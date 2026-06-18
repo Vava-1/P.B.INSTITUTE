@@ -3,15 +3,16 @@ import type { HttpBindings } from "@hono/node-server";
 import { serveStatic } from "@hono/node-server/serve-static";
 import fs from "fs";
 import path from "path";
-app.get("/health", (c) => c.json({ status: "ok" }));
+
 type App = Hono<{ Bindings: HttpBindings }>;
 
 export function serveStaticFiles(app: App) {
   const distPath = path.resolve(import.meta.dirname, "../dist/public");
-  
+
   console.log("Static files path:", distPath);
   console.log("dist/public exists:", fs.existsSync(distPath));
-  
+  console.log("index.html exists:", fs.existsSync(path.resolve(distPath, "index.html")));
+
   if (fs.existsSync(distPath)) {
     app.use("*", serveStatic({ root: distPath }));
   } else {
