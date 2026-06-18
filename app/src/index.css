@@ -1,0 +1,98 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-primary: #1A3C6E;
+    --color-secondary: #F4A400;
+    --color-accent: #00B894;
+    --color-dark: #0D1B2A;
+    --color-light: #F8F9FC;
+    --color-text: #1E1E2E;
+    --color-muted: #6B7280;
+    --color-gold: #F4A400;
+    --color-navy: #001233;
+    --color-midnight: #023E7D;
+    --color-royal: #0353A4;
+    --color-bright: #0466C8;
+    --color-institute-gold: #D4A418;
+    --color-metallic: #E0E0E0;
+
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+    --primary: 222 47% 11%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222 47% 11%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 222 47% 11%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: 'Playfair Display', serif;
+  }
+  .font-body {
+    font-family: 'Inter', sans-serif;
+  }
+  .text-gradient-gold {
+    background: linear-gradient(90deg, #F4A400, #FFD166);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .bg-gradient-hero {
+    background: linear-gradient(135deg, #0D1B2A 0%, #1A3C6E 60%, #0D1B2A 100%);
+  }
+  .bg-gradient-gold {
+    background: linear-gradient(90deg, #F4A400, #FFD166);
+  }
+  .glass-panel {
+    background: rgba(0, 18, 51, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border-radius: 16px;
+  }
+  .diagonal-stripe {
+    background: repeating-linear-gradient(
+      55deg,
+      transparent,
+      transparent 20px,
+      rgba(244, 164, 0, 0.06) 20px,
+      rgba(244, 164, 0, 0.06) 40px
+    );
+  }
+}
