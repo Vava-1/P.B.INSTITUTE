@@ -8,25 +8,19 @@ type App = Hono<{ Bindings: HttpBindings }>;
 
 export function serveStaticFiles(app: App) {
   const distPath = path.resolve(import.meta.dirname, "../dist/public");
-
+  
   console.log("Static files path:", distPath);
   console.log("dist/public exists:", fs.existsSync(distPath));
   console.log("index.html exists:", fs.existsSync(path.resolve(distPath, "index.html")));
 
-  if (fs.existsSync(distPath)) {
-    app.use("*", serveStatic({ root: distPath }));
-  } else {
-    console.error("ERROR: dist/public not found. Frontend will not be served.");
-  }
+  // Serve static files (JS, CSS, images, etc.)
+  app.use("/*", serveStatic({ root: distPath }));
 
-  app.notFound((c) => {
-    const accept = c.req.header("accept") ?? "";
-    if (!accept.includes("text/html")) {
-      return c.json({ error: "Not Found" }, 404);
-    }
+  // SPA fallback: serve index.html for any non-API route
+  app.get("*", (c) => {
     const indexPath = path.resolve(distPath, "index.html");
     if (!fs.existsSync(indexPath)) {
-      return c.text("Frontend build not found. Please run 'npm run build'.", 500);
+      return c.text("Frontend build not found", 500);
     }
     const content = fs.readFileSync(indexPath, "utf-8");
     return c.html(content);
