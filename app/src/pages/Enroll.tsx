@@ -325,7 +325,7 @@ export default function Enroll() {
                             <SelectItem value="IELTS">IELTS</SelectItem>
                             <SelectItem value="TOEFL">TOEFL</SelectItem>
                             <SelectItem value="DELF">DELF</SelectItem>
-                            <SelectItem value="Goethe">Goethe-Zertifikat</SelectItem>
+                             <SelectItem value="Goethe">Goethe Zertifikat</SelectItem>
                           </SelectContent>
                         </Select>
                       </div>
@@ -336,9 +336,9 @@ export default function Enroll() {
                       <Select value={formData.schedulePreference} onValueChange={(v) => update("schedulePreference", v)}>
                         <SelectTrigger><SelectValue placeholder="Select schedule" /></SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Morning">Morning (8-10 AM)</SelectItem>
-                          <SelectItem value="Afternoon">Afternoon (1-3 PM)</SelectItem>
-                          <SelectItem value="Evening">Evening (5-7 PM)</SelectItem>
+                          <SelectItem value="Morning">Morning (8 AM to 10 AM)</SelectItem>
+                          <SelectItem value="Afternoon">Afternoon (1 PM to 3 PM)</SelectItem>
+                          <SelectItem value="Evening">Evening (5 PM to 7 PM)</SelectItem>
                           <SelectItem value="Weekend">Weekend</SelectItem>
                         </SelectContent>
                       </Select>
@@ -353,7 +353,7 @@ export default function Enroll() {
                           <SelectItem value="Social Media">Social Media</SelectItem>
                           <SelectItem value="WhatsApp">WhatsApp</SelectItem>
                           <SelectItem value="Friend">Friend</SelectItem>
-                          <SelectItem value="Walk-in">Walk-in</SelectItem>
+                          <SelectItem value="Walk-in">Walk In</SelectItem>
                           <SelectItem value="Google">Google Search</SelectItem>
                           <SelectItem value="Other">Other</SelectItem>
                         </SelectContent>
@@ -366,8 +366,8 @@ export default function Enroll() {
                         <SelectTrigger><SelectValue placeholder="Select" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="Primary">Primary</SelectItem>
-                          <SelectItem value="O-Level">O-Level</SelectItem>
-                          <SelectItem value="A-Level">A-Level</SelectItem>
+                          <SelectItem value="O-Level">O Level</SelectItem>
+                          <SelectItem value="A-Level">A Level</SelectItem>
                           <SelectItem value="Diploma">Diploma</SelectItem>
                           <SelectItem value="Bachelor">Bachelor's</SelectItem>
                           <SelectItem value="Master">Master's+</SelectItem>
@@ -571,7 +571,7 @@ export default function Enroll() {
                         </div>
                         <div>
                           <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Email</div>
-                          <div className="font-medium">{formData.email || "-"}</div>
+                          <div className="font-medium">{formData.email || "—"}</div>
                         </div>
                       </div>
                       <div>

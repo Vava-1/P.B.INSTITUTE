@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, BookOpen, Newspaper,
   Settings, LogOut, Mail,
   TrendingUp, Clock, CheckCircle, AlertCircle, Eye, Menu, X,
-  Star,
+  Star, Plus, Edit, Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -311,7 +311,49 @@ function EnrollmentsPage() {
 
 // ─── COURSES ADMIN ───
 function CoursesAdminPage() {
-  const { data: courses } = trpc.admin.courseList.useQuery(undefined, { retry: false });
+  const { data: courses, refetch } = trpc.admin.courseList.useQuery(undefined, { retry: false });
+  const createMutation = trpc.admin.courseCreate.useMutation({ onSuccess: () => refetch() });
+  const updateMutation = trpc.admin.courseUpdate.useMutation({ onSuccess: () => refetch() });
+  const deleteMutation = trpc.admin.courseDelete.useMutation({ onSuccess: () => refetch() });
+
+  const [showModal, setShowModal] = useState(false);
+  const [editing, setEditing] = useState<any>(null);
+  const [form, setForm] = useState({
+    slug: "", title: "", category: "languages", shortDesc: "", description: "",
+    duration: "", isPublished: true, isFeatured: false, displayOrder: 0,
+  });
+
+  const openCreate = () => {
+    setEditing(null);
+    setForm({ slug: "", title: "", category: "languages", shortDesc: "", description: "", duration: "", isPublished: true, isFeatured: false, displayOrder: 0 });
+    setShowModal(true);
+  };
+
+  const openEdit = (course: any) => {
+    setEditing(course);
+    setForm({
+      slug: course.slug || "",
+      title: course.title || "",
+      category: course.category || "languages",
+      shortDesc: course.shortDesc || "",
+      description: course.description || "",
+      duration: course.duration || "",
+      isPublished: course.isPublished ?? true,
+      isFeatured: course.isFeatured ?? false,
+      displayOrder: course.displayOrder ?? 0,
+    });
+    setShowModal(true);
+  };
+
+  const handleSave = () => {
+    if (editing) {
+      updateMutation.mutate({ id: editing.id, data: form });
+    } else {
+      createMutation.mutate(form as any);
+    }
+    setShowModal(false);
+    setEditing(null);
+  };
 
   return (
     <div className="p-6 lg:p-8">
@@ -320,10 +362,83 @@ function CoursesAdminPage() {
           <h1 className="text-2xl font-bold text-[#0D1B2A] font-display">Courses</h1>
           <p className="text-[#6B7280]">Manage your course catalog</p>
         </div>
+        <Button onClick={openCreate} className="bg-[#1A3C6E] text-white hover:bg-[#0D1B2A]">
+          <Plus className="w-4 h-4 mr-2" /> Add Course
+        </Button>
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowModal(false)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-lg font-bold text-[#0D1B2A]">{editing ? "Edit Course" : "Add Course"}</h2>
+              <button onClick={() => setShowModal(false)}><X className="w-5 h-5 text-[#6B7280]" /></button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <label className="text-sm font-medium text-[#0D1B2A] block mb-1">Title</label>
+                  <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-[#0D1B2A] block mb-1">Slug</label>
+                  <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-[#0D1B2A] block mb-1">Category</label>
+                  <select className="w-full px-3 py-2 border rounded-md text-sm" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                    <option value="languages">Languages</option>
+                    <option value="bakery">Bakery & Pastry</option>
+                    <option value="salon">Salon & Beauty</option>
+                    <option value="mechanics">Mechanics</option>
+                    <option value="ai_skills">AI Skills</option>
+                    <option value="private_candidate">Private Candidate</option>
+                  </select>
+                </div>
+                <div className="col-span-2">
+                  <label className="text-sm font-medium text-[#0D1B2A] block mb-1">Short Description</label>
+                  <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.shortDesc} onChange={(e) => setForm({ ...form, shortDesc: e.target.value })} />
+                </div>
+                <div className="col-span-2">
+                  <label className="text-sm font-medium text-[#0D1B2A] block mb-1">Description</label>
+                  <textarea className="w-full px-3 py-2 border rounded-md text-sm min-h-[80px]" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-[#0D1B2A] block mb-1">Duration</label>
+                  <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-[#0D1B2A] block mb-1">Display Order</label>
+                  <input type="number" className="w-full px-3 py-2 border rounded-md text-sm" value={form.displayOrder} onChange={(e) => setForm({ ...form, displayOrder: parseInt(e.target.value) || 0 })} />
+                </div>
+                <div className="flex items-center gap-6">
+                  <label className="flex items-center gap-2 text-sm">
+                    <input type="checkbox" checked={form.isPublished} onChange={(e) => setForm({ ...form, isPublished: e.target.checked })} />
+                    Published
+                  </label>
+                  <label className="flex items-center gap-2 text-sm">
+                    <input type="checkbox" checked={form.isFeatured} onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })} />
+                    Featured
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 p-6 border-t">
+              <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} className="bg-[#1A3C6E] text-white hover:bg-[#0D1B2A]">
+                {createMutation.isPending || updateMutation.isPending ? "Saving..." : editing ? "Update Course" : "Create Course"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {(courses || []).length === 0 && (
+          <div className="col-span-full text-center py-12 text-[#6B7280]">No courses yet. Click "Add Course" to create one.</div>
+        )}
         {(courses || []).map((course: any) => (
-          <Card key={course.id} className="border-0 shadow-md">
+          <Card key={course.id} className="border-0 shadow-md group">
             <CardContent className="p-5">
               <div className="flex items-center gap-3 mb-3">
                 <div className="w-10 h-10 rounded-lg bg-[#1A3C6E]/10 flex items-center justify-center">
@@ -331,7 +446,7 @@ function CoursesAdminPage() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-[#0D1B2A] text-sm truncate">{course.title}</h3>
-                  <p className="text-xs text-[#6B7280]">{course.category}</p>
+                  <p className="text-xs text-[#6B7280]">{course.category.replace(/_/g, " ")}</p>
                 </div>
               </div>
               <div className="flex items-center justify-between">
@@ -339,6 +454,17 @@ function CoursesAdminPage() {
                   {course.isPublished ? "Published" : "Draft"}
                 </Badge>
                 <span className="text-xs text-[#6B7280]">{course.duration}</span>
+              </div>
+              <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-50 opacity-0 group-hover:opacity-100 transition-opacity">
+                <button onClick={() => openEdit(course)} className="text-xs flex items-center gap-1 text-[#1A3C6E] hover:text-[#F4A400] transition-colors">
+                  <Edit className="w-3.5 h-3.5" /> Edit
+                </button>
+                <button
+                  onClick={() => { if (confirm("Delete this course?")) deleteMutation.mutate({ id: course.id }); }}
+                  className="text-xs flex items-center gap-1 text-red-500 hover:text-red-700 transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" /> Delete
+                </button>
               </div>
             </CardContent>
           </Card>
@@ -350,27 +476,152 @@ function CoursesAdminPage() {
 
 // ─── NEWS ADMIN ───
 function NewsAdminPage() {
-  const { data: newsItems } = trpc.admin.newsList.useQuery(undefined, { retry: false });
+  const { data: newsItems, refetch } = trpc.admin.newsList.useQuery(undefined, { retry: false });
+  const createMutation = trpc.admin.newsCreate.useMutation({ onSuccess: () => refetch() });
+  const updateMutation = trpc.admin.newsUpdate.useMutation({ onSuccess: () => refetch() });
+  const deleteMutation = trpc.admin.newsDelete.useMutation({ onSuccess: () => refetch() });
+
+  const [showModal, setShowModal] = useState(false);
+  const [editing, setEditing] = useState<any>(null);
+  const [form, setForm] = useState({
+    slug: "", title: "", category: "news", excerpt: "", content: "",
+    authorName: "", isPublished: false,
+  });
+
+  const openCreate = () => {
+    setEditing(null);
+    setForm({ slug: "", title: "", category: "news", excerpt: "", content: "", authorName: "", isPublished: false });
+    setShowModal(true);
+  };
+
+  const openEdit = (item: any) => {
+    setEditing(item);
+    setForm({
+      slug: item.slug || "",
+      title: item.title || "",
+      category: item.category || "news",
+      excerpt: item.excerpt || "",
+      content: item.content || "",
+      authorName: item.authorName || "",
+      isPublished: item.isPublished ?? false,
+    });
+    setShowModal(true);
+  };
+
+  const handleSave = () => {
+    if (editing) {
+      updateMutation.mutate({ id: editing.id, data: form });
+    } else {
+      createMutation.mutate(form as any);
+    }
+    setShowModal(false);
+    setEditing(null);
+  };
 
   return (
     <div className="p-6 lg:p-8">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#0D1B2A] font-display">News & Events</h1>
-        <p className="text-[#6B7280]">Manage news articles and events</p>
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-[#0D1B2A] font-display">News & Events</h1>
+          <p className="text-[#6B7280]">Manage news articles and events</p>
+        </div>
+        <Button onClick={openCreate} className="bg-[#1A3C6E] text-white hover:bg-[#0D1B2A]">
+          <Plus className="w-4 h-4 mr-2" /> Add Article
+        </Button>
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowModal(false)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-lg font-bold text-[#0D1B2A]">{editing ? "Edit Article" : "Add Article"}</h2>
+              <button onClick={() => setShowModal(false)}><X className="w-5 h-5 text-[#6B7280]" /></button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="col-span-2">
+                  <label className="text-sm font-medium text-[#0D1B2A] block mb-1">Title</label>
+                  <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-[#0D1B2A] block mb-1">Slug</label>
+                  <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-[#0D1B2A] block mb-1">Category</label>
+                  <select className="w-full px-3 py-2 border rounded-md text-sm" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                    <option value="news">News</option>
+                    <option value="event">Event</option>
+                    <option value="achievement">Achievement</option>
+                    <option value="announcement">Announcement</option>
+                  </select>
+                </div>
+                <div className="col-span-2">
+                  <label className="text-sm font-medium text-[#0D1B2A] block mb-1">Excerpt</label>
+                  <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} />
+                </div>
+                <div className="col-span-2">
+                  <label className="text-sm font-medium text-[#0D1B2A] block mb-1">Content</label>
+                  <textarea className="w-full px-3 py-2 border rounded-md text-sm min-h-[120px]" value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} />
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-[#0D1B2A] block mb-1">Author Name</label>
+                  <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.authorName} onChange={(e) => setForm({ ...form, authorName: e.target.value })} />
+                </div>
+                <div className="flex items-end pb-2">
+                  <label className="flex items-center gap-2 text-sm">
+                    <input type="checkbox" checked={form.isPublished} onChange={(e) => setForm({ ...form, isPublished: e.target.checked })} />
+                    Published
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div className="flex justify-end gap-3 p-6 border-t">
+              <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} className="bg-[#1A3C6E] text-white hover:bg-[#0D1B2A]">
+                {createMutation.isPending || updateMutation.isPending ? "Saving..." : editing ? "Update Article" : "Create Article"}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="space-y-4">
         {(newsItems || []).length === 0 && <p className="text-[#6B7280]">No articles yet</p>}
         {(newsItems || []).map((item: any) => (
-          <Card key={item.id} className="border-0 shadow-sm">
-            <CardContent className="p-5 flex items-center justify-between">
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 mb-1">
-                  <Badge className="bg-[#F4A400]/10 text-[#F4A400]">{item.category}</Badge>
-                  <span className="text-xs text-[#6B7280]">
-                    {item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : "Draft"}
-                  </span>
+          <Card key={item.id} className="border-0 shadow-sm group">
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <Badge className="bg-[#F4A400]/10 text-[#F4A400]">{item.category}</Badge>
+                    <span className="text-xs text-[#6B7280]">
+                      {item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : "Draft"}
+                    </span>
+                    {!item.isPublished && (
+                      <Badge className="bg-gray-100 text-gray-600">Unpublished</Badge>
+                    )}
+                  </div>
+                  <h3 className="font-semibold text-[#0D1B2A] truncate">{item.title}</h3>
+                  <p className="text-xs text-[#6B7280] mt-1">{item.excerpt}</p>
                 </div>
-                <h3 className="font-semibold text-[#0D1B2A] truncate">{item.title}</h3>
+                <div className="flex items-center gap-2 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <button
+                    onClick={() => updateMutation.mutate({ id: item.id, data: { isPublished: !item.isPublished } })}
+                    className="text-xs px-2 py-1 bg-[#1A3C6E] text-white rounded hover:bg-[#0D1B2A] transition-colors"
+                  >
+                    {item.isPublished ? "Unpublish" : "Publish"}
+                  </button>
+                  <button onClick={() => openEdit(item)} className="text-[#1A3C6E] hover:text-[#F4A400] transition-colors">
+                    <Edit className="w-4 h-4" />
+                  </button>
+                  <button
+                    onClick={() => { if (confirm("Delete this article?")) deleteMutation.mutate({ id: item.id }); }}
+                    className="text-red-500 hover:text-red-700 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
             </CardContent>
           </Card>

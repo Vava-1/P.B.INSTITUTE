@@ -191,7 +191,7 @@ export default function Contact() {
                     <div>
                       <h3 className="font-semibold text-[#0D1B2A]">Opening Hours</h3>
                       <p className="text-sm text-[#6B7280]">
-                        {settings?.openingHours || "Mon–Fri: 8:00 AM – 6:00 PM | Sat: 9:00 AM – 1:00 PM"}
+                        {settings?.openingHours || "Mon to Fri: 8:00 AM to 6:00 PM | Sat: 9:00 AM to 1:00 PM"}
                       </p>
                     </div>
                   </div>

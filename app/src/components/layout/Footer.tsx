@@ -140,7 +140,7 @@ export default function Footer() {
               <li className="flex items-start gap-3">
                 <Clock className="w-5 h-5 text-[#F4A400] shrink-0 mt-0.5" />
                 <span className="text-[#E0E0E0]/70 text-sm">
-                  {settings?.openingHours || "Mon–Fri: 8:00 AM – 6:00 PM | Sat: 9:00 AM – 1:00 PM"}
+                  {settings?.openingHours || "Mon to Fri: 8:00 AM to 6:00 PM | Sat: 9:00 AM to 1:00 PM"}
                 </span>
               </li>
             </ul>
