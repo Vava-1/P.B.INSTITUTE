@@ -33,6 +33,7 @@ const categoryColors: Record<string, string> = {
 // ─── HOME PAGE ───
 export default function Home() {
   const { data: courses } = trpc.public.courses.list.useQuery({ featured: true });
+  const { data: allCourses } = trpc.public.courses.list.useQuery();
   const { data: testimonials } = trpc.public.testimonials.list.useQuery({ featured: true, limit: 6 });
   const { data: news } = trpc.public.news.list.useQuery({ limit: 3 });
   const { data: settings } = trpc.public.settings.get.useQuery();
@@ -64,6 +65,9 @@ export default function Home() {
 
       {/* Hero Section */}
       <HeroSection />
+
+      {/* Courses Slider */}
+      <CoursesSlider courses={allCourses || []} />
 
       {/* Stats Counter */}
       <StatsSection />
@@ -206,19 +210,18 @@ export default function Home() {
       </section>
 
       {/* CTA Banner */}
-      <section className="py-32 bg-gradient-to-br from-[#F4A400] via-[#FFD166] to-[#F4A400]">
+      <section className="py-16 bg-gradient-to-br from-[#C8E6C9] via-[#E8F5E9] to-[#C8E6C9]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold text-[#0D1B2A] mb-6 font-display">
+          <h2 className="text-2xl md:text-4xl font-bold text-[#2E7D32] mb-3 font-display">
             Ready to Start Your Training?
           </h2>
-          <p className="text-lg text-[#0D1B2A]/80 mb-10 max-w-2xl mx-auto">
-            Hundreds of Pacemaker graduates are already building better careers.
-            Join them and transform your future today.
+          <p className="text-base text-[#2E7D32]/80 mb-6 max-w-2xl mx-auto">
+            Join hundreds of Pacemaker graduates building better careers.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
               asChild
-              className="bg-[#0D1B2A] text-white hover:bg-[#1A3C6E] font-semibold rounded-full px-10 py-6 text-lg"
+              className="bg-[#2E7D32] text-white hover:bg-[#1B5E20] font-semibold rounded-full px-8 py-5 text-base"
             >
               <Link to="/enroll">Enroll Today</Link>
             </Button>
@@ -226,7 +229,7 @@ export default function Home() {
               href={`https://wa.me/${(settings?.whatsapp || "250786053720").replace(/\+/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-3 bg-white text-[#0D1B2A] font-semibold rounded-full hover:bg-[#F8F9FC] transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-white text-[#2E7D32] font-semibold rounded-full hover:bg-[#F8F9FC] transition-colors"
             >
               Talk to Us on WhatsApp
             </a>
@@ -237,6 +240,74 @@ export default function Home() {
       <Footer />
       <WhatsAppButton />
     </div>
+  );
+}
+
+// ─── COURSES SLIDER ───
+function CoursesSlider({ courses }: { courses: any[] }) {
+  const [idx, setIdx] = useState(0);
+
+  useEffect(() => {
+    if (courses.length <= 1) return;
+    const iv = setInterval(() => setIdx((p) => (p + 1) % courses.length), 4000);
+    return () => clearInterval(iv);
+  }, [courses.length]);
+
+  if (!courses.length) return null;
+
+  const course = courses[idx];
+  const Icon = categoryIcons[course.category] || BookOpen;
+  const color = categoryColors[course.category] || "#1A3C6E";
+
+  return (
+    <section className="bg-gradient-to-r from-[#F4A400] via-[#FFD166] to-[#F4A400] py-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-xl bg-white/20 backdrop-blur-sm">
+          <div className="flex items-center gap-6 p-4 sm:p-6">
+            <div
+              className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0"
+              style={{ backgroundColor: `${color}20` }}
+            >
+              <Icon className="w-7 h-7" style={{ color }} />
+            </div>
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 text-xs text-[#0D1B2A]/60 uppercase tracking-wider font-medium mb-0.5">
+                <span>Explore our programs</span>
+                <span>·</span>
+                <span>{course.category.replace(/_/g, " ")}</span>
+              </div>
+              <h3 className="text-lg sm:text-xl font-bold text-[#0D1B2A] font-display truncate">
+                {course.title}
+              </h3>
+              <p className="text-sm text-[#0D1B2A]/70 mt-0.5 line-clamp-1">
+                {course.shortDesc}
+              </p>
+            </div>
+            <Link
+              to={`/courses/${course.slug}`}
+              className="shrink-0 flex items-center gap-1 px-4 py-2 bg-[#0D1B2A] text-white text-sm font-medium rounded-lg hover:bg-[#1A3C6E] transition-colors"
+            >
+              View <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          {/* Dots */}
+          {courses.length > 1 && (
+            <div className="flex items-center justify-center gap-1.5 pb-3">
+              {courses.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setIdx(i)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    i === idx ? "bg-[#0D1B2A] w-4" : "bg-[#0D1B2A]/30"
+                  }`}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
   );
 }
 
