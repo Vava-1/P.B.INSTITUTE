@@ -14,6 +14,7 @@ import {
   payments,
 } from "@db/schema";
 import { eq, and, desc, asc } from "drizzle-orm";
+import { buildMomoConfig, requestToPay, checkTransactionStatus } from "./lib/mtn-momo";
 
 export const publicRouter = createRouter({
   // ─── HEALTH CHECK ───
@@ -316,8 +317,43 @@ export const publicRouter = createRouter({
       .mutation(async ({ input }) => {
         const db = getDb();
         const refNum = `PI-PAY-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
-        // In production, integrate with MTN MoMo / Airtel Money APIs here
-        // For now, payment is auto-approved
+
+        if (input.provider === "MOMO") {
+          const momoConfig = buildMomoConfig();
+          if (momoConfig) {
+            try {
+              const { referenceId } = await requestToPay(momoConfig, input.amount, input.phoneNumber, refNum);
+              await db.insert(payments).values({
+                referenceNumber: refNum,
+                provider: "MOMO",
+                amount: input.amount,
+                phoneNumber: input.phoneNumber,
+                status: "pending",
+                transactionId: referenceId,
+              });
+              return {
+                success: true,
+                referenceNumber: refNum,
+                transactionId: referenceId,
+                provider: "MOMO",
+                amount: input.amount,
+                phoneNumber: input.phoneNumber,
+                status: "pending",
+                message: "Payment request sent to your phone. Check your MTN MoMo app and enter your PIN to confirm.",
+              };
+            } catch (e: any) {
+              console.error("[MTN MoMo] Initiate failed:", e);
+              return {
+                success: false,
+                referenceNumber: refNum,
+                status: "failed",
+                message: e.message || "Payment request failed. Please try again.",
+              };
+            }
+          }
+        }
+
+        // Fallback: auto-approve (Airtel or no MoMo credentials configured)
         await db.insert(payments).values({
           referenceNumber: refNum,
           provider: input.provider,
@@ -336,15 +372,45 @@ export const publicRouter = createRouter({
         };
       }),
 
-    verify: publicQuery
+    status: publicQuery
       .input(z.object({ reference: z.string() }))
       .query(async ({ input }) => {
         const db = getDb();
-        const result = await db
+        const payment = await db
           .select()
           .from(payments)
-          .where(eq(payments.referenceNumber, input.reference));
-        return result[0] ?? null;
+          .where(eq(payments.referenceNumber, input.reference))
+          .then((r) => r[0] ?? null);
+
+        if (!payment) return null;
+
+        // If still pending and has an MTN transactionId, check remote status
+        if (payment.status === "pending" && payment.transactionId && payment.provider === "MOMO") {
+          const momoConfig = buildMomoConfig();
+          if (momoConfig) {
+            try {
+              const { status: mtnStatus } = await checkTransactionStatus(momoConfig, payment.transactionId);
+              if (mtnStatus === "SUCCESSFUL") {
+                await db
+                  .update(payments)
+                  .set({ status: "success", verifiedAt: new Date() })
+                  .where(eq(payments.referenceNumber, input.reference));
+                return { ...payment, status: "success", verifiedAt: new Date() };
+              }
+              if (mtnStatus === "FAILED") {
+                await db
+                  .update(payments)
+                  .set({ status: "failed" })
+                  .where(eq(payments.referenceNumber, input.reference));
+                return { ...payment, status: "failed" };
+              }
+            } catch {
+              // Remote check failed, return current DB status
+            }
+          }
+        }
+
+        return payment;
       }),
   }),
 });

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router";
 import {
   CheckCircle, ChevronRight, ChevronLeft, BookOpen,
@@ -26,6 +26,8 @@ export default function Enroll() {
   const [refNum, setRefNum] = useState("");
   const [paymentRef, setPaymentRef] = useState("");
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success" | "failed">("idle");
+  const [paymentMessage, setPaymentMessage] = useState("");
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const [formData, setFormData] = useState<Record<string, any>>({
     fullName: "", email: "", phone: "", whatsapp: "",
     dateOfBirth: "", gender: "", nationality: "", nationalId: "", district: "",
@@ -82,6 +84,7 @@ export default function Enroll() {
       return;
     }
     setPaymentStatus("processing");
+    setPaymentMessage("");
     try {
       const result = await payMutation.mutateAsync({
         provider: formData.paymentProvider as "MOMO" | "AIRTEL",
@@ -90,11 +93,42 @@ export default function Enroll() {
         courseId: parseInt(formData.courseId),
       });
       setPaymentRef(result.referenceNumber);
-      setPaymentStatus("success");
+      if (result.status === "pending") {
+        setPaymentMessage(result.message || "Payment request sent to your phone.");
+      } else if (result.status === "success") {
+        setPaymentStatus("success");
+      } else {
+        setPaymentStatus("failed");
+        setPaymentMessage(result.message || "Payment failed. Please try again.");
+      }
     } catch {
       setPaymentStatus("failed");
     }
   };
+
+  // Poll payment status while waiting for PIN confirmation
+  useEffect(() => {
+    if (paymentStatus === "processing" && paymentRef) {
+      const interval = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/trpc/public.payments.status?input=${encodeURIComponent(JSON.stringify({ reference: paymentRef }))}`);
+          const json = await res.json();
+          const status = json?.result?.data?.status;
+          if (status === "success") {
+            setPaymentStatus("success");
+            clearInterval(interval);
+          } else if (status === "failed") {
+            setPaymentStatus("failed");
+            clearInterval(interval);
+          }
+        } catch {}
+      }, 3000);
+      pollingRef.current = interval;
+      return () => clearInterval(interval);
+    }
+  }, [paymentStatus, paymentRef]);
+
+
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
@@ -451,9 +485,14 @@ export default function Enroll() {
                     {paymentStatus === "processing" && (
                       <div className="text-center py-8">
                         <Loader2 className="w-10 h-10 animate-spin text-[#1A3C6E] mx-auto mb-3" />
-                        <p className="text-[#6B7280]">Processing your payment...</p>
-                        <p className="text-xs text-[#6B7280] mt-1">
-                          {formData.paymentProvider === "MOMO" ? "Check your MTN MoMo phone for a payment request" : "Check your Airtel Money phone for a payment request"}
+                        <p className="text-[#0D1B2A] font-semibold">Payment request sent to your phone</p>
+                        {paymentMessage && <p className="text-sm text-[#6B7280] mt-1">{paymentMessage}</p>}
+                        <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
+                          <p className="font-medium">Check your phone and enter your PIN to confirm</p>
+                          <p className="text-xs mt-1">Waiting for confirmation... This page will update automatically.</p>
+                        </div>
+                        <p className="text-xs text-[#6B7280] mt-3">
+                          {formData.paymentProvider === "MOMO" ? "MTN MoMo" : "Airtel Money"} • {courseFee.toLocaleString()} RWF
                         </p>
                       </div>
                     )}
