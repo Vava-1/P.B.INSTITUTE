@@ -9,6 +9,7 @@ import {
   galleryItems,
   adminUsers,
 } from "./schema";
+import { eq, sql } from "drizzle-orm";
 import { hashSync } from "bcryptjs";
 
 async function seed() {
@@ -16,7 +17,9 @@ async function seed() {
   console.log("🌱 Starting seed...");
 
   // ─── SITE SETTINGS ───
-  await db.insert(siteSettings).values({
+  const existingSettings = await db.select().from(siteSettings).where(eq(siteSettings.id, "main"));
+  if (existingSettings.length === 0) {
+    await db.insert(siteSettings).values({
     id: "main",
     siteName: "Pacemaker Institute",
     tagline: "Empowering individuals with practical skills, language mastery, and professional knowledge to excel in today's competitive world.",
@@ -42,10 +45,15 @@ async function seed() {
     seoTitleSuffix: "| Pacemaker Institute Kigali",
     seoDefaultDesc: "Professional training in Languages, Bakery, Salon, Mechanics, AI Skills and Private Candidate Support in Kigali, Rwanda.",
   });
-  console.log("✅ Site settings seeded");
+    console.log("✅ Site settings seeded");
+  } else {
+    console.log("⏭️ Site settings already exist, skipping");
+  }
 
   // ─── COURSES ───
-  await db.insert(courses).values([
+  const existingCourses = await db.select({ count: sql<number>`count(*)` }).from(courses);
+  if (existingCourses[0].count === 0) {
+    await db.insert(courses).values([
     {
       slug: "languages-conversational",
       title: "Language Courses",
@@ -256,7 +264,10 @@ async function seed() {
       displayOrder: 7,
     },
   ]);
-  console.log("✅ 7 courses seeded");
+    console.log("✅ 7 courses seeded");
+  } else {
+    console.log("⏭️ Courses already exist, skipping");
+  }
 
   // ─── TESTIMONIALS ───
   await db.insert(testimonials).values([

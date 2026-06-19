@@ -242,9 +242,13 @@ export default function Enroll() {
                       <Select value={formData.courseId} onValueChange={(v) => update("courseId", v)}>
                         <SelectTrigger><SelectValue placeholder="Choose a course" /></SelectTrigger>
                         <SelectContent>
-                          {(courses || []).map((c) => (
-                            <SelectItem key={c.id} value={c.id.toString()}>{c.title}</SelectItem>
-                          ))}
+                          {!courses || courses.length === 0 ? (
+                            <SelectItem value="" disabled>No courses available</SelectItem>
+                          ) : (
+                            (courses || []).map((c) => (
+                              <SelectItem key={c.id} value={c.id.toString()}>{c.title}</SelectItem>
+                            ))
+                          )}
                         </SelectContent>
                       </Select>
                       {errors.courseId && <p className="text-red-500 text-xs mt-1">{errors.courseId}</p>}
