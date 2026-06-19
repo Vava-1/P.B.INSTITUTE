@@ -60,11 +60,6 @@ export default function Enroll() {
     }
     if (step === 3) {
       if (!formData.courseId) newErrors.courseId = "Please select a course first";
-      if (courseFee > 0) {
-        if (!formData.paymentProvider) newErrors.paymentProvider = "Please select a payment method";
-        if (!formData.paymentPhone) newErrors.paymentPhone = "Please enter your mobile money number";
-        if (paymentStatus !== "success") newErrors.payment = "Please complete payment before proceeding";
-      }
     }
     if (step === 4) {
       if (!formData.confirmInfo) newErrors.confirmInfo = "Please confirm";
@@ -432,7 +427,7 @@ export default function Enroll() {
                       </div>
                     )}
                     <div>
-                      <Label>Payment Method *</Label>
+                      <Label>Payment Method</Label>
                       <div className="grid grid-cols-2 gap-3 mt-1">
                         <button
                           type="button"
@@ -462,7 +457,7 @@ export default function Enroll() {
                       {errors.paymentProvider && <p className="text-red-500 text-xs mt-1">{errors.paymentProvider}</p>}
                     </div>
                     <div>
-                      <Label>Mobile Money Number *</Label>
+                      <Label>Mobile Money Number</Label>
                       <Input
                         value={formData.paymentPhone}
                         onChange={(e) => update("paymentPhone", e.target.value)}
@@ -472,14 +467,24 @@ export default function Enroll() {
                     </div>
 
                     {paymentStatus === "idle" && courseFee > 0 && (
-                      <Button
-                        onClick={handlePayNow}
-                        disabled={payMutation.isPending}
-                        className="w-full bg-gradient-to-r from-[#00B894] to-[#00C9A7] text-white font-semibold py-6 text-lg"
-                      >
-                        <CreditCard className="w-5 h-5 mr-2" />
-                        {payMutation.isPending ? "Processing..." : `Pay ${courseFee.toLocaleString()} RWF`}
-                      </Button>
+                      <div className="space-y-3">
+                        <Button
+                          onClick={handlePayNow}
+                          disabled={payMutation.isPending}
+                          className="w-full bg-gradient-to-r from-[#00B894] to-[#00C9A7] text-white font-semibold py-6 text-lg"
+                        >
+                          <CreditCard className="w-5 h-5 mr-2" />
+                          {payMutation.isPending ? "Processing..." : `Pay ${courseFee.toLocaleString()} RWF`}
+                        </Button>
+                        <p className="text-center text-xs text-[#6B7280]">or</p>
+                        <Button
+                          variant="outline"
+                          onClick={() => setStep(4)}
+                          className="w-full"
+                        >
+                          Skip for now — continue to enrollment
+                        </Button>
+                      </div>
                     )}
 
                     {paymentStatus === "processing" && (
@@ -629,15 +634,19 @@ export default function Enroll() {
                           </div>
                         )}
                       </div>
-                      {paymentStatus === "success" && (
-                        <div>
-                          <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Payment</div>
-                          <div className="font-medium text-[#00B894]">
-                            {courseFee.toLocaleString()} RWF via {formData.paymentProvider}
-                          </div>
-                          <div className="text-xs text-[#6B7280]">Ref: {paymentRef}</div>
-                        </div>
-                      )}
+                      <div>
+                        <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Payment</div>
+                        {paymentStatus === "success" ? (
+                          <>
+                            <div className="font-medium text-[#00B894]">
+                              {courseFee.toLocaleString()} RWF via {formData.paymentProvider}
+                            </div>
+                            <div className="text-xs text-[#6B7280]">Ref: {paymentRef}</div>
+                          </>
+                        ) : (
+                          <div className="text-sm text-[#6B7280]">To be arranged</div>
+                        )}
+                      </div>
                     </div>
                     <p className="text-sm text-[#6B7280] text-center">
                       By submitting, you agree to our terms and conditions.
