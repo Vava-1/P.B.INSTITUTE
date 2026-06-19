@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router";
 import {
   CheckCircle, ChevronRight, ChevronLeft, BookOpen,
-  Phone, User, GraduationCap,
+  Phone, User, GraduationCap, Smartphone, CreditCard, Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,16 +19,21 @@ export default function Enroll() {
   const { data: courses } = trpc.public.courses.list.useQuery();
   const { data: settings } = trpc.public.settings.get.useQuery();
   const enrollMutation = trpc.public.enrollments.submit.useMutation();
+  const payInitMutation = trpc.public.payments.initiate.useMutation();
+  const payVerifyQuery = trpc.public.payments.verify.useQuery;
 
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
   const [refNum, setRefNum] = useState("");
+  const [paymentRef, setPaymentRef] = useState("");
+  const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success" | "failed">("idle");
   const [formData, setFormData] = useState<Record<string, any>>({
     fullName: "", email: "", phone: "", whatsapp: "",
     dateOfBirth: "", gender: "", nationality: "", nationalId: "", district: "",
     courseId: "", languageOption: "", languageLevel: "", examOption: "",
     schedulePreference: "", referralSource: "", educationLevel: "", occupation: "",
     specialNeeds: "", emergencyName: "", emergencyPhone: "", emergencyRelation: "",
+    paymentProvider: "", paymentPhone: "",
     confirmInfo: false, acceptTerms: false, consentContact: false,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -37,6 +42,28 @@ export default function Enroll() {
     setFormData((p) => ({ ...p, [field]: value }));
     setErrors((p) => ({ ...p, [field]: "" }));
   };
+
+  const selectedCourse = (courses || []).find((c) => c.id === parseInt(formData.courseId));
+  const courseFee = selectedCourse?.feeRwf || 0;
+
+  useEffect(() => {
+    if (paymentStatus === "processing" && paymentRef) {
+      const interval = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/trpc/public.payments.verify?input=${encodeURIComponent(JSON.stringify({ reference: paymentRef }))}`);
+          const json = await res.json();
+          if (json.result?.data?.status === "success") {
+            setPaymentStatus("success");
+            clearInterval(interval);
+          } else if (json.result?.data?.status === "failed") {
+            setPaymentStatus("failed");
+            clearInterval(interval);
+          }
+        } catch { }
+      }, 2000);
+      return () => clearInterval(interval);
+    }
+  }, [paymentStatus, paymentRef]);
 
   const validateStep = () => {
     const newErrors: Record<string, string> = {};
@@ -50,6 +77,14 @@ export default function Enroll() {
       if (!formData.schedulePreference) newErrors.schedulePreference = "Please select a schedule";
     }
     if (step === 3) {
+      if (!formData.courseId) newErrors.courseId = "Please select a course first";
+      if (courseFee > 0) {
+        if (!formData.paymentProvider) newErrors.paymentProvider = "Please select a payment method";
+        if (!formData.paymentPhone) newErrors.paymentPhone = "Please enter your mobile money number";
+        if (paymentStatus !== "success") newErrors.payment = "Please complete payment before proceeding";
+      }
+    }
+    if (step === 4) {
       if (!formData.confirmInfo) newErrors.confirmInfo = "Please confirm";
       if (!formData.acceptTerms) newErrors.acceptTerms = "Please accept terms";
       if (!formData.consentContact) newErrors.consentContact = "Please consent";
@@ -58,8 +93,27 @@ export default function Enroll() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleNext = () => { if (validateStep()) setStep((p) => Math.min(p + 1, 4)); };
+  const handleNext = () => { if (validateStep()) setStep((p) => Math.min(p + 1, 5)); };
   const handlePrev = () => setStep((p) => Math.max(p - 1, 1));
+
+  const handlePayNow = async () => {
+    if (!formData.paymentProvider || !formData.paymentPhone) {
+      setErrors((p) => ({ ...p, paymentProvider: !formData.paymentProvider ? "Select provider" : "", paymentPhone: !formData.paymentPhone ? "Enter phone number" : "" }));
+      return;
+    }
+    setPaymentStatus("processing");
+    try {
+      const result = await payInitMutation.mutateAsync({
+        provider: formData.paymentProvider as "MOMO" | "AIRTEL",
+        amount: courseFee,
+        phoneNumber: formData.paymentPhone,
+        courseId: parseInt(formData.courseId),
+      });
+      setPaymentRef(result.referenceNumber);
+    } catch {
+      setPaymentStatus("failed");
+    }
+  };
 
   const handleSubmit = async () => {
     if (!validateStep()) return;
@@ -86,6 +140,7 @@ export default function Enroll() {
         emergencyName: formData.emergencyName || undefined,
         emergencyPhone: formData.emergencyPhone || undefined,
         emergencyRelation: formData.emergencyRelation || undefined,
+        paymentRef: paymentRef || undefined,
       });
       if (result.success) {
         setRefNum(result.referenceNumber);
@@ -96,9 +151,7 @@ export default function Enroll() {
     }
   };
 
-  const selectedCourse = (courses || []).find((c) => c.id === parseInt(formData.courseId));
-
-  const stepLabels = ["Personal Info", "Course Selection", "Declaration", "Review"];
+  const stepLabels = ["Personal Info", "Course Selection", "Payment", "Declaration", "Review"];
 
   return (
     <div className="min-h-screen bg-[#F8F9FC]">
@@ -173,7 +226,7 @@ export default function Enroll() {
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
                       className="h-full bg-gradient-to-r from-[#F4A400] to-[#FFD166] transition-all duration-500"
-                      style={{ width: `${(step / 4) * 100}%` }}
+                      style={{ width: `${(step / 5) * 100}%` }}
                     />
                   </div>
                 </div>
@@ -343,8 +396,115 @@ export default function Enroll() {
                   </div>
                 )}
 
-                {/* Step 3: Declaration */}
+                {/* Step 3: Payment */}
                 {step === 3 && (
+                  <div className="space-y-4">
+                    <h2 className="text-xl font-bold text-[#0D1B2A] font-display flex items-center gap-2">
+                      <CreditCard className="w-5 h-5 text-[#F4A400]" /> Payment
+                    </h2>
+                    {selectedCourse && (
+                      <div className="bg-[#F8F9FC] rounded-lg p-4">
+                        <div className="text-sm text-[#6B7280]">Course Fee</div>
+                        <div className="text-2xl font-bold text-[#0D1B2A]">
+                          {courseFee > 0 ? `${courseFee.toLocaleString()} RWF` : "Contact us for fee"}
+                        </div>
+                        <div className="text-xs text-[#6B7280] mt-1">{selectedCourse.title}</div>
+                      </div>
+                    )}
+                    {courseFee === 0 && (
+                      <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
+                        Course fee not set. Please contact us for pricing.
+                      </div>
+                    )}
+                    <div>
+                      <Label>Payment Method *</Label>
+                      <div className="grid grid-cols-2 gap-3 mt-1">
+                        <button
+                          type="button"
+                          onClick={() => update("paymentProvider", "MOMO")}
+                          className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all ${
+                            formData.paymentProvider === "MOMO"
+                              ? "border-[#F4A400] bg-[#F4A400]/5"
+                              : "border-gray-200 hover:border-gray-300"
+                          }`}
+                        >
+                          <Smartphone className="w-6 h-6 text-[#1A3C6E]" />
+                          <span className="text-sm font-medium">MTN MoMo</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => update("paymentProvider", "AIRTEL")}
+                          className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all ${
+                            formData.paymentProvider === "AIRTEL"
+                              ? "border-[#F4A400] bg-[#F4A400]/5"
+                              : "border-gray-200 hover:border-gray-300"
+                          }`}
+                        >
+                          <Smartphone className="w-6 h-6 text-[#E53935]" />
+                          <span className="text-sm font-medium">Airtel Money</span>
+                        </button>
+                      </div>
+                      {errors.paymentProvider && <p className="text-red-500 text-xs mt-1">{errors.paymentProvider}</p>}
+                    </div>
+                    <div>
+                      <Label>Mobile Money Number *</Label>
+                      <Input
+                        value={formData.paymentPhone}
+                        onChange={(e) => update("paymentPhone", e.target.value)}
+                        placeholder="e.g., 0788123456"
+                      />
+                      {errors.paymentPhone && <p className="text-red-500 text-xs mt-1">{errors.paymentPhone}</p>}
+                    </div>
+
+                    {paymentStatus === "idle" && courseFee > 0 && (
+                      <Button
+                        onClick={handlePayNow}
+                        disabled={payInitMutation.isPending}
+                        className="w-full bg-gradient-to-r from-[#00B894] to-[#00C9A7] text-white font-semibold py-6 text-lg"
+                      >
+                        <CreditCard className="w-5 h-5 mr-2" />
+                        {payInitMutation.isPending ? "Processing..." : `Pay ${courseFee.toLocaleString()} RWF`}
+                      </Button>
+                    )}
+
+                    {paymentStatus === "processing" && (
+                      <div className="text-center py-8">
+                        <Loader2 className="w-10 h-10 animate-spin text-[#1A3C6E] mx-auto mb-3" />
+                        <p className="text-[#6B7280]">Processing your payment...</p>
+                        <p className="text-xs text-[#6B7280] mt-1">
+                          {formData.paymentProvider === "MOMO" ? "Check your MTN MoMo phone for a payment request" : "Check your Airtel Money phone for a payment request"}
+                        </p>
+                      </div>
+                    )}
+
+                    {paymentStatus === "success" && (
+                      <div className="text-center py-6 bg-[#00B894]/5 rounded-lg border border-[#00B894]/20">
+                        <CheckCircle className="w-10 h-10 text-[#00B894] mx-auto mb-2" />
+                        <p className="font-semibold text-[#00B894]">Payment Successful!</p>
+                        <p className="text-xs text-[#6B7280] mt-1">Ref: {paymentRef}</p>
+                      </div>
+                    )}
+
+                    {paymentStatus === "failed" && (
+                      <div className="text-center py-6 bg-red-50 rounded-lg border border-red-200">
+                        <p className="font-semibold text-red-600 mb-2">Payment Failed</p>
+                        <p className="text-xs text-red-500 mb-3">The transaction could not be completed. Please try again.</p>
+                        <Button onClick={() => { setPaymentStatus("idle"); setPaymentRef(""); }} variant="outline" size="sm">
+                          Try Again
+                        </Button>
+                      </div>
+                    )}
+
+                    {courseFee === 0 && paymentStatus === "idle" && (
+                      <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+                        You can proceed without payment. Our team will contact you with fee details.
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Step 4: Declaration */}
+                {step === 4 && (
                   <div className="space-y-4">
                     <h2 className="text-xl font-bold text-[#0D1B2A] font-display flex items-center gap-2">
                       <BookOpen className="w-5 h-5 text-[#F4A400]" /> Background & Declaration
@@ -414,8 +574,8 @@ export default function Enroll() {
                   </div>
                 )}
 
-                {/* Step 4: Review */}
-                {step === 4 && (
+                {/* Step 5: Review */}
+                {step === 5 && (
                   <div className="space-y-4">
                     <h2 className="text-xl font-bold text-[#0D1B2A] font-display">Review Your Application</h2>
                     <div className="bg-[#F8F9FC] rounded-lg p-6 space-y-4">
@@ -449,6 +609,15 @@ export default function Enroll() {
                           </div>
                         )}
                       </div>
+                      {paymentStatus === "success" && (
+                        <div>
+                          <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Payment</div>
+                          <div className="font-medium text-[#00B894]">
+                            {courseFee.toLocaleString()} RWF via {formData.paymentProvider}
+                          </div>
+                          <div className="text-xs text-[#6B7280]">Ref: {paymentRef}</div>
+                        </div>
+                      )}
                     </div>
                     <p className="text-sm text-[#6B7280] text-center">
                       By submitting, you agree to our terms and conditions.
@@ -465,7 +634,7 @@ export default function Enroll() {
                   ) : (
                     <div />
                   )}
-                  {step < 4 ? (
+                  {step < 5 ? (
                     <Button onClick={handleNext} className="bg-[#1A3C6E] hover:bg-[#0D1B2A] flex items-center gap-1">
                       Next <ChevronRight className="w-4 h-4" />
                     </Button>

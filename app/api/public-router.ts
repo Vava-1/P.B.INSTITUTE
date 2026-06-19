@@ -11,6 +11,7 @@ import {
   contactMessages,
   enrollments,
   siteSettings,
+  payments,
 } from "@db/schema";
 import { eq, and, desc, asc } from "drizzle-orm";
 
@@ -249,6 +250,7 @@ export const publicRouter = createRouter({
           emergencyName: z.string().optional(),
           emergencyPhone: z.string().optional(),
           emergencyRelation: z.string().optional(),
+          paymentRef: z.string().optional(),
         })
       )
       .mutation(async ({ input }) => {
@@ -278,7 +280,13 @@ export const publicRouter = createRouter({
           emergencyName: input.emergencyName,
           emergencyPhone: input.emergencyPhone,
           emergencyRelation: input.emergencyRelation,
+          paymentStatus: input.paymentRef ? "fully_paid" : "not_paid",
         });
+        if (input.paymentRef) {
+          await db.update(payments)
+            .set({ enrollmentRef: refNum, status: "success", verifiedAt: new Date() })
+            .where(eq(payments.referenceNumber, input.paymentRef));
+        }
         return { success: true, referenceNumber: refNum };
       }),
 
@@ -291,6 +299,58 @@ export const publicRouter = createRouter({
           .from(enrollments)
           .where(eq(enrollments.referenceNumber, input.reference));
         return result[0] ?? null;
+      }),
+  }),
+
+  // ─── PAYMENTS ───
+  payments: createRouter({
+    initiate: publicQuery
+      .input(
+        z.object({
+          provider: z.enum(["MOMO", "AIRTEL"]),
+          amount: z.number().int().positive(),
+          phoneNumber: z.string().min(1),
+          courseId: z.number().optional(),
+        })
+      )
+      .mutation(async ({ input }) => {
+        const db = getDb();
+        const refNum = `PI-PAY-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+        await db.insert(payments).values({
+          referenceNumber: refNum,
+          provider: input.provider,
+          amount: input.amount,
+          phoneNumber: input.phoneNumber,
+          status: "pending",
+        });
+        return {
+          success: true,
+          referenceNumber: refNum,
+          provider: input.provider,
+          amount: input.amount,
+          phoneNumber: input.phoneNumber,
+          status: "pending",
+        };
+      }),
+
+    verify: publicQuery
+      .input(z.object({ reference: z.string() }))
+      .query(async ({ input }) => {
+        const db = getDb();
+        const result = await db
+          .select()
+          .from(payments)
+          .where(eq(payments.referenceNumber, input.reference));
+        const payment = result[0];
+        if (!payment) return null;
+        // Auto-approve pending payments (demo mode — replace with real MoMo/Airtel API callback)
+        if (payment.status === "pending") {
+          await db.update(payments)
+            .set({ status: "success", verifiedAt: new Date() })
+            .where(eq(payments.referenceNumber, input.reference));
+          return { ...payment, status: "success", verifiedAt: new Date() };
+        }
+        return payment;
       }),
   }),
 });

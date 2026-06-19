@@ -251,6 +251,25 @@ export const siteSettings = mysqlTable("site_settings", {
 export type SiteSetting = typeof siteSettings.$inferSelect;
 export type InsertSiteSetting = typeof siteSettings.$inferInsert;
 
+// ─── PAYMENTS ───
+export const payments = mysqlTable("payments", {
+  id: serial("id").primaryKey(),
+  referenceNumber: varchar("reference_number", { length: 50 }).notNull().unique(),
+  enrollmentRef: varchar("enrollment_ref", { length: 50 }),
+  provider: mysqlEnum("provider", ["MOMO", "AIRTEL"]).notNull(),
+  amount: int("amount").notNull(),
+  phoneNumber: varchar("phone_number", { length: 20 }).notNull(),
+  status: mysqlEnum("status", ["pending", "success", "failed", "cancelled"])
+    .default("pending")
+    .notNull(),
+  transactionId: varchar("transaction_id", { length: 100 }),
+  initiatedAt: timestamp("initiated_at").defaultNow().notNull(),
+  verifiedAt: timestamp("verified_at"),
+});
+
+export type Payment = typeof payments.$inferSelect;
+export type InsertPayment = typeof payments.$inferInsert;
+
 // ─── FAQS ───
 export const faqs = mysqlTable("faqs", {
   id: serial("id").primaryKey(),
