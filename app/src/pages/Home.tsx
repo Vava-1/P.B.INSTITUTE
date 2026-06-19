@@ -387,9 +387,6 @@ function HeroSection() {
         className="absolute inset-0 w-full h-full"
       />
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-        <span className="inline-block px-4 py-2 bg-[#F4A400]/20 border border-[#F4A400]/30 rounded-full text-[#FFD166] text-sm font-medium mb-6 backdrop-blur-sm">
-          Kigali's Premier Training & Language Institute
-        </span>
         <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 font-display leading-tight">
           Master a Skill.
           <br />
