@@ -69,7 +69,7 @@ export default function Home() {
       <StatsSection />
 
       {/* Courses Section */}
-      <section className="py-24 bg-[#F8F9FC]">
+      <section className="py-32 bg-[#F8F9FC]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <span className="text-[#F4A400] font-semibold text-sm uppercase tracking-wider">
@@ -152,7 +152,7 @@ export default function Home() {
       <TestimonialsSection testimonials={testimonials || []} />
 
       {/* News Preview */}
-      <section className="py-24 bg-[#F8F9FC]">
+      <section className="py-32 bg-[#F8F9FC]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-12">
             <div>
@@ -206,7 +206,7 @@ export default function Home() {
       </section>
 
       {/* CTA Banner */}
-      <section className="py-24 bg-gradient-to-br from-[#F4A400] via-[#FFD166] to-[#F4A400]">
+      <section className="py-32 bg-gradient-to-br from-[#F4A400] via-[#FFD166] to-[#F4A400]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl md:text-5xl font-bold text-[#0D1B2A] mb-6 font-display">
             Ready to Start Your Training?
@@ -441,7 +441,7 @@ function StatsSection() {
   return (
     <section
       ref={statsRef}
-      className="relative py-20 bg-gradient-to-r from-[#0D1B2A] via-[#1A3C6E] to-[#0D1B2A]"
+      className="relative py-32 bg-gradient-to-r from-[#0D1B2A] via-[#1A3C6E] to-[#0D1B2A]"
     >
       <div className="absolute inset-0 diagonal-stripe opacity-50" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -517,7 +517,7 @@ function WhyChooseSection() {
   ];
 
   return (
-    <section className="py-24 bg-white">
+    <section className="py-32 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <span className="text-[#F4A400] font-semibold text-sm uppercase tracking-wider">
@@ -589,7 +589,7 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
   const t = testimonials[current];
 
   return (
-    <section className="py-24 bg-white">
+    <section className="py-32 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <span className="text-[#F4A400] font-semibold text-sm uppercase tracking-wider">
