@@ -125,17 +125,6 @@ export default function Navbar() {
 
             {/* CTA */}
             <div className="hidden lg:flex items-center gap-3">
-              <a
-                href="https://wa.me/250786053720"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`flex items-center gap-2 text-sm font-medium ${
-                  showBg ? "text-[#1A3C6E]" : "text-white"
-                }`}
-              >
-                <Phone className="w-4 h-4" />
-                +250 786 053 720
-              </a>
               <Button
                 asChild
                 className="bg-gradient-to-r from-[#F4A400] to-[#FFD166] text-[#0D1B2A] hover:from-[#FFD166] hover:to-[#F4A400] font-semibold rounded-full px-6"
