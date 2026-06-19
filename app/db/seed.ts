@@ -515,15 +515,25 @@ async function seed() {
   console.log("✅ 6 gallery items seeded");
 
   // ─── ADMIN USER ───
-  const hashedPassword = hashSync("PBI@Admin2025!", 12);
-  await db.insert(adminUsers).values({
-    name: "System Administrator",
-    email: "admin@pacemakerinstitute.ac.rw",
-    passwordHash: hashedPassword,
-    role: "super_admin",
-    isActive: true,
-  });
-  console.log("✅ Admin user seeded (admin@pacemakerinstitute.ac.rw / PBI@Admin2025!)");
+  const adminEmail = "mnasida@gmail.com";
+  const adminPassword = "Tonde@123";
+  const hashedPassword = hashSync(adminPassword, 12);
+  const existingAdmin = await db.select().from(adminUsers).where(eq(adminUsers.email, adminEmail));
+  if (existingAdmin.length === 0) {
+    await db.insert(adminUsers).values({
+      name: "System Administrator",
+      email: adminEmail,
+      passwordHash: hashedPassword,
+      role: "super_admin",
+      isActive: true,
+    });
+    console.log(`✅ Admin user created (${adminEmail})`);
+  } else {
+    await db.update(adminUsers)
+      .set({ passwordHash: hashedPassword, isActive: true })
+      .where(eq(adminUsers.email, adminEmail));
+    console.log(`✅ Admin password updated (${adminEmail})`);
+  }
 
   console.log("\n🎉 Seed complete!");
 }
