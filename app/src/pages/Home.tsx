@@ -405,8 +405,7 @@ function HeroSection() {
           </Button>
           <Button
             asChild
-            variant="outline"
-            className="border-white/30 text-white hover:bg-white/10 font-semibold rounded-full px-8 py-6 text-lg"
+            className="border-2 border-[#F4A400] text-[#FFD166] hover:bg-[#F4A400]/10 font-semibold rounded-full px-8 py-6 text-lg"
           >
             <Link to="/courses">Browse Courses</Link>
           </Button>
