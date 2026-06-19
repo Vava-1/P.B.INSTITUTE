@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Link } from "react-router";
 import {
   CheckCircle, ChevronRight, ChevronLeft, BookOpen,
@@ -19,8 +19,7 @@ export default function Enroll() {
   const { data: courses } = trpc.public.courses.list.useQuery();
   const { data: settings } = trpc.public.settings.get.useQuery();
   const enrollMutation = trpc.public.enrollments.submit.useMutation();
-  const payInitMutation = trpc.public.payments.initiate.useMutation();
-  const payVerifyQuery = trpc.public.payments.verify.useQuery;
+  const payMutation = trpc.public.payments.initiate.useMutation();
 
   const [step, setStep] = useState(1);
   const [submitted, setSubmitted] = useState(false);
@@ -45,25 +44,6 @@ export default function Enroll() {
 
   const selectedCourse = (courses || []).find((c) => c.id === parseInt(formData.courseId));
   const courseFee = selectedCourse?.feeRwf || 0;
-
-  useEffect(() => {
-    if (paymentStatus === "processing" && paymentRef) {
-      const interval = setInterval(async () => {
-        try {
-          const res = await fetch(`/api/trpc/public.payments.verify?input=${encodeURIComponent(JSON.stringify({ reference: paymentRef }))}`);
-          const json = await res.json();
-          if (json.result?.data?.status === "success") {
-            setPaymentStatus("success");
-            clearInterval(interval);
-          } else if (json.result?.data?.status === "failed") {
-            setPaymentStatus("failed");
-            clearInterval(interval);
-          }
-        } catch { }
-      }, 2000);
-      return () => clearInterval(interval);
-    }
-  }, [paymentStatus, paymentRef]);
 
   const validateStep = () => {
     const newErrors: Record<string, string> = {};
@@ -103,13 +83,14 @@ export default function Enroll() {
     }
     setPaymentStatus("processing");
     try {
-      const result = await payInitMutation.mutateAsync({
+      const result = await payMutation.mutateAsync({
         provider: formData.paymentProvider as "MOMO" | "AIRTEL",
         amount: courseFee,
         phoneNumber: formData.paymentPhone,
         courseId: parseInt(formData.courseId),
       });
       setPaymentRef(result.referenceNumber);
+      setPaymentStatus("success");
     } catch {
       setPaymentStatus("failed");
     }
@@ -459,11 +440,11 @@ export default function Enroll() {
                     {paymentStatus === "idle" && courseFee > 0 && (
                       <Button
                         onClick={handlePayNow}
-                        disabled={payInitMutation.isPending}
+                        disabled={payMutation.isPending}
                         className="w-full bg-gradient-to-r from-[#00B894] to-[#00C9A7] text-white font-semibold py-6 text-lg"
                       >
                         <CreditCard className="w-5 h-5 mr-2" />
-                        {payInitMutation.isPending ? "Processing..." : `Pay ${courseFee.toLocaleString()} RWF`}
+                        {payMutation.isPending ? "Processing..." : `Pay ${courseFee.toLocaleString()} RWF`}
                       </Button>
                     )}
 

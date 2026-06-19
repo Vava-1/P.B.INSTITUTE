@@ -51,9 +51,7 @@ async function seed() {
   }
 
   // ─── COURSES ───
-  const existingCourses = await db.select({ count: sql<number>`count(*)` }).from(courses);
-  if (existingCourses[0].count === 0) {
-    await db.insert(courses).values([
+  const courseData = [
     {
       slug: "languages-conversational",
       title: "Language Courses",
@@ -110,7 +108,7 @@ async function seed() {
       careerOutcomes: JSON.stringify(["Study Abroad Candidate", "Certified Language Professional", "International Job Applicant", "Embassy/Consulate Worker"]),
       duration: "6-8 weeks intensive",
       scheduleOptions: JSON.stringify(["Evening (5-7 PM)", "Weekend Intensive"]),
-      feeRwf: 200000,
+      feeRwf: 135000,
       installmentAvailable: true,
       isFeatured: true,
       displayOrder: 2,
@@ -141,7 +139,7 @@ async function seed() {
       careerOutcomes: JSON.stringify(["Professional Baker", "Pastry Chef", "Catering Business Owner", "Bakery Owner", "Cake Designer"]),
       duration: "2 months",
       scheduleOptions: JSON.stringify(["Morning (8 AM - 12 PM)", "Afternoon (1-5 PM)"]),
-      feeRwf: 250000,
+      feeRwf: 175000,
       installmentAvailable: true,
       isFeatured: true,
       displayOrder: 3,
@@ -174,7 +172,7 @@ async function seed() {
       careerOutcomes: JSON.stringify(["Hair Stylist", "Makeup Artist", "Salon Owner", "Beauty Consultant", "Nail Technician", "Bridal Stylist"]),
       duration: "3 months",
       scheduleOptions: JSON.stringify(["Morning (8 AM - 12 PM)", "Afternoon (1-5 PM)"]),
-      feeRwf: 200000,
+      feeRwf: 175000,
       installmentAvailable: true,
       isFeatured: true,
       displayOrder: 4,
@@ -207,7 +205,7 @@ async function seed() {
       careerOutcomes: JSON.stringify(["Auto Mechanic", "Service Technician", "Workshop Supervisor", "Auto Parts Specialist", "Mobile Mechanic"]),
       duration: "3 months",
       scheduleOptions: JSON.stringify(["Full-day (Mon-Fri 8 AM - 4 PM)"]),
-      feeRwf: 300000,
+      feeRwf: 200000,
       installmentAvailable: true,
       isFeatured: true,
       displayOrder: 5,
@@ -240,7 +238,7 @@ async function seed() {
       careerOutcomes: JSON.stringify(["AI-Powered Professional", "Content Creator", "Marketing Specialist", "Automation Consultant", "Entrepreneur"]),
       duration: "4-6 weeks",
       scheduleOptions: JSON.stringify(["Evening (Mon/Wed/Fri 5-7 PM)", "Weekend Intensive"]),
-      feeRwf: 150000,
+      feeRwf: 175000,
       installmentAvailable: true,
       isFeatured: true,
       displayOrder: 6,
@@ -272,16 +270,24 @@ async function seed() {
       careerOutcomes: JSON.stringify(["PLE Pass", "O-Level Certificate", "A-Level Certificate", "University Admission", "Career Advancement"]),
       duration: "3 months (per exam cycle)",
       scheduleOptions: JSON.stringify(["Morning", "Afternoon", "Evening"]),
-      feeRwf: 100000,
+      feeRwf: 150000,
       installmentAvailable: false,
       isFeatured: true,
       displayOrder: 7,
     },
-  ]);
-    console.log("✅ 7 courses seeded");
-  } else {
-    console.log("⏭️ Courses already exist, skipping");
+  ];
+
+  const existingCourses = await db.select({ slug: courses.slug }).from(courses);
+  const existingSlugs = new Set(existingCourses.map(c => c.slug));
+
+  for (const course of courseData) {
+    if (existingSlugs.has(course.slug)) {
+      await db.update(courses).set({ feeRwf: course.feeRwf }).where(eq(courses.slug, course.slug));
+    } else {
+      await db.insert(courses).values(course);
+    }
   }
+  console.log(`✅ ${courseData.length} courses synced`);
 
   // ─── TESTIMONIALS ───
   await db.insert(testimonials).values([

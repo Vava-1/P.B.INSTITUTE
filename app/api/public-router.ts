@@ -316,12 +316,15 @@ export const publicRouter = createRouter({
       .mutation(async ({ input }) => {
         const db = getDb();
         const refNum = `PI-PAY-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+        // In production, integrate with MTN MoMo / Airtel Money APIs here
+        // For now, payment is auto-approved
         await db.insert(payments).values({
           referenceNumber: refNum,
           provider: input.provider,
           amount: input.amount,
           phoneNumber: input.phoneNumber,
-          status: "pending",
+          status: "success",
+          verifiedAt: new Date(),
         });
         return {
           success: true,
@@ -329,7 +332,7 @@ export const publicRouter = createRouter({
           provider: input.provider,
           amount: input.amount,
           phoneNumber: input.phoneNumber,
-          status: "pending",
+          status: "success",
         };
       }),
 
@@ -341,16 +344,7 @@ export const publicRouter = createRouter({
           .select()
           .from(payments)
           .where(eq(payments.referenceNumber, input.reference));
-        const payment = result[0];
-        if (!payment) return null;
-        // Auto-approve pending payments (demo mode — replace with real MoMo/Airtel API callback)
-        if (payment.status === "pending") {
-          await db.update(payments)
-            .set({ status: "success", verifiedAt: new Date() })
-            .where(eq(payments.referenceNumber, input.reference));
-          return { ...payment, status: "success", verifiedAt: new Date() };
-        }
-        return payment;
+        return result[0] ?? null;
       }),
   }),
 });
