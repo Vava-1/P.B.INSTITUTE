@@ -38,7 +38,7 @@ export default function CourseDetail() {
       <div className="min-h-screen bg-white">
         <Navbar />
         <div className="pt-32 pb-20 flex items-center justify-center">
-          <div className="animate-spin w-8 h-8 border-4 border-[#1A3C6E] border-t-transparent rounded-full" />
+          <div className="animate-spin w-8 h-8 border-4 border-[#5E17EB] border-t-transparent rounded-full" />
         </div>
         <Footer />
       </div>
@@ -50,7 +50,7 @@ export default function CourseDetail() {
       <div className="min-h-screen bg-white">
         <Navbar />
         <div className="pt-32 pb-20 text-center">
-          <h1 className="text-2xl font-bold text-[#0D1B2A] mb-4">Course Not Found</h1>
+          <h1 className="text-2xl font-bold text-[#1A1A2E] mb-4">Course Not Found</h1>
           <Button asChild>
             <Link to="/courses">Browse All Courses</Link>
           </Button>
@@ -60,7 +60,7 @@ export default function CourseDetail() {
     );
   }
 
-  const color = categoryColors[course.category] || "#1A3C6E";
+  const color = categoryColors[course.category] || "#5E17EB";
   const whatYoullLearn = course.whatYoullLearn
     ? JSON.parse(course.whatYoullLearn as string)
     : [];
@@ -102,7 +102,7 @@ export default function CourseDetail() {
               {course.category.replace("_", " ").toUpperCase()}
             </Badge>
             {course.isFeatured && (
-              <Badge className="bg-[#F4A400] text-[#0D1B2A]">Featured</Badge>
+              <Badge className="bg-[#5E17EB] text-[#1A1A2E]">Featured</Badge>
             )}
           </div>
           <h1 className="text-3xl md:text-5xl font-bold text-white font-display mb-4">
@@ -113,7 +113,7 @@ export default function CourseDetail() {
       </section>
 
       {/* Main Content */}
-      <section className="py-16 bg-[#F8F9FC]">
+      <section className="py-16 bg-[#EDE7FF]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left: Course Details */}
@@ -121,10 +121,10 @@ export default function CourseDetail() {
               {/* Overview */}
               <Card className="border-0 shadow-md">
                 <CardContent className="p-8">
-                  <h2 className="text-2xl font-bold text-[#0D1B2A] mb-4 font-display flex items-center gap-2">
-                    <BookOpen className="w-6 h-6 text-[#F4A400]" /> Overview
+                  <h2 className="text-2xl font-bold text-[#1A1A2E] mb-4 font-display flex items-center gap-2">
+                    <BookOpen className="w-6 h-6 text-[#5E17EB]" /> Overview
                   </h2>
-                  <p className="text-[#1E1E2E] leading-relaxed whitespace-pre-line">
+                  <p className="text-[#1A1A2E] leading-relaxed whitespace-pre-line">
                     {course.description}
                   </p>
                 </CardContent>
@@ -134,14 +134,14 @@ export default function CourseDetail() {
               {whatYoullLearn.length > 0 && (
                 <Card className="border-0 shadow-md">
                   <CardContent className="p-8">
-                    <h2 className="text-2xl font-bold text-[#0D1B2A] mb-4 font-display flex items-center gap-2">
-                      <GraduationCap className="w-6 h-6 text-[#F4A400]" /> What You'll Learn
+                    <h2 className="text-2xl font-bold text-[#1A1A2E] mb-4 font-display flex items-center gap-2">
+                      <GraduationCap className="w-6 h-6 text-[#5E17EB]" /> What You'll Learn
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {whatYoullLearn.map((item: string, i: number) => (
                         <div key={i} className="flex items-start gap-3">
                           <CheckCircle className="w-5 h-5 text-[#00B894] shrink-0 mt-0.5" />
-                          <span className="text-[#1E1E2E] text-sm">{item}</span>
+                          <span className="text-[#1A1A2E] text-sm">{item}</span>
                         </div>
                       ))}
                     </div>
@@ -153,15 +153,15 @@ export default function CourseDetail() {
               {modules.length > 0 && (
                 <Card className="border-0 shadow-md">
                   <CardContent className="p-8">
-                    <h2 className="text-2xl font-bold text-[#0D1B2A] mb-4 font-display flex items-center gap-2">
-                      <BookOpen className="w-6 h-6 text-[#F4A400]" /> Course Modules
+                    <h2 className="text-2xl font-bold text-[#1A1A2E] mb-4 font-display flex items-center gap-2">
+                      <BookOpen className="w-6 h-6 text-[#5E17EB]" /> Course Modules
                     </h2>
                     <div className="space-y-3">
                       {modules.map((mod: any, i: number) => (
                         <div key={i} className="border border-gray-100 rounded-lg overflow-hidden">
                           <button
                             onClick={() => setOpenModule(openModule === i ? null : i)}
-                            className="w-full flex items-center justify-between p-4 text-left hover:bg-[#F8F9FC] transition-colors"
+                            className="w-full flex items-center justify-between p-4 text-left hover:bg-[#EDE7FF] transition-colors"
                           >
                             <div className="flex items-center gap-3">
                               <span
@@ -170,7 +170,7 @@ export default function CourseDetail() {
                               >
                                 {i + 1}
                               </span>
-                              <span className="font-semibold text-[#0D1B2A]">{mod.title}</span>
+                              <span className="font-semibold text-[#1A1A2E]">{mod.title}</span>
                             </div>
                             {openModule === i ? (
                               <ChevronUp className="w-5 h-5 text-[#6B7280]" />
@@ -201,14 +201,14 @@ export default function CourseDetail() {
               {requirements.length > 0 && (
                 <Card className="border-0 shadow-md">
                   <CardContent className="p-8">
-                    <h2 className="text-2xl font-bold text-[#0D1B2A] mb-4 font-display flex items-center gap-2">
-                      <CheckCircle className="w-6 h-6 text-[#F4A400]" /> Requirements
+                    <h2 className="text-2xl font-bold text-[#1A1A2E] mb-4 font-display flex items-center gap-2">
+                      <CheckCircle className="w-6 h-6 text-[#5E17EB]" /> Requirements
                     </h2>
                     <ul className="space-y-2">
                       {requirements.map((req: string, i: number) => (
                         <li key={i} className="flex items-start gap-3">
                           <CheckCircle className="w-5 h-5 text-[#00B894] shrink-0 mt-0.5" />
-                          <span className="text-[#1E1E2E]">{req}</span>
+                          <span className="text-[#1A1A2E]">{req}</span>
                         </li>
                       ))}
                     </ul>
@@ -220,17 +220,17 @@ export default function CourseDetail() {
               {careerOutcomes.length > 0 && (
                 <Card className="border-0 shadow-md">
                   <CardContent className="p-8">
-                    <h2 className="text-2xl font-bold text-[#0D1B2A] mb-4 font-display flex items-center gap-2">
-                      <Briefcase className="w-6 h-6 text-[#F4A400]" /> Career Outcomes
+                    <h2 className="text-2xl font-bold text-[#1A1A2E] mb-4 font-display flex items-center gap-2">
+                      <Briefcase className="w-6 h-6 text-[#5E17EB]" /> Career Outcomes
                     </h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                       {careerOutcomes.map((career: string, i: number) => (
                         <div
                           key={i}
-                          className="flex items-center gap-3 p-4 bg-[#F8F9FC] rounded-lg"
+                          className="flex items-center gap-3 p-4 bg-[#EDE7FF] rounded-lg"
                         >
-                          <Briefcase className="w-5 h-5 text-[#1A3C6E]" />
-                          <span className="text-sm font-medium text-[#0D1B2A]">{career}</span>
+                          <Briefcase className="w-5 h-5 text-[#5E17EB]" />
+                          <span className="text-sm font-medium text-[#1A1A2E]">{career}</span>
                         </div>
                       ))}
                     </div>
@@ -242,20 +242,20 @@ export default function CourseDetail() {
               {courseTestimonials.length > 0 && (
                 <Card className="border-0 shadow-md">
                   <CardContent className="p-8">
-                    <h2 className="text-2xl font-bold text-[#0D1B2A] mb-6 font-display">
+                    <h2 className="text-2xl font-bold text-[#1A1A2E] mb-6 font-display">
                       Student Reviews
                     </h2>
                     <div className="space-y-6">
                       {courseTestimonials.slice(0, 3).map((t) => (
-                        <div key={t.id} className="flex items-start gap-4 p-4 bg-[#F8F9FC] rounded-lg">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1A3C6E] to-[#0D1B2A] flex items-center justify-center text-white font-bold shrink-0">
+                        <div key={t.id} className="flex items-start gap-4 p-4 bg-[#EDE7FF] rounded-lg">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center text-white font-bold shrink-0">
                             {t.studentName.charAt(0)}
                           </div>
                           <div>
-                            <div className="font-semibold text-[#0D1B2A]">{t.studentName}</div>
+                            <div className="font-semibold text-[#1A1A2E]">{t.studentName}</div>
                             <div className="flex items-center gap-1 mb-2">
                               {Array.from({ length: t.rating }).map((_, i) => (
-                                <svg key={i} className="w-4 h-4 text-[#F4A400] fill-current" viewBox="0 0 20 20">
+                                <svg key={i} className="w-4 h-4 text-[#5E17EB] fill-current" viewBox="0 0 20 20">
                                   <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                                 </svg>
                               ))}
@@ -273,21 +273,21 @@ export default function CourseDetail() {
             {/* Right: Sticky Sidebar */}
             <div className="lg:col-span-1">
               <div className="sticky top-24 space-y-6">
-                <Card className="border-2 border-[#F4A400]/30 shadow-lg">
+                <Card className="border-2 border-[#5E17EB]/30 shadow-lg">
                   <CardContent className="p-6">
-                    <h3 className="text-lg font-bold text-[#0D1B2A] mb-4 font-display">
+                    <h3 className="text-lg font-bold text-[#1A1A2E] mb-4 font-display">
                       Course Details
                     </h3>
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
-                        <Clock className="w-5 h-5 text-[#F4A400]" />
+                        <Clock className="w-5 h-5 text-[#5E17EB]" />
                         <div>
                           <div className="text-xs text-[#6B7280]">Duration</div>
                           <div className="font-medium text-sm">{course.duration}</div>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Calendar className="w-5 h-5 text-[#F4A400]" />
+                        <Calendar className="w-5 h-5 text-[#5E17EB]" />
                         <div>
                           <div className="text-xs text-[#6B7280]">Schedule</div>
                           <div className="font-medium text-sm">
@@ -296,7 +296,7 @@ export default function CourseDetail() {
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <GraduationCap className="w-5 h-5 text-[#F4A400]" />
+                        <GraduationCap className="w-5 h-5 text-[#5E17EB]" />
                         <div>
                           <div className="text-xs text-[#6B7280]">Certificate</div>
                           <div className="font-medium text-sm">Professional Certificate</div>
@@ -304,7 +304,7 @@ export default function CourseDetail() {
                       </div>
                       {course.feeRwf && (
                         <div className="flex items-center gap-3">
-                          <MessageCircle className="w-5 h-5 text-[#F4A400]" />
+                          <MessageCircle className="w-5 h-5 text-[#5E17EB]" />
                           <div>
                             <div className="text-xs text-[#6B7280]">Fee</div>
                             <div className="font-medium text-sm">
@@ -318,7 +318,7 @@ export default function CourseDetail() {
                     <div className="mt-6 space-y-3">
                       <Button
                         asChild
-                        className="w-full bg-gradient-to-r from-[#F4A400] to-[#FFD166] text-[#0D1B2A] hover:from-[#FFD166] hover:to-[#F4A400] font-semibold"
+                        className="w-full bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] hover:from-[#5E17EB] hover:to-[#5E17EB] font-semibold"
                       >
                         <Link to="/enroll">Enroll Now</Link>
                       </Button>
@@ -338,7 +338,7 @@ export default function CourseDetail() {
                 {course.whoIsItFor && (
                   <Card className="border-0 shadow-md">
                     <CardContent className="p-6">
-                      <h3 className="text-lg font-bold text-[#0D1B2A] mb-3 font-display">
+                      <h3 className="text-lg font-bold text-[#1A1A2E] mb-3 font-display">
                         Who Is This For?
                       </h3>
                       <p className="text-sm text-[#6B7280]">{course.whoIsItFor}</p>

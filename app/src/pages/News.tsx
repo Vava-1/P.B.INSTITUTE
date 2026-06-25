@@ -14,8 +14,8 @@ const categoryIcons: Record<string, any> = {
 };
 
 const categoryColors: Record<string, string> = {
-  news: "#1A3C6E",
-  event: "#F4A400",
+  news: "#5E17EB",
+  event: "#5E17EB",
   achievement: "#00B894",
   announcement: "#8B5CF6",
 };
@@ -36,7 +36,7 @@ export default function News() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative pt-32 pb-16 bg-gradient-to-br from-[#0D1B2A] via-[#1A3C6E] to-[#0D1B2A]">
+      <section className="relative pt-32 pb-16 bg-gradient-to-br from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-5xl font-bold text-white font-display">
             News & <span className="text-gradient-gold">Events</span>
@@ -48,7 +48,7 @@ export default function News() {
       </section>
 
       {/* Category Filter */}
-      <section className="py-8 bg-[#F8F9FC] border-b border-gray-100">
+      <section className="py-8 bg-[#EDE7FF] border-b border-gray-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center gap-2 overflow-x-auto">
             {["all", "news", "event", "achievement", "announcement"].map((cat) => {
@@ -59,8 +59,8 @@ export default function News() {
                   onClick={() => setActiveCategory(cat)}
                   className={`flex items-center gap-2 px-5 py-2.5 text-sm font-medium rounded-full whitespace-nowrap transition-colors ${
                     activeCategory === cat
-                      ? "bg-[#1A3C6E] text-white"
-                      : "bg-white text-[#6B7280] hover:bg-[#1A3C6E]/10"
+                      ? "bg-[#5E17EB] text-white"
+                      : "bg-white text-[#6B7280] hover:bg-[#5E17EB]/10"
                   }`}
                 >
                   <Icon className="w-4 h-4" />
@@ -74,15 +74,15 @@ export default function News() {
 
       {/* Featured Article */}
       {featured && (
-        <section className="py-12 bg-[#F8F9FC]">
+        <section className="py-12 bg-[#EDE7FF]">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <Card className="border-0 shadow-xl overflow-hidden">
               <div className="grid grid-cols-1 lg:grid-cols-2">
-                <div className="h-64 lg:h-auto bg-gradient-to-br from-[#0D1B2A] to-[#1A3C6E] flex items-center justify-center">
+                <div className="h-64 lg:h-auto bg-gradient-to-br from-[#1A1A2E] to-[#5E17EB] flex items-center justify-center">
                   <div className="text-center">
                     <span
                       className="inline-block px-4 py-1.5 text-xs font-medium rounded-full text-white mb-4"
-                      style={{ backgroundColor: categoryColors[featured.category] || "#1A3C6E" }}
+                      style={{ backgroundColor: categoryColors[featured.category] || "#5E17EB" }}
                     >
                       {featured.category.toUpperCase()}
                     </span>
@@ -102,14 +102,14 @@ export default function News() {
                         })
                       : "Recently"}
                   </div>
-                  <h2 className="text-2xl md:text-3xl font-bold text-[#0D1B2A] mb-4 font-display">
+                  <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A2E] mb-4 font-display">
                     {featured.title}
                   </h2>
                   <p className="text-[#6B7280] mb-6 leading-relaxed">{featured.excerpt}</p>
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-[#6B7280]">By {featured.authorName}</span>
                     {featured.eventDate && (
-                      <span className="text-sm text-[#F4A400] font-medium">
+                      <span className="text-sm text-[#5E17EB] font-medium">
                         Event: {new Date(featured.eventDate).toLocaleDateString()}
                       </span>
                     )}
@@ -127,13 +127,13 @@ export default function News() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {rest.map((item) => {
               const Icon = categoryIcons[item.category] || Newspaper;
-              const color = categoryColors[item.category] || "#1A3C6E";
+              const color = categoryColors[item.category] || "#5E17EB";
               return (
                 <Card
                   key={item.id}
                   className="border-0 shadow-md hover:shadow-xl transition-all duration-300 group"
                 >
-                  <div className="h-48 bg-gradient-to-br from-[#0D1B2A] to-[#1A3C6E] flex items-center justify-center">
+                  <div className="h-48 bg-gradient-to-br from-[#1A1A2E] to-[#5E17EB] flex items-center justify-center">
                     <Icon className="w-16 h-16 text-white/20" />
                   </div>
                   <CardContent className="p-6">
@@ -149,7 +149,7 @@ export default function News() {
                         ? new Date(item.publishedAt).toLocaleDateString()
                         : "Recently"}
                     </div>
-                    <h3 className="text-lg font-bold text-[#0D1B2A] mb-2 font-display group-hover:text-[#1A3C6E] transition-colors line-clamp-2">
+                    <h3 className="text-lg font-bold text-[#1A1A2E] mb-2 font-display group-hover:text-[#5E17EB] transition-colors line-clamp-2">
                       {item.title}
                     </h3>
                     <p className="text-sm text-[#6B7280] line-clamp-2 mb-4">

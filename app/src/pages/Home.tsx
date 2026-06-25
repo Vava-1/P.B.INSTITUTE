@@ -55,7 +55,7 @@ export default function Home() {
 
       {/* Announcement Ticker */}
       {settings?.announcementActive && announcementMsgs.length > 0 && (
-        <div className="fixed top-20 left-0 right-0 z-40 bg-gradient-to-r from-[#F4A400] to-[#FFD166] text-[#0D1B2A] py-2.5 px-4 text-center text-sm font-medium shadow-md">
+        <div className="fixed top-20 left-0 right-0 z-40 bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] py-2.5 px-4 text-center text-sm font-medium shadow-md">
           <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
             <span className="animate-pulse">📣</span>
             <span>{announcementMsgs[announceIdx]}</span>
@@ -73,13 +73,13 @@ export default function Home() {
       <StatsSection />
 
       {/* Courses Section */}
-      <section className="py-32 bg-[#F8F9FC]">
+      <section className="py-32 bg-[#EDE7FF]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="text-[#F4A400] font-semibold text-sm uppercase tracking-wider">
+            <span className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider">
               What We Teach
             </span>
-            <h2 className="mt-3 text-4xl md:text-5xl font-bold text-[#0D1B2A] font-display">
+            <h2 className="mt-3 text-4xl md:text-5xl font-bold text-[#1A1A2E] font-display">
               Six Paths to <span className="text-gradient-gold">Excellence</span>
             </h2>
             <p className="mt-4 text-lg text-[#6B7280] max-w-2xl mx-auto">
@@ -90,7 +90,7 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {courses?.map((course) => {
               const Icon = categoryIcons[course.category] || BookOpen;
-              const color = categoryColors[course.category] || "#1A3C6E";
+              const color = categoryColors[course.category] || "#5E17EB";
               return (
                 <Card
                   key={course.id}
@@ -104,7 +104,7 @@ export default function Home() {
                     >
                       <Icon className="w-7 h-7" style={{ color }} />
                     </div>
-                    <h3 className="text-xl font-bold text-[#0D1B2A] mb-2 font-display">
+                    <h3 className="text-xl font-bold text-[#1A1A2E] mb-2 font-display">
                       {course.title}
                     </h3>
                     <p className="text-[#6B7280] text-sm mb-4 line-clamp-2">
@@ -119,7 +119,7 @@ export default function Home() {
                     <div className="flex items-center gap-3">
                       <Link
                         to={`/courses/${course.slug}`}
-                        className="text-sm font-medium text-[#1A3C6E] hover:text-[#F4A400] transition-colors flex items-center gap-1"
+                        className="text-sm font-medium text-[#5E17EB] hover:text-[#5E17EB] transition-colors flex items-center gap-1"
                       >
                         Learn More <ArrowRight className="w-4 h-4" />
                       </Link>
@@ -141,7 +141,7 @@ export default function Home() {
             <Button
               asChild
               variant="outline"
-              className="border-[#1A3C6E] text-[#1A3C6E] hover:bg-[#1A3C6E] hover:text-white rounded-full px-8"
+              className="border-[#5E17EB] text-[#5E17EB] hover:bg-[#5E17EB] hover:text-white rounded-full px-8"
             >
               <Link to="/courses">View All Courses</Link>
             </Button>
@@ -156,20 +156,20 @@ export default function Home() {
       <TestimonialsSection testimonials={testimonials || []} />
 
       {/* News Preview */}
-      <section className="py-32 bg-[#F8F9FC]">
+      <section className="py-32 bg-[#EDE7FF]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-12">
             <div>
-              <span className="text-[#F4A400] font-semibold text-sm uppercase tracking-wider">
+              <span className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider">
                 Latest Updates
               </span>
-              <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#0D1B2A] font-display">
+              <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#1A1A2E] font-display">
                 News & Events
               </h2>
             </div>
             <Link
               to="/news"
-              className="hidden sm:flex items-center gap-1 text-[#1A3C6E] hover:text-[#F4A400] font-medium transition-colors"
+              className="hidden sm:flex items-center gap-1 text-[#5E17EB] hover:text-[#5E17EB] font-medium transition-colors"
             >
               View All <ArrowRight className="w-4 h-4" />
             </Link>
@@ -181,16 +181,16 @@ export default function Home() {
                 key={item.id}
                 className="overflow-hidden bg-white border-0 shadow-md hover:shadow-xl transition-all duration-300 group"
               >
-                <div className="h-48 bg-gradient-to-br from-[#1A3C6E] to-[#0D1B2A] flex items-center justify-center">
+                <div className="h-48 bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center">
                   <span className="text-5xl font-bold text-white/20 font-display uppercase">
                     {item.category.charAt(0)}
                   </span>
                 </div>
                 <CardContent className="p-6">
-                  <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-[#F4A400]/10 text-[#F4A400] mb-3 uppercase">
+                  <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-[#5E17EB]/10 text-[#5E17EB] mb-3 uppercase">
                     {item.category}
                   </span>
-                  <h3 className="text-lg font-bold text-[#0D1B2A] mb-2 font-display group-hover:text-[#1A3C6E] transition-colors line-clamp-2">
+                  <h3 className="text-lg font-bold text-[#1A1A2E] mb-2 font-display group-hover:text-[#5E17EB] transition-colors line-clamp-2">
                     {item.title}
                   </h3>
                   <p className="text-sm text-[#6B7280] line-clamp-2 mb-4">
@@ -229,7 +229,7 @@ export default function Home() {
               href={`https://wa.me/${(settings?.whatsapp || "250786053720").replace(/\+/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-white text-[#2E7D32] font-semibold rounded-full hover:bg-[#F8F9FC] transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-white text-[#2E7D32] font-semibold rounded-full hover:bg-[#EDE7FF] transition-colors"
             >
               Talk to Us on WhatsApp
             </a>
@@ -257,10 +257,10 @@ function CoursesSlider({ courses }: { courses: any[] }) {
 
   const course = courses[idx];
   const Icon = categoryIcons[course.category] || BookOpen;
-  const color = categoryColors[course.category] || "#1A3C6E";
+  const color = categoryColors[course.category] || "#5E17EB";
 
   return (
-    <section className="bg-gradient-to-r from-[#F4A400] via-[#FFD166] to-[#F4A400] py-6">
+    <section className="bg-gradient-to-r from-[#5E17EB] via-[#5E17EB] to-[#5E17EB] py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-xl bg-white/20 backdrop-blur-sm">
           <div className="flex items-center gap-6 p-4 sm:p-6">
@@ -271,21 +271,21 @@ function CoursesSlider({ courses }: { courses: any[] }) {
               <Icon className="w-7 h-7" style={{ color }} />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 text-xs text-[#0D1B2A]/60 uppercase tracking-wider font-medium mb-0.5">
+              <div className="flex items-center gap-2 text-xs text-[#1A1A2E]/60 uppercase tracking-wider font-medium mb-0.5">
                 <span>Explore our programs</span>
                 <span>·</span>
                 <span>{course.category.replace(/_/g, " ")}</span>
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-[#0D1B2A] font-display truncate">
+              <h3 className="text-lg sm:text-xl font-bold text-[#1A1A2E] font-display truncate">
                 {course.title}
               </h3>
-              <p className="text-sm text-[#0D1B2A]/70 mt-0.5 line-clamp-1">
+              <p className="text-sm text-[#1A1A2E]/70 mt-0.5 line-clamp-1">
                 {course.shortDesc}
               </p>
             </div>
             <Link
               to={`/courses/${course.slug}`}
-              className="shrink-0 flex items-center gap-1 px-4 py-2 bg-[#0D1B2A] text-white text-sm font-medium rounded-lg hover:bg-[#1A3C6E] transition-colors"
+              className="shrink-0 flex items-center gap-1 px-4 py-2 bg-[#1A1A2E] text-white text-sm font-medium rounded-lg hover:bg-[#5E17EB] transition-colors"
             >
               View <ArrowRight className="w-4 h-4" />
             </Link>
@@ -299,7 +299,7 @@ function CoursesSlider({ courses }: { courses: any[] }) {
                   key={i}
                   onClick={() => setIdx(i)}
                   className={`w-2 h-2 rounded-full transition-all ${
-                    i === idx ? "bg-[#0D1B2A] w-4" : "bg-[#0D1B2A]/30"
+                    i === idx ? "bg-[#1A1A2E] w-4" : "bg-[#1A1A2E]/30"
                   }`}
                 />
               ))}
@@ -358,9 +358,9 @@ function HeroSection() {
 
       // Deep navy gradient background
       const bg = ctx.createLinearGradient(0, 0, w, h);
-      bg.addColorStop(0, "#0D1B2A");
-      bg.addColorStop(0.5, "#1A3C6E");
-      bg.addColorStop(1, "#0D1B2A");
+      bg.addColorStop(0, "#1A1A2E");
+      bg.addColorStop(0.5, "#5E17EB");
+      bg.addColorStop(1, "#1A1A2E");
       ctx.fillStyle = bg;
       ctx.fillRect(0, 0, w, h);
 
@@ -470,13 +470,13 @@ function HeroSection() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button
             asChild
-            className="bg-gradient-to-r from-[#F4A400] to-[#FFD166] text-[#0D1B2A] hover:from-[#FFD166] hover:to-[#F4A400] font-semibold rounded-full px-8 py-6 text-lg shadow-lg shadow-[#F4A400]/25"
+            className="bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] hover:from-[#5E17EB] hover:to-[#5E17EB] font-semibold rounded-full px-8 py-6 text-lg shadow-lg shadow-[#5E17EB]/25"
           >
             <Link to="/enroll">Enroll Now</Link>
           </Button>
           <Button
             asChild
-            className="border-2 border-[#F4A400] text-[#FFD166] hover:bg-[#F4A400]/10 font-semibold rounded-full px-8 py-6 text-lg"
+            className="border-2 border-[#5E17EB] text-[#5E17EB] hover:bg-[#5E17EB]/10 font-semibold rounded-full px-8 py-6 text-lg"
           >
             <Link to="/courses">Browse Courses</Link>
           </Button>
@@ -512,15 +512,15 @@ function StatsSection() {
   return (
     <section
       ref={statsRef}
-      className="relative py-32 bg-gradient-to-r from-[#0D1B2A] via-[#1A3C6E] to-[#0D1B2A]"
+      className="relative py-32 bg-gradient-to-r from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E]"
     >
       <div className="absolute inset-0 diagonal-stripe opacity-50" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat, i) => (
             <div key={stat.label} className="text-center">
-              <stat.icon className="w-8 h-8 text-[#F4A400] mx-auto mb-3" />
-              <div className="text-4xl md:text-5xl font-bold text-[#F4A400] font-display mb-1">
+              <stat.icon className="w-8 h-8 text-[#5E17EB] mx-auto mb-3" />
+              <div className="text-4xl md:text-5xl font-bold text-[#5E17EB] font-display mb-1">
                 {visible ? <CountUp end={stat.value} duration={2000} delay={i * 200} /> : "0"}
                 {stat.suffix}
               </div>
@@ -591,11 +591,11 @@ function WhyChooseSection() {
     <section className="py-32 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <span className="text-[#F4A400] font-semibold text-sm uppercase tracking-wider">
+          <span className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider">
             Why Pacemaker
           </span>
-          <h2 className="mt-3 text-4xl md:text-5xl font-bold text-[#0D1B2A] font-display">
-            Why Choose <span className="text-[#1A3C6E]">Pacemaker Institute?</span>
+          <h2 className="mt-3 text-4xl md:text-5xl font-bold text-[#1A1A2E] font-display">
+            Why Choose <span className="text-[#5E17EB]">Pacemaker Institute?</span>
           </h2>
         </div>
 
@@ -605,13 +605,13 @@ function WhyChooseSection() {
             {features.map((f) => (
               <Card
                 key={f.title}
-                className="border-0 shadow-md hover:shadow-lg transition-shadow bg-[#F8F9FC]"
+                className="border-0 shadow-md hover:shadow-lg transition-shadow bg-[#EDE7FF]"
               >
                 <CardContent className="p-6">
-                  <div className="w-12 h-12 rounded-lg bg-[#1A3C6E]/10 flex items-center justify-center mb-4">
-                    <f.icon className="w-6 h-6 text-[#1A3C6E]" />
+                  <div className="w-12 h-12 rounded-lg bg-[#5E17EB]/10 flex items-center justify-center mb-4">
+                    <f.icon className="w-6 h-6 text-[#5E17EB]" />
                   </div>
-                  <h3 className="text-lg font-bold text-[#0D1B2A] mb-2">{f.title}</h3>
+                  <h3 className="text-lg font-bold text-[#1A1A2E] mb-2">{f.title}</h3>
                   <p className="text-sm text-[#6B7280]">{f.desc}</p>
                 </CardContent>
               </Card>
@@ -619,7 +619,7 @@ function WhyChooseSection() {
           </div>
 
           {/* Comparison table */}
-          <div className="bg-[#0D1B2A] rounded-2xl p-8">
+          <div className="bg-[#1A1A2E] rounded-2xl p-8">
             <h3 className="text-xl font-bold text-white mb-6 font-display">
               Pacemaker vs Others
             </h3>
@@ -663,29 +663,29 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
     <section className="py-32 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <span className="text-[#F4A400] font-semibold text-sm uppercase tracking-wider">
+          <span className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider">
             Testimonials
           </span>
-          <h2 className="mt-3 text-4xl md:text-5xl font-bold text-[#0D1B2A] font-display">
+          <h2 className="mt-3 text-4xl md:text-5xl font-bold text-[#1A1A2E] font-display">
             What Our <span className="text-gradient-gold">Students Say</span>
           </h2>
         </div>
 
         <div className="max-w-4xl mx-auto">
-          <div className="relative bg-gradient-to-br from-[#F8F9FC] to-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100">
-            <div className="text-6xl text-[#F4A400]/30 font-display leading-none mb-6">
+          <div className="relative bg-gradient-to-br from-[#EDE7FF] to-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100">
+            <div className="text-6xl text-[#5E17EB]/30 font-display leading-none mb-6">
               "
             </div>
-            <p className="text-lg md:text-xl text-[#1E1E2E] leading-relaxed mb-8 italic">
+            <p className="text-lg md:text-xl text-[#1A1A2E] leading-relaxed mb-8 italic">
               {t?.quote}
             </p>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#1A3C6E] to-[#0D1B2A] flex items-center justify-center text-white font-bold text-lg">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center text-white font-bold text-lg">
                   {t?.studentName?.charAt(0)}
                 </div>
                 <div>
-                  <div className="font-bold text-[#0D1B2A]">{t?.studentName}</div>
+                  <div className="font-bold text-[#1A1A2E]">{t?.studentName}</div>
                   <div className="text-sm text-[#6B7280]">
                     {t?.courseName} · {t?.currentRole}
                     {t?.employer ? ` at ${t.employer}` : ""}
@@ -694,7 +694,7 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
               </div>
               <div className="flex items-center gap-1">
                 {Array.from({ length: t?.rating || 5 }).map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-[#F4A400] text-[#F4A400]" />
+                  <Star key={i} className="w-5 h-5 fill-[#5E17EB] text-[#5E17EB]" />
                 ))}
               </div>
             </div>
@@ -703,7 +703,7 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
             <div className="flex items-center justify-center gap-3 mt-8">
               <button
                 onClick={prev}
-                className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#F8F9FC] transition-colors"
+                className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#EDE7FF] transition-colors"
               >
                 <ChevronLeft className="w-5 h-5" />
               </button>
@@ -712,13 +712,13 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
                   key={i}
                   onClick={() => setCurrent(i)}
                   className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                    i === current ? "bg-[#F4A400]" : "bg-gray-300"
+                    i === current ? "bg-[#5E17EB]" : "bg-gray-300"
                   }`}
                 />
               ))}
               <button
                 onClick={next}
-                className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#F8F9FC] transition-colors"
+                className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#EDE7FF] transition-colors"
               >
                 <ChevronRight className="w-5 h-5" />
               </button>

@@ -58,11 +58,11 @@ export default function Courses() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative pt-32 pb-16 bg-gradient-to-br from-[#0D1B2A] via-[#1A3C6E] to-[#0D1B2A]">
+      <section className="relative pt-32 pb-16 bg-gradient-to-br from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E]">
         <div className="absolute inset-0 diagonal-stripe opacity-30" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <span className="text-[#F4A400] font-semibold text-sm uppercase tracking-wider">
+            <span className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider">
               Course Catalog
             </span>
             <h1 className="mt-4 text-4xl md:text-5xl font-bold text-white font-display">
@@ -96,8 +96,8 @@ export default function Courses() {
                   onClick={() => setActiveCategory(cat.key)}
                   className={`px-4 py-2 text-sm font-medium rounded-full whitespace-nowrap transition-colors ${
                     activeCategory === cat.key
-                      ? "bg-[#1A3C6E] text-white"
-                      : "bg-[#F8F9FC] text-[#6B7280] hover:bg-[#1A3C6E]/10 hover:text-[#1A3C6E]"
+                      ? "bg-[#5E17EB] text-white"
+                      : "bg-[#EDE7FF] text-[#6B7280] hover:bg-[#5E17EB]/10 hover:text-[#5E17EB]"
                   }`}
                 >
                   {cat.label}
@@ -118,7 +118,7 @@ export default function Courses() {
       </section>
 
       {/* Course Grid */}
-      <section className="py-16 bg-[#F8F9FC]">
+      <section className="py-16 bg-[#EDE7FF]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-6 text-sm text-[#6B7280]">
             Showing {filtered.length} of {courses?.length || 0} courses
@@ -126,14 +126,14 @@ export default function Courses() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filtered.map((course) => {
               const Icon = categoryIcons[course.category] || BookOpen;
-              const color = categoryColors[course.category] || "#1A3C6E";
+              const color = categoryColors[course.category] || "#5E17EB";
               return (
                 <Card
                   key={course.id}
                   className="group overflow-hidden bg-white border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                 >
                   <div className="h-2" style={{ backgroundColor: color }} />
-                  <div className="h-40 bg-gradient-to-br from-[#0D1B2A] to-[#1A3C6E] flex items-center justify-center relative overflow-hidden">
+                  <div className="h-40 bg-gradient-to-br from-[#1A1A2E] to-[#5E17EB] flex items-center justify-center relative overflow-hidden">
                     <div className="absolute inset-0 opacity-10">
                       <div className="absolute top-4 left-4 w-20 h-20 rounded-full bg-white/20" />
                       <div className="absolute bottom-4 right-4 w-32 h-32 rounded-full bg-white/10" />
@@ -149,7 +149,7 @@ export default function Courses() {
                         {categoryLabels[course.category] || course.category}
                       </span>
                     </div>
-                    <h3 className="text-xl font-bold text-[#0D1B2A] mb-2 font-display group-hover:text-[#1A3C6E] transition-colors">
+                    <h3 className="text-xl font-bold text-[#1A1A2E] mb-2 font-display group-hover:text-[#5E17EB] transition-colors">
                       {course.title}
                     </h3>
                     <p className="text-sm text-[#6B7280] mb-4 line-clamp-2">
@@ -162,7 +162,7 @@ export default function Courses() {
                       </span>
                       <Link
                         to={`/courses/${course.slug}`}
-                        className="flex items-center gap-1 text-sm font-medium text-[#1A3C6E] hover:text-[#F4A400] transition-colors"
+                        className="flex items-center gap-1 text-sm font-medium text-[#5E17EB] hover:text-[#5E17EB] transition-colors"
                       >
                         Details <ArrowRight className="w-4 h-4" />
                       </Link>

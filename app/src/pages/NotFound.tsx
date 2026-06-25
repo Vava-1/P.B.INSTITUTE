@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1A3C6E] to-[#0D1B2A] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E] flex items-center justify-center px-4">
       <div className="absolute inset-0 diagonal-stripe opacity-30" />
       <div className="relative text-center">
         <img
@@ -24,7 +24,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button
             asChild
-            className="bg-gradient-to-r from-[#F4A400] to-[#FFD166] text-[#0D1B2A] hover:from-[#FFD166] hover:to-[#F4A400] font-semibold rounded-full px-8"
+            className="bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] hover:from-[#5E17EB] hover:to-[#5E17EB] font-semibold rounded-full px-8"
           >
             <Link to="/" className="flex items-center gap-2">
               <Home className="w-4 h-4" /> Back to Home

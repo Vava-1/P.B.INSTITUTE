@@ -5,6 +5,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        brand: {
+          DEFAULT: "#5E17EB",
+          light: "#EDE7FF",
+        },
+        body: "#1A1A2E",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

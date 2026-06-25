@@ -9,8 +9,8 @@ import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { trpc } from "@/providers/trpc";
 
 const categoryColors: Record<string, string> = {
-  enrollment: "#1A3C6E",
-  courses: "#F4A400",
+  enrollment: "#5E17EB",
+  courses: "#5E17EB",
   fees: "#00B894",
   schedule: "#8B5CF6",
   certificates: "#EC4899",
@@ -47,7 +47,7 @@ export default function Faqs() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative pt-32 pb-16 bg-gradient-to-br from-[#0D1B2A] via-[#1A3C6E] to-[#0D1B2A]">
+      <section className="relative pt-32 pb-16 bg-gradient-to-br from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-5xl font-bold text-white font-display">
             Frequently Asked <span className="text-gradient-gold">Questions</span>
@@ -59,7 +59,7 @@ export default function Faqs() {
       </section>
 
       {/* Search & Filter */}
-      <section className="py-12 bg-[#F8F9FC]">
+      <section className="py-12 bg-[#EDE7FF]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative mb-8">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B7280]" />
@@ -75,8 +75,8 @@ export default function Faqs() {
               onClick={() => setActiveCategory("all")}
               className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                 activeCategory === "all"
-                  ? "bg-[#1A3C6E] text-white"
-                  : "bg-white text-[#6B7280] hover:bg-[#1A3C6E]/10"
+                  ? "bg-[#5E17EB] text-white"
+                  : "bg-white text-[#6B7280] hover:bg-[#5E17EB]/10"
               }`}
             >
               All
@@ -87,8 +87,8 @@ export default function Faqs() {
                 onClick={() => setActiveCategory(key)}
                 className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                   activeCategory === key
-                    ? "bg-[#1A3C6E] text-white"
-                    : "bg-white text-[#6B7280] hover:bg-[#1A3C6E]/10"
+                    ? "bg-[#5E17EB] text-white"
+                    : "bg-white text-[#6B7280] hover:bg-[#5E17EB]/10"
                 }`}
               >
                 {label}
@@ -100,7 +100,7 @@ export default function Faqs() {
           <div className="space-y-4">
             {filtered.map((faq) => {
               const isOpen = openId === faq.id;
-              const color = categoryColors[faq.category] || "#1A3C6E";
+              const color = categoryColors[faq.category] || "#5E17EB";
               return (
                 <Card
                   key={faq.id}
@@ -117,7 +117,7 @@ export default function Faqs() {
                       >
                         {categoryLabels[faq.category] || faq.category}
                       </span>
-                      <h3 className="font-semibold text-[#0D1B2A]">{faq.question}</h3>
+                      <h3 className="font-semibold text-[#1A1A2E]">{faq.question}</h3>
                     </div>
                     {isOpen ? (
                       <ChevronUp className="w-5 h-5 text-[#6B7280] shrink-0 mt-6" />
@@ -143,7 +143,7 @@ export default function Faqs() {
           )}
 
           {/* CTA */}
-          <div className="mt-12 text-center p-8 bg-gradient-to-r from-[#1A3C6E] to-[#0D1B2A] rounded-2xl">
+          <div className="mt-12 text-center p-8 bg-gradient-to-r from-[#5E17EB] to-[#1A1A2E] rounded-2xl">
             <h3 className="text-xl font-bold text-white mb-3 font-display">
               Didn't Find Your Answer?
             </h3>
@@ -153,7 +153,7 @@ export default function Faqs() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 to="/contact"
-                className="px-6 py-3 bg-white text-[#0D1B2A] font-semibold rounded-full hover:bg-[#F8F9FC] transition-colors"
+                className="px-6 py-3 bg-white text-[#1A1A2E] font-semibold rounded-full hover:bg-[#EDE7FF] transition-colors"
               >
                 Contact Us
               </Link>

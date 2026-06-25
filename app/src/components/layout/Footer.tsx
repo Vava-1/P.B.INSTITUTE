@@ -21,7 +21,7 @@ export default function Footer() {
                 <div className="text-xl font-bold leading-tight font-display">
                   Pacemaker
                 </div>
-                <div className="text-xs uppercase tracking-wider text-[#F4A400]">
+                <div className="text-xs uppercase tracking-wider text-[#5E17EB]">
                   Institute
                 </div>
               </div>
@@ -32,27 +32,27 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-3">
               {settings?.facebookUrl && (
-                <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#F4A400] transition-colors">
+                <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#5E17EB] transition-colors">
                   <Facebook className="w-4 h-4" />
                 </a>
               )}
               {settings?.instagramUrl && (
-                <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#F4A400] transition-colors">
+                <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#5E17EB] transition-colors">
                   <Instagram className="w-4 h-4" />
                 </a>
               )}
               {settings?.twitterUrl && (
-                <a href={settings.twitterUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#F4A400] transition-colors">
+                <a href={settings.twitterUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#5E17EB] transition-colors">
                   <Twitter className="w-4 h-4" />
                 </a>
               )}
               {settings?.linkedinUrl && (
-                <a href={settings.linkedinUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#F4A400] transition-colors">
+                <a href={settings.linkedinUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#5E17EB] transition-colors">
                   <Linkedin className="w-4 h-4" />
                 </a>
               )}
               {settings?.youtubeUrl && (
-                <a href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#F4A400] transition-colors">
+                <a href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#5E17EB] transition-colors">
                   <Youtube className="w-4 h-4" />
                 </a>
               )}
@@ -61,7 +61,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-[#F4A400] font-semibold text-sm uppercase tracking-wider mb-6">
+            <h4 className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider mb-6">
               Quick Links
             </h4>
             <ul className="space-y-3">
@@ -77,7 +77,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.href}
-                    className="text-[#E0E0E0]/70 hover:text-[#F4A400] text-sm transition-colors"
+                    className="text-[#E0E0E0]/70 hover:text-[#5E17EB] text-sm transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -88,7 +88,7 @@ export default function Footer() {
 
           {/* Courses */}
           <div>
-            <h4 className="text-[#F4A400] font-semibold text-sm uppercase tracking-wider mb-6">
+            <h4 className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider mb-6">
               Our Courses
             </h4>
             <ul className="space-y-3">
@@ -104,7 +104,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.href}
-                    className="text-[#E0E0E0]/70 hover:text-[#F4A400] text-sm transition-colors"
+                    className="text-[#E0E0E0]/70 hover:text-[#5E17EB] text-sm transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -115,30 +115,30 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-[#F4A400] font-semibold text-sm uppercase tracking-wider mb-6">
+            <h4 className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider mb-6">
               Contact Us
             </h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-[#F4A400] shrink-0 mt-0.5" />
+                <MapPin className="w-5 h-5 text-[#5E17EB] shrink-0 mt-0.5" />
                 <span className="text-[#E0E0E0]/70 text-sm">
                   {settings?.address || "Centenary House, 8 KN 4 Ave, Kigali, Rwanda"}
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-[#F4A400] shrink-0" />
-                <a href={`tel:${settings?.phone || "+250786053720"}`} className="text-[#E0E0E0]/70 text-sm hover:text-[#F4A400] transition-colors">
+                <Phone className="w-5 h-5 text-[#5E17EB] shrink-0" />
+                <a href={`tel:${settings?.phone || "+250786053720"}`} className="text-[#E0E0E0]/70 text-sm hover:text-[#5E17EB] transition-colors">
                   {settings?.phone || "+250 786 053 720"}
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-[#F4A400] shrink-0" />
-                <a href={`mailto:${settings?.email || "info@pacemakerinstitute.rw"}`} className="text-[#E0E0E0]/70 text-sm hover:text-[#F4A400] transition-colors">
+                <Mail className="w-5 h-5 text-[#5E17EB] shrink-0" />
+                <a href={`mailto:${settings?.email || "info@pacemakerinstitute.rw"}`} className="text-[#E0E0E0]/70 text-sm hover:text-[#5E17EB] transition-colors">
                   {settings?.email || "info@pacemakerinstitute.rw"}
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-[#F4A400] shrink-0 mt-0.5" />
+                <Clock className="w-5 h-5 text-[#5E17EB] shrink-0 mt-0.5" />
                 <span className="text-[#E0E0E0]/70 text-sm">
                   {settings?.openingHours || "Mon to Fri: 8:00 AM to 6:00 PM | Sat: 9:00 AM to 1:00 PM"}
                 </span>
@@ -162,10 +162,10 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Pacemaker Institute. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <Link to="/faqs" className="text-[#E0E0E0]/50 hover:text-[#F4A400] text-sm transition-colors">
+            <Link to="/faqs" className="text-[#E0E0E0]/50 hover:text-[#5E17EB] text-sm transition-colors">
               Privacy Policy
             </Link>
-            <Link to="/faqs" className="text-[#E0E0E0]/50 hover:text-[#F4A400] text-sm transition-colors">
+            <Link to="/faqs" className="text-[#E0E0E0]/50 hover:text-[#5E17EB] text-sm transition-colors">
               Terms of Service
             </Link>
           </div>

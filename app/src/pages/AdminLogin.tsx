@@ -51,7 +51,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0D1B2A] via-[#1A3C6E] to-[#0D1B2A] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E] flex items-center justify-center px-4">
       <div className="absolute inset-0 diagonal-stripe opacity-30" />
       <div className="relative w-full max-w-md">
         <div className="text-center mb-8">
@@ -69,11 +69,11 @@ export default function AdminLogin() {
         <Card className="border-0 shadow-2xl">
           <CardContent className="p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-lg bg-[#1A3C6E]/10 flex items-center justify-center">
-                <Shield className="w-5 h-5 text-[#1A3C6E]" />
+              <div className="w-10 h-10 rounded-lg bg-[#5E17EB]/10 flex items-center justify-center">
+                <Shield className="w-5 h-5 text-[#5E17EB]" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-[#0D1B2A]">Sign In</h2>
+                <h2 className="text-lg font-bold text-[#1A1A2E]">Sign In</h2>
                 <p className="text-sm text-[#6B7280]">Enter your credentials</p>
               </div>
             </div>
@@ -117,7 +117,7 @@ export default function AdminLogin() {
               <Button
                 type="submit"
                 disabled={loginMutation.isPending}
-                className="w-full bg-gradient-to-r from-[#F4A400] to-[#FFD166] text-[#0D1B2A] hover:from-[#FFD166] hover:to-[#F4A400] font-semibold"
+                className="w-full bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] hover:from-[#5E17EB] hover:to-[#5E17EB] font-semibold"
               >
                 <LogIn className="w-4 h-4 mr-2" />
                 {loginMutation.isPending ? "Signing in..." : "Sign In"}
@@ -125,7 +125,7 @@ export default function AdminLogin() {
             </form>
 
             <div className="mt-6 pt-6 border-t text-center">
-              <a href="/" className="text-sm text-[#1A3C6E] hover:text-[#F4A400] transition-colors">
+              <a href="/" className="text-sm text-[#5E17EB] hover:text-[#5E17EB] transition-colors">
                 ← Back to Website
               </a>
             </div>

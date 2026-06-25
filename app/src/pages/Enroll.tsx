@@ -164,11 +164,11 @@ export default function Enroll() {
   const stepLabels = ["Personal Info", "Course Selection", "Payment", "Declaration", "Review"];
 
   return (
-    <div className="min-h-screen bg-[#F8F9FC]">
+    <div className="min-h-screen bg-[#EDE7FF]">
       <Navbar />
 
       {/* Hero */}
-      <section className="pt-32 pb-12 bg-gradient-to-br from-[#0D1B2A] via-[#1A3C6E] to-[#0D1B2A]">
+      <section className="pt-32 pb-12 bg-gradient-to-br from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white font-display">
             Enroll at <span className="text-gradient-gold">Pacemaker</span>
@@ -189,19 +189,19 @@ export default function Enroll() {
                 <div className="w-20 h-20 rounded-full bg-[#00B894]/10 flex items-center justify-center mx-auto mb-6">
                   <CheckCircle className="w-10 h-10 text-[#00B894]" />
                 </div>
-                <h2 className="text-2xl font-bold text-[#0D1B2A] mb-3 font-display">
+                <h2 className="text-2xl font-bold text-[#1A1A2E] mb-3 font-display">
                   Enrollment Submitted!
                 </h2>
                 <p className="text-[#6B7280] mb-2">
                   Your reference number:
                 </p>
-                <p className="text-2xl font-bold text-[#1A3C6E] font-mono mb-6">{refNum}</p>
+                <p className="text-2xl font-bold text-[#5E17EB] font-mono mb-6">{refNum}</p>
                 <p className="text-sm text-[#6B7280] mb-8">
                   Our admissions team will contact you within 2 business days to confirm
                   your class schedule.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Button asChild className="bg-gradient-to-r from-[#F4A400] to-[#FFD166] text-[#0D1B2A] font-semibold rounded-full px-8">
+                  <Button asChild className="bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] font-semibold rounded-full px-8">
                     <Link to="/">Back to Home</Link>
                   </Button>
                   <a
@@ -225,7 +225,7 @@ export default function Enroll() {
                       <div
                         key={label}
                         className={`text-xs font-medium ${
-                          i + 1 <= step ? "text-[#1A3C6E]" : "text-[#6B7280]"
+                          i + 1 <= step ? "text-[#5E17EB]" : "text-[#6B7280]"
                         }`}
                       >
                         <span className="hidden sm:inline">{label}</span>
@@ -235,7 +235,7 @@ export default function Enroll() {
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-[#F4A400] to-[#FFD166] transition-all duration-500"
+                      className="h-full bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] transition-all duration-500"
                       style={{ width: `${(step / 5) * 100}%` }}
                     />
                   </div>
@@ -244,8 +244,8 @@ export default function Enroll() {
                 {/* Step 1: Personal Info */}
                 {step === 1 && (
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-[#0D1B2A] font-display flex items-center gap-2">
-                      <User className="w-5 h-5 text-[#F4A400]" /> Personal Information
+                    <h2 className="text-xl font-bold text-[#1A1A2E] font-display flex items-center gap-2">
+                      <User className="w-5 h-5 text-[#5E17EB]" /> Personal Information
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -297,8 +297,8 @@ export default function Enroll() {
                 {/* Step 2: Course Selection */}
                 {step === 2 && (
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-[#0D1B2A] font-display flex items-center gap-2">
-                      <GraduationCap className="w-5 h-5 text-[#F4A400]" /> Course Selection
+                    <h2 className="text-xl font-bold text-[#1A1A2E] font-display flex items-center gap-2">
+                      <GraduationCap className="w-5 h-5 text-[#5E17EB]" /> Course Selection
                     </h2>
                     <div>
                       <Label>Select Course *</Label>
@@ -409,13 +409,13 @@ export default function Enroll() {
                 {/* Step 3: Payment */}
                 {step === 3 && (
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-[#0D1B2A] font-display flex items-center gap-2">
-                      <CreditCard className="w-5 h-5 text-[#F4A400]" /> Payment
+                    <h2 className="text-xl font-bold text-[#1A1A2E] font-display flex items-center gap-2">
+                      <CreditCard className="w-5 h-5 text-[#5E17EB]" /> Payment
                     </h2>
                     {selectedCourse && (
-                      <div className="bg-[#F8F9FC] rounded-lg p-4">
+                      <div className="bg-[#EDE7FF] rounded-lg p-4">
                         <div className="text-sm text-[#6B7280]">Course Fee</div>
-                        <div className="text-2xl font-bold text-[#0D1B2A]">
+                        <div className="text-2xl font-bold text-[#1A1A2E]">
                           {courseFee > 0 ? `${courseFee.toLocaleString()} RWF` : "Contact us for fee"}
                         </div>
                         <div className="text-xs text-[#6B7280] mt-1">{selectedCourse.title}</div>
@@ -434,11 +434,11 @@ export default function Enroll() {
                           onClick={() => update("paymentProvider", "MOMO")}
                           className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all ${
                             formData.paymentProvider === "MOMO"
-                              ? "border-[#F4A400] bg-[#F4A400]/5"
+                              ? "border-[#5E17EB] bg-[#5E17EB]/5"
                               : "border-gray-200 hover:border-gray-300"
                           }`}
                         >
-                          <Smartphone className="w-6 h-6 text-[#1A3C6E]" />
+                          <Smartphone className="w-6 h-6 text-[#5E17EB]" />
                           <span className="text-sm font-medium">MTN MoMo</span>
                         </button>
                         <button
@@ -446,7 +446,7 @@ export default function Enroll() {
                           onClick={() => update("paymentProvider", "AIRTEL")}
                           className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all ${
                             formData.paymentProvider === "AIRTEL"
-                              ? "border-[#F4A400] bg-[#F4A400]/5"
+                              ? "border-[#5E17EB] bg-[#5E17EB]/5"
                               : "border-gray-200 hover:border-gray-300"
                           }`}
                         >
@@ -489,8 +489,8 @@ export default function Enroll() {
 
                     {paymentStatus === "processing" && (
                       <div className="text-center py-8">
-                        <Loader2 className="w-10 h-10 animate-spin text-[#1A3C6E] mx-auto mb-3" />
-                        <p className="text-[#0D1B2A] font-semibold">Payment request sent to your phone</p>
+                        <Loader2 className="w-10 h-10 animate-spin text-[#5E17EB] mx-auto mb-3" />
+                        <p className="text-[#1A1A2E] font-semibold">Payment request sent to your phone</p>
                         {paymentMessage && <p className="text-sm text-[#6B7280] mt-1">{paymentMessage}</p>}
                         <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
                           <p className="font-medium">Check your phone and enter your PIN to confirm</p>
@@ -531,8 +531,8 @@ export default function Enroll() {
                 {/* Step 4: Declaration */}
                 {step === 4 && (
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-[#0D1B2A] font-display flex items-center gap-2">
-                      <BookOpen className="w-5 h-5 text-[#F4A400]" /> Background & Declaration
+                    <h2 className="text-xl font-bold text-[#1A1A2E] font-display flex items-center gap-2">
+                      <BookOpen className="w-5 h-5 text-[#5E17EB]" /> Background & Declaration
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -602,8 +602,8 @@ export default function Enroll() {
                 {/* Step 5: Review */}
                 {step === 5 && (
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-[#0D1B2A] font-display">Review Your Application</h2>
-                    <div className="bg-[#F8F9FC] rounded-lg p-6 space-y-4">
+                    <h2 className="text-xl font-bold text-[#1A1A2E] font-display">Review Your Application</h2>
+                    <div className="bg-[#EDE7FF] rounded-lg p-6 space-y-4">
                       <div>
                         <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Name</div>
                         <div className="font-medium">{formData.fullName}</div>
@@ -664,14 +664,14 @@ export default function Enroll() {
                     <div />
                   )}
                   {step < 5 ? (
-                    <Button onClick={handleNext} className="bg-[#1A3C6E] hover:bg-[#0D1B2A] flex items-center gap-1">
+                    <Button onClick={handleNext} className="bg-[#5E17EB] hover:bg-[#1A1A2E] flex items-center gap-1">
                       Next <ChevronRight className="w-4 h-4" />
                     </Button>
                   ) : (
                     <Button
                       onClick={handleSubmit}
                       disabled={enrollMutation.isPending}
-                      className="bg-gradient-to-r from-[#F4A400] to-[#FFD166] text-[#0D1B2A] hover:from-[#FFD166] hover:to-[#F4A400] font-semibold px-8"
+                      className="bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] hover:from-[#5E17EB] hover:to-[#5E17EB] font-semibold px-8"
                     >
                       {enrollMutation.isPending ? "Submitting..." : "Submit Enrollment"}
                     </Button>
