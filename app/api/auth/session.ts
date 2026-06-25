@@ -19,7 +19,7 @@ export async function verifySessionToken(
   token: string,
 ): Promise<SessionPayload | null> {
   if (!token) {
-    console.warn("[session] No token provided for verification.");
+    console.warn("[auth] No token provided for verification.");
     return null;
   }
   try {
@@ -29,12 +29,12 @@ export async function verifySessionToken(
     });
     const { unionId, clientId } = payload;
     if (!unionId || !clientId) {
-      console.warn("[session] JWT payload missing required fields.");
+      console.warn("[auth] JWT payload missing required fields.");
       return null;
     }
     return { unionId, clientId } as SessionPayload;
   } catch (error) {
-    console.warn("[session] JWT verification failed:", error);
+    console.warn("[auth] JWT verification failed:", error);
     return null;
   }
 }
