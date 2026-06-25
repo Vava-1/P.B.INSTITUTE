@@ -2,7 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 function getOAuthUrl() {
-  const authUrl = import.meta.env.VITE_AUTH_URL || import.meta.env.VITE_KIMI_AUTH_URL;
+  const authUrl = import.meta.env.VITE_AUTH_URL;
   const appID = import.meta.env.VITE_APP_ID;
   const redirectUri = `${window.location.origin}/api/oauth/callback`;
   const state = btoa(redirectUri);

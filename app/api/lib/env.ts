@@ -8,17 +8,13 @@ function required(name: string): string {
   return value ?? "";
 }
 
-function optionalWithFallback(name: string, fallbackName: string): string {
-  return process.env[name] || process.env[fallbackName] || "";
-}
-
 export const env = {
   appId: required("APP_ID"),
   appSecret: required("APP_SECRET"),
   isProduction: process.env.NODE_ENV === "production",
   databaseUrl: required("DATABASE_URL"),
-  authUrl: optionalWithFallback("AUTH_URL", "KIMI_AUTH_URL"),
-  openUrl: optionalWithFallback("OPEN_URL", "KIMI_OPEN_URL"),
+  authUrl: required("AUTH_URL"),
+  openUrl: required("OPEN_URL"),
   ownerUnionId: process.env.OWNER_UNION_ID ?? "",
 
   // MTN MoMo
