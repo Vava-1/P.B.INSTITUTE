@@ -482,7 +482,7 @@ export default function Enroll() {
                           onClick={() => setStep(4)}
                           className="w-full"
                         >
-                          Skip for now — continue to enrollment
+                          Skip for now, continue to enrollment
                         </Button>
                       </div>
                     )}
@@ -615,7 +615,7 @@ export default function Enroll() {
                         </div>
                         <div>
                           <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Email</div>
-                          <div className="font-medium">{formData.email || "—"}</div>
+                          <div className="font-medium">{formData.email || "-"}</div>
                         </div>
                       </div>
                       <div>
@@ -630,7 +630,7 @@ export default function Enroll() {
                         {formData.languageOption && (
                           <div>
                             <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Language</div>
-                            <div className="font-medium">{formData.languageOption} - {formData.languageLevel}</div>
+                            <div className="font-medium">{formData.languageOption} {formData.languageLevel}</div>
                           </div>
                         )}
                       </div>

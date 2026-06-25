@@ -465,7 +465,7 @@ function HeroSection() {
         </h1>
         <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10 leading-relaxed">
           Professional training in Languages, Bakery, Salon, Mechanics,
-          AI Skills, and Exam Preparation — all in the heart of Kigali.
+          AI Skills, and Exam Preparation, all in the heart of Kigali.
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button
@@ -565,7 +565,7 @@ function WhyChooseSection() {
     {
       icon: Users,
       title: "Hands-On Learning",
-      desc: "Theory meets practice — you learn by doing in our fully equipped facilities.",
+      desc: "Theory meets practice so you learn by doing in our fully equipped facilities.",
     },
     {
       icon: CheckCircle,

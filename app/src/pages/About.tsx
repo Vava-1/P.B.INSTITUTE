@@ -11,7 +11,7 @@ const values = [
   { icon: Award, title: "Excellence", desc: "High standards in instruction and student outcomes." },
   { icon: Users, title: "Practicality", desc: "Skills immediately applicable in the real world." },
   { icon: Heart, title: "Inclusivity", desc: "Accessible to all Rwandans and beyond." },
-  { icon: BookOpen, title: "Innovation", desc: "Modern curriculum, technology-forward learning." },
+  { icon: BookOpen, title: "Innovation", desc: "Modern curriculum with technology forward learning." },
   { icon: Target, title: "Integrity", desc: "Transparent, honest, ethical institution." },
 ];
 
@@ -19,7 +19,7 @@ const timeline = [
   { year: "2014", event: "Founded in Kigali with a single language classroom and a vision." },
   { year: "2017", event: "Launched vocational training division with Bakery and Salon courses." },
   { year: "2020", event: "Added Mechanics program and expanded to current campus facilities." },
-  { year: "2023", event: "Introduced AI Skills course — first in Kigali. 500+ graduates milestone." },
+  { year: "2023", event: "Introduced AI Skills course, first in Kigali. 500+ graduates milestone." },
   { year: "2025", event: "1,000+ graduates across all programs. Recognized as premier training institute." },
 ];
 

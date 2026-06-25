@@ -214,10 +214,10 @@ function AuthLayoutContent({
                   </Avatar>
                   <div className="flex-1 min-w-0 group-data-[collapsible=icon]:hidden">
                     <p className="text-sm font-medium truncate leading-none">
-                      {user?.name || "—"}
+                      {user?.name || ""}
                     </p>
                     <p className="text-xs text-muted-foreground truncate mt-1.5">
-                      {user?.email || "—"}
+                      {user?.email || ""}
                     </p>
                   </div>
                 </button>
