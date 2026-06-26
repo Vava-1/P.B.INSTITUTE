@@ -127,7 +127,7 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-3">
               <Button
                 asChild
-                className="bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] hover:from-[#5E17EB] hover:to-[#5E17EB] font-semibold rounded-full px-6"
+                className="bg-[#F4A400] text-[#1A1A2E] hover:bg-[#e09600] font-bold rounded-full px-6 transition-colors"
               >
                 <Link to="/enroll">Enroll Now</Link>
               </Button>
@@ -204,7 +204,7 @@ export default function Navbar() {
               <div className="mt-8 pt-6 border-t border-white/10">
                 <Button
                   asChild
-                  className="w-full bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] hover:from-[#5E17EB] hover:to-[#5E17EB] font-semibold rounded-full"
+                  className="w-full bg-[#F4A400] text-[#1A1A2E] hover:bg-[#e09600] font-bold rounded-full"
                 >
                   <Link to="/enroll">Enroll Now</Link>
                 </Button>

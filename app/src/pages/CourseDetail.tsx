@@ -1,7 +1,7 @@
 import { useParams, Link, useNavigate } from "react-router";
 import {
   Clock, BookOpen, CheckCircle, Briefcase, ArrowLeft,
-  GraduationCap, Calendar, Phone, MessageCircle,
+  GraduationCap, Calendar, Phone, MessageCircle, Linkedin,
   ChevronDown, ChevronUp,
 } from "lucide-react";
 import { useState } from "react";
@@ -248,11 +248,32 @@ export default function CourseDetail() {
                     <div className="space-y-6">
                       {courseTestimonials.slice(0, 3).map((t) => (
                         <div key={t.id} className="flex items-start gap-4 p-4 bg-[#EDE7FF] rounded-lg">
-                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center text-white font-bold shrink-0">
-                            {t.studentName.charAt(0)}
-                          </div>
+                          {t.photoUrl ? (
+                            <div className="relative w-12 h-12 shrink-0">
+                              <img src={t.photoUrl} alt={t.studentName} className="w-12 h-12 rounded-full object-cover" />
+                              {t.linkedinUrl && (
+                                <a href={t.linkedinUrl} target="_blank" rel="noopener noreferrer"
+                                  className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#0A66C2] rounded-full flex items-center justify-center shadow hover:scale-110 transition-transform">
+                                  <Linkedin className="w-3 h-3 text-white" />
+                                </a>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="relative w-12 h-12 shrink-0">
+                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center text-white font-bold">
+                                {t.studentName.charAt(0)}
+                              </div>
+                              {t.linkedinUrl && (
+                                <a href={t.linkedinUrl} target="_blank" rel="noopener noreferrer"
+                                  className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#0A66C2] rounded-full flex items-center justify-center shadow hover:scale-110 transition-transform">
+                                  <Linkedin className="w-3 h-3 text-white" />
+                                </a>
+                              )}
+                            </div>
+                          )}
                           <div>
                             <div className="font-semibold text-[#1A1A2E]">{t.studentName}</div>
+                            {t.courseName && <div className="text-xs text-[#6B7280] mb-1">{t.courseName}</div>}
                             <div className="flex items-center gap-1 mb-2">
                               {Array.from({ length: t.rating }).map((_, i) => (
                                 <svg key={i} className="w-4 h-4 text-[#5E17EB] fill-current" viewBox="0 0 20 20">

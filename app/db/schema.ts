@@ -163,6 +163,7 @@ export const testimonials = mysqlTable("testimonials", {
   id: serial("id").primaryKey(),
   studentName: varchar("student_name", { length: 255 }).notNull(),
   photoUrl: text("photo_url"),
+  linkedinUrl: text("linkedin_url"),
   courseId: bigint("course_id", { mode: "number", unsigned: true }),
   courseName: varchar("course_name", { length: 255 }),
   completionYear: int("completion_year"),
@@ -306,3 +307,18 @@ export const users = mysqlTable("users", {
 
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
+
+// ─── CERTIFICATES ───
+export const certificates = mysqlTable("certificates", {
+  id: serial("id").primaryKey(),
+  certificateNumber: varchar("certificate_number", { length: 50 }).notNull().unique(),
+  studentName: varchar("student_name", { length: 255 }).notNull(),
+  courseName: varchar("course_name", { length: 255 }).notNull(),
+  completionDate: date("completion_date").notNull(),
+  enrollmentId: bigint("enrollment_id", { mode: "number", unsigned: true }),
+  issuedAt: timestamp("issued_at").defaultNow().notNull(),
+  isValid: boolean("is_valid").default(true).notNull(),
+});
+
+export type Certificate = typeof certificates.$inferSelect;
+export type InsertCertificate = typeof certificates.$inferInsert;

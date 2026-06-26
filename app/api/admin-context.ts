@@ -1,4 +1,5 @@
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
+import { verifyAdminToken } from "./lib/jwt";
 
 export type AdminContext = {
   req: Request;
@@ -11,21 +12,16 @@ export async function createAdminContext(
 ): Promise<AdminContext> {
   const ctx: AdminContext = { req: opts.req, resHeaders: opts.resHeaders };
 
-  // Check for admin session in x-admin-token header
   const adminToken = opts.req.headers.get("x-admin-token");
   if (adminToken) {
-    try {
-      const payload = JSON.parse(Buffer.from(adminToken, "base64").toString());
-      if (payload.id && payload.email && payload.exp > Date.now()) {
-        ctx.admin = {
-          id: payload.id,
-          name: payload.name,
-          email: payload.email,
-          role: payload.role,
-        };
-      }
-    } catch {
-      // Invalid token
+    const payload = await verifyAdminToken(adminToken);
+    if (payload) {
+      ctx.admin = {
+        id: payload.id as number,
+        name: payload.name as string,
+        email: payload.email as string,
+        role: payload.role as string,
+      };
     }
   }
 

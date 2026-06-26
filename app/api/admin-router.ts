@@ -12,6 +12,7 @@ import {
 } from "@db/schema";
 import { eq, desc, asc, or, like, count } from "drizzle-orm";
 import { hashSync, compareSync } from "bcryptjs";
+import { signAdminToken } from "./lib/jwt";
 
 export const adminRouter = createRouter({
   // ─── LOGIN (Public - used for admin login) ───
@@ -40,11 +41,18 @@ export const adminRouter = createRouter({
         .update(adminUsers)
         .set({ lastLoginAt: new Date() })
         .where(eq(adminUsers.id, user.id));
+      const token = await signAdminToken({
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      });
       return {
         id: user.id,
         name: user.name,
         email: user.email,
         role: user.role,
+        token,
       };
     }),
 
@@ -247,6 +255,30 @@ export const adminRouter = createRouter({
     return db.select().from(testimonials).orderBy(desc(testimonials.submittedAt));
   }),
 
+  testimonialCreate: adminQuery
+    .input(
+      z.object({
+        studentName: z.string().min(1),
+        photoUrl: z.string().optional(),
+        linkedinUrl: z.string().optional(),
+        courseId: z.number().optional(),
+        courseName: z.string().optional(),
+        completionYear: z.number().optional(),
+        currentRole: z.string().optional(),
+        employer: z.string().optional(),
+        quote: z.string().min(1),
+        rating: z.number().min(1).max(5).default(5),
+        isFeatured: z.boolean().default(false),
+        isPublished: z.boolean().default(false),
+        isApproved: z.boolean().default(false),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      await db.insert(testimonials).values(input);
+      return { success: true };
+    }),
+
   testimonialUpdate: adminQuery
     .input(
       z.object({
@@ -257,6 +289,14 @@ export const adminRouter = createRouter({
     .mutation(async ({ input }) => {
       const db = getDb();
       await db.update(testimonials).set(input.data).where(eq(testimonials.id, input.id));
+      return { success: true };
+    }),
+
+  testimonialDelete: adminQuery
+    .input(z.object({ id: z.number() }))
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      await db.delete(testimonials).where(eq(testimonials.id, input.id));
       return { success: true };
     }),
 

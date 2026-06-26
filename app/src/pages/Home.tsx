@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import {
   BookOpen, Users, Clock, Award, ArrowRight, Star,
   CheckCircle, GraduationCap, Wrench, Cpu, Languages,
-  ChefHat, Scissors, FileText, ChevronLeft, ChevronRight,
+  ChefHat, Scissors, FileText, ChevronLeft, ChevronRight, Linkedin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,11 +32,12 @@ const categoryColors: Record<string, string> = {
 
 // ─── HOME PAGE ───
 export default function Home() {
-  const { data: courses } = trpc.public.courses.list.useQuery({ featured: true });
-  const { data: allCourses } = trpc.public.courses.list.useQuery();
-  const { data: testimonials } = trpc.public.testimonials.list.useQuery({ featured: true, limit: 6 });
-  const { data: news } = trpc.public.news.list.useQuery({ limit: 3 });
-  const { data: settings } = trpc.public.settings.get.useQuery();
+  const { data } = trpc.public.homepage.data.useQuery();
+  const courses = data?.featuredCourses;
+  const allCourses = data?.allCourses ?? [];
+  const testimonialsData = data?.testimonials ?? [];
+  const news = data?.news ?? [];
+  const settings = data?.settings;
 
   const announcementMsgs = settings?.announcementMessages
     ? JSON.parse(settings.announcementMessages as string)
@@ -55,7 +56,7 @@ export default function Home() {
 
       {/* Announcement Ticker */}
       {settings?.announcementActive && announcementMsgs.length > 0 && (
-        <div className="fixed top-20 left-0 right-0 z-40 bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] py-2.5 px-4 text-center text-sm font-medium shadow-md">
+        <div className="fixed top-20 left-0 right-0 z-40 bg-[#5E17EB] text-white py-2.5 px-4 text-center text-sm font-medium shadow-md">
           <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
             <span className="animate-pulse">📣</span>
             <span>{announcementMsgs[announceIdx]}</span>
@@ -153,7 +154,7 @@ export default function Home() {
       <WhyChooseSection />
 
       {/* Testimonials */}
-      <TestimonialsSection testimonials={testimonials || []} />
+      <TestimonialsSection testimonials={testimonialsData} />
 
       {/* News Preview */}
       <section className="py-32 bg-[#EDE7FF]">
@@ -322,6 +323,12 @@ function HeroSection() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReduced) {
+      canvas.style.display = "none";
+      return;
+    }
+
     let w = window.innerWidth;
     let h = window.innerHeight;
     canvas.width = w;
@@ -437,8 +444,12 @@ function HeroSection() {
       canvas.height = h;
     };
 
+    let mouseThrottleId: number;
     const handleMouse = (e: MouseEvent) => {
-      mouseRef.current = { x: e.clientX, y: e.clientY };
+      cancelAnimationFrame(mouseThrottleId);
+      mouseThrottleId = requestAnimationFrame(() => {
+        mouseRef.current = { x: e.clientX, y: e.clientY };
+      });
     };
 
     window.addEventListener("resize", handleResize, { passive: true });
@@ -446,6 +457,7 @@ function HeroSection() {
 
     return () => {
       cancelAnimationFrame(animId);
+      cancelAnimationFrame(mouseThrottleId);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", handleMouse);
     };
@@ -470,13 +482,13 @@ function HeroSection() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button
             asChild
-            className="bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] hover:from-[#5E17EB] hover:to-[#5E17EB] font-semibold rounded-full px-8 py-6 text-lg shadow-lg shadow-[#5E17EB]/25"
+            className="bg-gradient-to-r from-[#F4A400] to-[#FFD166] text-[#1A1A2E] font-bold rounded-full px-8 py-6 text-lg shadow-lg shadow-[#F4A400]/30 hover:from-[#e09600] hover:to-[#F4A400] transition-all"
           >
             <Link to="/enroll">Enroll Now</Link>
           </Button>
           <Button
             asChild
-            className="border-2 border-[#5E17EB] text-[#5E17EB] hover:bg-[#5E17EB]/10 font-semibold rounded-full px-8 py-6 text-lg"
+            className="border-2 border-white text-white hover:bg-white/10 font-semibold rounded-full px-8 py-6 text-lg backdrop-blur-sm"
           >
             <Link to="/courses">Browse Courses</Link>
           </Button>
@@ -519,10 +531,10 @@ function StatsSection() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat, i) => (
             <div key={stat.label} className="text-center">
-              <stat.icon className="w-8 h-8 text-[#5E17EB] mx-auto mb-3" />
-              <div className="text-4xl md:text-5xl font-bold text-[#5E17EB] font-display mb-1">
+              <stat.icon className="w-8 h-8 text-[#F4A400] mx-auto mb-3" />
+              <div className="text-4xl md:text-5xl font-bold text-white font-display mb-1">
                 {visible ? <CountUp end={stat.value} duration={2000} delay={i * 200} /> : "0"}
-                {stat.suffix}
+                <span className="text-[#F4A400]">{stat.suffix}</span>
               </div>
               <div className="text-sm text-white/70">{stat.label}</div>
             </div>
@@ -681,9 +693,29 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
             </p>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center text-white font-bold text-lg">
-                  {t?.studentName?.charAt(0)}
-                </div>
+                {t?.photoUrl ? (
+                  <div className="relative w-14 h-14 shrink-0">
+                    <img src={t.photoUrl} alt={t.studentName} className="w-14 h-14 rounded-full object-cover" />
+                    {t?.linkedinUrl && (
+                      <a href={t.linkedinUrl} target="_blank" rel="noopener noreferrer"
+                        className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#0A66C2] rounded-full flex items-center justify-center shadow hover:scale-110 transition-transform">
+                        <Linkedin className="w-3.5 h-3.5 text-white" />
+                      </a>
+                    )}
+                  </div>
+                ) : (
+                  <div className="relative w-14 h-14 shrink-0">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center text-white font-bold text-lg">
+                      {t?.studentName?.charAt(0)}
+                    </div>
+                    {t?.linkedinUrl && (
+                      <a href={t.linkedinUrl} target="_blank" rel="noopener noreferrer"
+                        className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#0A66C2] rounded-full flex items-center justify-center shadow hover:scale-110 transition-transform">
+                        <Linkedin className="w-3.5 h-3.5 text-white" />
+                      </a>
+                    )}
+                  </div>
+                )}
                 <div>
                   <div className="font-bold text-[#1A1A2E]">{t?.studentName}</div>
                   <div className="text-sm text-[#6B7280]">

@@ -23,5 +23,19 @@ export default defineConfig({
   build: {
     outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "react-vendor": ["react", "react-dom", "react-router"],
+          "ui-vendor": ["@radix-ui/react-dialog", "@radix-ui/react-dropdown-menu", "@radix-ui/react-tabs"],
+          "form-vendor": ["react-hook-form", "@hookform/resolvers", "zod"],
+          "query-vendor": ["@tanstack/react-query", "@trpc/client", "@trpc/react-query"],
+          "chart-vendor": ["recharts"],
+        },
+      },
+    },
+    target: "es2020",
+    minify: "esbuild",
+    sourcemap: false,
   },
 });

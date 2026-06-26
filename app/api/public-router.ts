@@ -14,11 +14,29 @@ import {
   payments,
 } from "@db/schema";
 import { eq, and, desc, asc } from "drizzle-orm";
+import { TRPCError } from "@trpc/server";
 import { buildMomoConfig, requestToPay, checkTransactionStatus } from "./lib/mtn-momo";
+import { rateLimit } from "./lib/rate-limiter";
+import { sendEnrollmentConfirmation, sendAdminNewEnrollmentAlert } from "./lib/email";
 
 export const publicRouter = createRouter({
   // ─── HEALTH CHECK ───
   health: publicQuery.query(() => ({ status: "ok", timestamp: new Date().toISOString() })),
+
+  // ─── HOMEPAGE (batched data) ───
+  homepage: createRouter({
+    data: publicQuery.query(async () => {
+      const db = getDb();
+      const [featuredCourses, allCoursesList, featuredTestimonials, latestNews, settings] = await Promise.all([
+        db.select().from(courses).where(and(eq(courses.isPublished, true), eq(courses.isFeatured, true))).orderBy(asc(courses.displayOrder)),
+        db.select().from(courses).where(eq(courses.isPublished, true)).orderBy(asc(courses.displayOrder)),
+        db.select().from(testimonials).where(and(eq(testimonials.isPublished, true), eq(testimonials.isApproved, true), eq(testimonials.isFeatured, true))).orderBy(desc(testimonials.submittedAt)).limit(6),
+        db.select().from(newsEvents).where(eq(newsEvents.isPublished, true)).orderBy(desc(newsEvents.publishedAt)).limit(3),
+        db.select().from(siteSettings).where(eq(siteSettings.id, "main")).then(r => r[0] ?? null),
+      ]);
+      return { featuredCourses, allCourses: allCoursesList, testimonials: featuredTestimonials, news: latestNews, settings };
+    }),
+  }),
 
   // ─── SETTINGS ───
   settings: createRouter({
@@ -224,6 +242,17 @@ export const publicRouter = createRouter({
       }),
   }),
 
+  // ─── CERTIFICATES ───
+  certificates: createRouter({
+    verify: publicQuery
+      .input(z.object({ certificateNumber: z.string() }))
+      .query(async ({ input }) => {
+        const db = getDb();
+        const result = await db.select().from(certificates).where(eq(certificates.certificateNumber, input.certificateNumber));
+        return result[0] ?? null;
+      }),
+  }),
+
   // ─── ENROLLMENTS ───
   enrollments: createRouter({
     submit: publicQuery
@@ -288,6 +317,27 @@ export const publicRouter = createRouter({
             .set({ enrollmentRef: refNum, status: "success", verifiedAt: new Date() })
             .where(eq(payments.referenceNumber, input.paymentRef));
         }
+        if (input.email) {
+          const course = await db.select({ title: courses.title }).from(courses).where(eq(courses.id, input.courseId)).then(r => r[0]);
+          await sendEnrollmentConfirmation({
+            to: input.email,
+            studentName: input.fullName,
+            courseName: course?.title ?? "Your selected course",
+            referenceNumber: refNum,
+            schedulePreference: input.schedulePreference,
+          });
+        }
+        const settings = await db.select({ email: siteSettings.email }).from(siteSettings).where(eq(siteSettings.id, "main")).then(r => r[0]);
+        if (settings?.email) {
+          const course = await db.select({ title: courses.title }).from(courses).where(eq(courses.id, input.courseId)).then(r => r[0]);
+          await sendAdminNewEnrollmentAlert({
+            adminEmail: settings.email,
+            studentName: input.fullName,
+            courseName: course?.title ?? "",
+            referenceNumber: refNum,
+            phone: input.phone,
+          });
+        }
         return { success: true, referenceNumber: refNum };
       }),
 
@@ -314,9 +364,14 @@ export const publicRouter = createRouter({
           courseId: z.number().optional(),
         })
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         const db = getDb();
         const refNum = `PI-PAY-${Date.now()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
+
+        const ip = ctx.req.headers.get("x-forwarded-for") ?? "unknown";
+        if (!rateLimit(`payment:${ip}`, 5, 60_000)) {
+          throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "Too many payment attempts. Wait a minute." });
+        }
 
         if (input.provider === "MOMO") {
           const momoConfig = buildMomoConfig();
@@ -353,22 +408,20 @@ export const publicRouter = createRouter({
           }
         }
 
-        // Fallback: auto-approve (Airtel or no MoMo credentials configured)
+        // Airtel: keep as pending until real webhook integration
         await db.insert(payments).values({
           referenceNumber: refNum,
-          provider: input.provider,
+          provider: "AIRTEL",
           amount: input.amount,
           phoneNumber: input.phoneNumber,
-          status: "success",
-          verifiedAt: new Date(),
+          status: "pending",
         });
         return {
           success: true,
           referenceNumber: refNum,
-          provider: input.provider,
-          amount: input.amount,
-          phoneNumber: input.phoneNumber,
-          status: "success",
+          provider: "AIRTEL",
+          status: "pending",
+          message: "Airtel Money integration coming soon. Your enrollment is received and our team will contact you to confirm payment via WhatsApp.",
         };
       }),
 

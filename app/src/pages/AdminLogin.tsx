@@ -18,15 +18,8 @@ export default function AdminLogin() {
   // Redirect if already logged in
   const adminToken = localStorage.getItem("admin_token");
   if (adminToken) {
-    try {
-      const payload = JSON.parse(atob(adminToken));
-      if (payload.exp > Date.now()) {
-        navigate("/admin/dashboard");
-        return null;
-      }
-    } catch {
-      localStorage.removeItem("admin_token");
-    }
+    navigate("/admin/dashboard");
+    return null;
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,16 +27,7 @@ export default function AdminLogin() {
     setError("");
     try {
       const result = await loginMutation.mutateAsync({ email, password });
-      const token = btoa(
-        JSON.stringify({
-          id: result.id,
-          name: result.name,
-          email: result.email,
-          role: result.role,
-          exp: Date.now() + 24 * 60 * 60 * 1000, // 24 hours
-        })
-      );
-      localStorage.setItem("admin_token", token);
+      localStorage.setItem("admin_token", result.token);
       navigate("/admin/dashboard");
     } catch (err: any) {
       setError(err.message || "Invalid credentials");
