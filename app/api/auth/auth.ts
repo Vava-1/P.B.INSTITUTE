@@ -93,7 +93,21 @@ export function createOAuthCallbackHandler() {
     }
 
     try {
-      const redirectUri = atob(state);
+      // SECURITY: verify state nonce. state is `${nonce}.${base64(redirectUri)}`.
+      // The nonce must match the oauth_state cookie set when the flow started.
+      const stateParts = state.split(".");
+      if (stateParts.length !== 2) {
+        return c.json({ error: "invalid state format" }, 400);
+      }
+      const [nonce, redirectB64] = stateParts;
+      const cookies = cookie.parse(c.req.raw.headers.get("cookie") || "");
+      const expectedNonce = cookies["oauth_state"];
+      if (!expectedNonce || expectedNonce !== nonce) {
+        return c.json({ error: "invalid or expired state (CSRF check failed)" }, 400);
+      }
+      const redirectUri = atob(redirectB64);
+      // Clear the one-time nonce cookie by setting it expired.
+      setCookie(c, "oauth_state", "", { path: "/", maxAge: 0 });
       const tokenResp = await exchangeAuthCode(code, redirectUri);
       const { userId } = await verifyAccessToken(tokenResp.access_token);
       const userProfile = await oauthUsers.getProfile(tokenResp.access_token);

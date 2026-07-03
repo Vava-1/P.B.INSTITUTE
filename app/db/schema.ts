@@ -8,7 +8,8 @@ import {
   int,
   date,
   boolean,
-  bigint,
+  index,
+  uniqueIndex,
 } from "drizzle-orm/mysql-core";
 
 // ─── ADMIN USERS ───
@@ -63,7 +64,12 @@ export const courses = mysqlTable("courses", {
   displayOrder: int("display_order").default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
-});
+}, (t) => ({
+  // Index for the public course list filter by category + published.
+  categoryPublishedIdx: index("courses_category_published_idx").on(t.category, t.isPublished),
+  // Index for "featured courses" homepage query.
+  featuredPublishedIdx: index("courses_featured_published_idx").on(t.isFeatured, t.isPublished),
+}));
 
 export type Course = typeof courses.$inferSelect;
 export type InsertCourse = typeof courses.$inferInsert;
@@ -81,7 +87,8 @@ export const enrollments = mysqlTable("enrollments", {
   nationality: varchar("nationality", { length: 100 }),
   nationalId: varchar("national_id", { length: 100 }),
   district: varchar("district", { length: 100 }),
-  courseId: bigint("course_id", { mode: "number", unsigned: true }).notNull(),
+  // FIXED: was bigint joining against int `courses.id`. Now int to match.
+  courseId: int("course_id").notNull(),
   languageOption: varchar("language_option", { length: 50 }),
   languageLevel: varchar("language_level", { length: 50 }),
   examOption: varchar("exam_option", { length: 50 }),
@@ -103,7 +110,16 @@ export const enrollments = mysqlTable("enrollments", {
   adminNotes: text("admin_notes"),
   submittedAt: timestamp("submitted_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
-});
+}, (t) => ({
+  // Lookup by reference number (already unique, but explicit for clarity).
+  referenceIdx: uniqueIndex("enrollments_reference_idx").on(t.referenceNumber),
+  // Status filter used by admin dashboard.
+  statusIdx: index("enrollments_status_idx").on(t.status),
+  // Email lookup (e.g. "find my enrollment").
+  emailIdx: index("enrollments_email_idx").on(t.email),
+  // Course join.
+  courseIdx: index("enrollments_course_idx").on(t.courseId),
+}));
 
 export type Enrollment = typeof enrollments.$inferSelect;
 export type InsertEnrollment = typeof enrollments.$inferInsert;
@@ -124,7 +140,9 @@ export const newsEvents = mysqlTable("news_events", {
   publishedAt: timestamp("published_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
-});
+}, (t) => ({
+  publishedCategoryIdx: index("news_published_category_idx").on(t.isPublished, t.category),
+}));
 
 export type NewsEvent = typeof newsEvents.$inferSelect;
 export type InsertNewsEvent = typeof newsEvents.$inferInsert;
@@ -164,7 +182,8 @@ export const testimonials = mysqlTable("testimonials", {
   studentName: varchar("student_name", { length: 255 }).notNull(),
   photoUrl: text("photo_url"),
   linkedinUrl: text("linkedin_url"),
-  courseId: bigint("course_id", { mode: "number", unsigned: true }),
+  // FIXED: was bigint; now int to match courses.id.
+  courseId: int("course_id"),
   courseName: varchar("course_name", { length: 255 }),
   completionYear: int("completion_year"),
   currentRole: varchar("current_role", { length: 255 }),
@@ -176,7 +195,9 @@ export const testimonials = mysqlTable("testimonials", {
   isPublished: boolean("is_published").default(false),
   submittedAt: timestamp("submitted_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull().$onUpdate(() => new Date()),
-});
+}, (t) => ({
+  publishedFeaturedIdx: index("testimonials_published_featured_idx").on(t.isPublished, t.isApproved, t.isFeatured),
+}));
 
 export type Testimonial = typeof testimonials.$inferSelect;
 export type InsertTestimonial = typeof testimonials.$inferInsert;
@@ -214,7 +235,10 @@ export const contactMessages = mysqlTable("contact_messages", {
   isRead: boolean("is_read").default(false),
   isReplied: boolean("is_replied").default(false),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (t) => ({
+  // Unread messages counter on admin dashboard.
+  isReadIdx: index("contact_messages_is_read_idx").on(t.isRead),
+}));
 
 export type ContactMessage = typeof contactMessages.$inferSelect;
 export type InsertContactMessage = typeof contactMessages.$inferInsert;
@@ -266,7 +290,14 @@ export const payments = mysqlTable("payments", {
   transactionId: varchar("transaction_id", { length: 100 }),
   initiatedAt: timestamp("initiated_at").defaultNow().notNull(),
   verifiedAt: timestamp("verified_at"),
-});
+}, (t) => ({
+  referenceIdx: uniqueIndex("payments_reference_idx").on(t.referenceNumber),
+  // Lookup payments by enrollment ref (admin "show payments for enrollment").
+  enrollmentRefIdx: index("payments_enrollment_ref_idx").on(t.enrollmentRef),
+  // Lookup by phone for ownership verification.
+  phoneIdx: index("payments_phone_idx").on(t.phoneNumber),
+  transactionIdIdx: index("payments_transaction_id_idx").on(t.transactionId),
+}));
 
 export type Payment = typeof payments.$inferSelect;
 export type InsertPayment = typeof payments.$inferInsert;
@@ -287,7 +318,9 @@ export const faqs = mysqlTable("faqs", {
   displayOrder: int("display_order").default(0),
   isPublished: boolean("is_published").default(true),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (t) => ({
+  publishedCategoryIdx: index("faqs_published_category_idx").on(t.isPublished, t.category),
+}));
 
 export type Faq = typeof faqs.$inferSelect;
 export type InsertFaq = typeof faqs.$inferInsert;
@@ -297,7 +330,8 @@ export const users = mysqlTable("users", {
   id: serial("id").primaryKey(),
   unionId: varchar("unionId", { length: 255 }).notNull().unique(),
   name: varchar("name", { length: 255 }),
-  email: varchar("email", { length: 320 }),
+  // FIXED: email is now unique to prevent duplicate OAuth accounts.
+  email: varchar("email", { length: 320 }).unique(),
   avatar: text("avatar"),
   role: mysqlEnum("role", ["user", "admin"]).default("user").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -315,10 +349,14 @@ export const certificates = mysqlTable("certificates", {
   studentName: varchar("student_name", { length: 255 }).notNull(),
   courseName: varchar("course_name", { length: 255 }).notNull(),
   completionDate: date("completion_date").notNull(),
-  enrollmentId: bigint("enrollment_id", { mode: "number", unsigned: true }),
+  // FIXED: was bigint; now int to match enrollments.id.
+  enrollmentId: int("enrollment_id"),
   issuedAt: timestamp("issued_at").defaultNow().notNull(),
   isValid: boolean("is_valid").default(true).notNull(),
-});
+}, (t) => ({
+  // Lookup by certificate number (verification flow).
+  certificateNumberIdx: uniqueIndex("certificates_number_idx").on(t.certificateNumber),
+}));
 
 export type Certificate = typeof certificates.$inferSelect;
 export type InsertCertificate = typeof certificates.$inferInsert;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Routes, Route, Link } from "react-router";
+import { useNavigate, useLocation, Routes, Route, Link } from "react-router";
 import {
   LayoutDashboard, Users, BookOpen, Newspaper,
   Settings, LogOut, Mail,
@@ -20,6 +20,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { trpc } from "@/providers/trpc";
+import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin/dashboard" },
@@ -33,6 +34,7 @@ const navItems = [
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [admin, setAdmin] = useState<{ name: string; email: string; role: string } | null>(null);
 
@@ -42,7 +44,13 @@ export default function AdminDashboard() {
       navigate("/admin");
       return;
     }
-    setAdmin({ name: "Admin", email: "", role: "admin" });
+    // Decode the JWT to get the admin's name/email/role for the sidebar.
+    try {
+      const payload = JSON.parse(atob(token.split(".")[1] ?? ""));
+      setAdmin({ name: payload.name ?? "Admin", email: payload.email ?? "", role: payload.role ?? "admin" });
+    } catch {
+      setAdmin({ name: "Admin", email: "", role: "admin" });
+    }
   }, [navigate]);
 
   const handleLogout = () => {
@@ -60,7 +68,7 @@ export default function AdminDashboard() {
           <img src="/images/PBI_logo.jpg" alt="PBI" className="h-8 w-auto rounded" />
           <span className="font-bold font-display">Admin</span>
         </div>
-        <button onClick={() => setSidebarOpen(!sidebarOpen)}>
+        <button onClick={() => setSidebarOpen(!sidebarOpen)} aria-label="Toggle navigation menu" aria-expanded={sidebarOpen}>
           {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
       </div>
@@ -89,10 +97,11 @@ export default function AdminDashboard() {
                 to={item.path}
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors ${
-                  location.pathname === item.path
+                  location.pathname.startsWith(item.path)
                     ? "bg-[#5E17EB] text-[#1A1A2E] font-semibold"
                     : "text-white/70 hover:bg-white/10 hover:text-white"
                 }`}
+                aria-current={location.pathname.startsWith(item.path) ? "page" : undefined}
               >
                 <item.icon className="w-5 h-5" />
                 {item.label}
@@ -294,7 +303,22 @@ function EnrollmentsPage() {
                     </select>
                   </td>
                   <td className="p-4">
-                    <button className="text-[#5E17EB] hover:text-[#5E17EB]">
+                    <button
+                      className="text-[#5E17EB] hover:text-[#5E17EB] transition-colors"
+                      aria-label={`View details for ${e.fullName}`}
+                      title="View details"
+                      onClick={() => {
+                        alert(
+                          `Enrollment: ${e.fullName}\n` +
+                          `Reference: ${e.referenceNumber}\n` +
+                          `Phone: ${e.phone}\n` +
+                          `Email: ${e.email ?? "—"}\n` +
+                          `Status: ${e.status}\n` +
+                          `Payment: ${e.paymentStatus ?? "—"}\n` +
+                          `Submitted: ${e.submittedAt ? new Date(e.submittedAt).toLocaleString() : "—"}`
+                        );
+                      }}
+                    >
                       <Eye className="w-4 h-4" />
                     </button>
                   </td>
@@ -314,6 +338,7 @@ function CoursesAdminPage() {
   const createMutation = trpc.admin.courseCreate.useMutation({ onSuccess: () => refetch() });
   const updateMutation = trpc.admin.courseUpdate.useMutation({ onSuccess: () => refetch() });
   const deleteMutation = trpc.admin.courseDelete.useMutation({ onSuccess: () => refetch() });
+  const [confirmNode, confirm] = useConfirmDialog();
 
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<any>(null);
@@ -346,7 +371,7 @@ function CoursesAdminPage() {
 
   const handleSave = () => {
     if (editing) {
-      updateMutation.mutate({ id: editing.id, data: form });
+      updateMutation.mutate({ id: editing.id, data: form as any });
     } else {
       createMutation.mutate(form as any);
     }
@@ -459,7 +484,7 @@ function CoursesAdminPage() {
                   <Edit className="w-3.5 h-3.5" /> Edit
                 </button>
                 <button
-                  onClick={() => { if (confirm("Delete this course?")) deleteMutation.mutate({ id: course.id }); }}
+                  onClick={async () => { if (await confirm("Delete this course? This cannot be undone.", "Delete course")) deleteMutation.mutate({ id: course.id }); }}
                   className="text-xs flex items-center gap-1 text-red-500 hover:text-red-700 transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5" /> Delete
@@ -469,6 +494,7 @@ function CoursesAdminPage() {
           </Card>
         ))}
       </div>
+      {confirmNode}
     </div>
   );
 }
@@ -479,6 +505,7 @@ function NewsAdminPage() {
   const createMutation = trpc.admin.newsCreate.useMutation({ onSuccess: () => refetch() });
   const updateMutation = trpc.admin.newsUpdate.useMutation({ onSuccess: () => refetch() });
   const deleteMutation = trpc.admin.newsDelete.useMutation({ onSuccess: () => refetch() });
+  const [confirmNode, confirm] = useConfirmDialog();
 
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<any>(null);
@@ -509,7 +536,7 @@ function NewsAdminPage() {
 
   const handleSave = () => {
     if (editing) {
-      updateMutation.mutate({ id: editing.id, data: form });
+      updateMutation.mutate({ id: editing.id, data: form as any });
     } else {
       createMutation.mutate(form as any);
     }
@@ -615,7 +642,7 @@ function NewsAdminPage() {
                     <Edit className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={() => { if (confirm("Delete this article?")) deleteMutation.mutate({ id: item.id }); }}
+                    onClick={async () => { if (await confirm("Delete this article? This cannot be undone.", "Delete article")) deleteMutation.mutate({ id: item.id }); }}
                     className="text-red-500 hover:text-red-700 transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -626,6 +653,7 @@ function NewsAdminPage() {
           </Card>
         ))}
       </div>
+      {confirmNode}
     </div>
   );
 }
@@ -633,6 +661,7 @@ function NewsAdminPage() {
 // ─── TESTIMONIALS ADMIN ───
 function TestimonialsAdminPage() {
   const { data: testimonials, refetch } = trpc.admin.testimonialList.useQuery(undefined, { retry: false });
+  const [confirmNode, confirm] = useConfirmDialog();
   const updateMutation = trpc.admin.testimonialUpdate.useMutation({ onSuccess: () => refetch() });
   const deleteMutation = trpc.admin.testimonialDelete.useMutation({ onSuccess: () => refetch() });
   const createMutation = trpc.admin.testimonialCreate.useMutation({ onSuccess: () => refetch() });
@@ -777,10 +806,10 @@ function TestimonialsAdminPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <button onClick={() => openEdit(t)} className="p-2 text-[#6B7280] hover:text-[#5E17EB] hover:bg-[#EDE7FF] rounded transition-colors">
+                  <button onClick={() => openEdit(t)} aria-label={`Edit testimonial from ${t.studentName}`} className="p-2 text-[#6B7280] hover:text-[#5E17EB] hover:bg-[#EDE7FF] rounded transition-colors">
                     <Edit className="w-4 h-4" />
                   </button>
-                  <button onClick={() => { if (confirm("Delete this testimonial?")) deleteMutation.mutate({ id: t.id }); }}
+                  <button onClick={async () => { if (await confirm("Delete this testimonial? This cannot be undone.", "Delete testimonial")) deleteMutation.mutate({ id: t.id }); }} aria-label={`Delete testimonial from ${t.studentName}`}
                     className="p-2 text-[#6B7280] hover:text-red-500 hover:bg-red-50 rounded transition-colors">
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -796,6 +825,7 @@ function TestimonialsAdminPage() {
           </Card>
         ))}
       </div>
+      {confirmNode}
     </div>
   );
 }

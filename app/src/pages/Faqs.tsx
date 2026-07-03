@@ -108,6 +108,9 @@ export default function Faqs() {
                 >
                   <button
                     onClick={() => setOpenId(isOpen ? null : faq.id)}
+                    aria-expanded={isOpen}
+                    aria-controls={`faq-answer-${faq.id}`}
+                    id={`faq-button-${faq.id}`}
                     className="w-full flex items-start justify-between p-6 text-left"
                   >
                     <div className="flex-1 pr-4">
@@ -127,7 +130,7 @@ export default function Faqs() {
                   </button>
                   {isOpen && (
                     <CardContent className="pt-0 pb-6 px-6">
-                      <p className="text-[#6B7280] leading-relaxed">{faq.answer}</p>
+                      <p id={`faq-answer-${faq.id}`} role="region" aria-labelledby={`faq-button-${faq.id}`} className="text-[#6B7280] leading-relaxed">{faq.answer}</p>
                     </CardContent>
                   )}
                 </Card>

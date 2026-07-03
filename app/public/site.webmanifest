@@ -1,0 +1,17 @@
+{
+  "name": "Pacemaker Institute",
+  "short_name": "PBI",
+  "description": "Pacemaker Institute Kigali — professional vocational training",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#5E17EB",
+  "icons": [
+    {
+      "src": "/images/PBI_logo.jpg",
+      "sizes": "192x192 512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}

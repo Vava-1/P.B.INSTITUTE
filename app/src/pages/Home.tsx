@@ -39,9 +39,15 @@ export default function Home() {
   const news = data?.news ?? [];
   const settings = data?.settings;
 
-  const announcementMsgs = settings?.announcementMessages
-    ? JSON.parse(settings.announcementMessages as string)
-    : [];
+  const announcementMsgs = (() => {
+    if (!settings?.announcementMessages) return [];
+    try {
+      const parsed = JSON.parse(settings.announcementMessages as string);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  })();
   const [announceIdx, setAnnounceIdx] = useState(0);
 
   useEffect(() => {
@@ -735,14 +741,17 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
             <div className="flex items-center justify-center gap-3 mt-8">
               <button
                 onClick={prev}
+                aria-label="Previous testimonial"
                 className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#EDE7FF] transition-colors"
               >
-                <ChevronLeft className="w-5 h-5" />
+                <ChevronLeft className="w-5 h-5" aria-hidden="true" />
               </button>
               {testimonials.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrent(i)}
+                  aria-label={`Go to testimonial ${i + 1}`}
+                  aria-current={i === current}
                   className={`w-2.5 h-2.5 rounded-full transition-colors ${
                     i === current ? "bg-[#5E17EB]" : "bg-gray-300"
                   }`}
@@ -750,9 +759,10 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
               ))}
               <button
                 onClick={next}
+                aria-label="Next testimonial"
                 className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#EDE7FF] transition-colors"
               >
-                <ChevronRight className="w-5 h-5" />
+                <ChevronRight className="w-5 h-5" aria-hidden="true" />
               </button>
             </div>
           </div>

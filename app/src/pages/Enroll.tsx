@@ -83,7 +83,6 @@ export default function Enroll() {
     try {
       const result = await payMutation.mutateAsync({
         provider: formData.paymentProvider as "MOMO" | "AIRTEL",
-        amount: courseFee,
         phoneNumber: formData.paymentPhone,
         courseId: parseInt(formData.courseId),
       });

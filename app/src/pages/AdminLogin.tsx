@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Shield, LogIn, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -14,12 +14,24 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState("");
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
-  // Redirect if already logged in
-  const adminToken = localStorage.getItem("admin_token");
-  if (adminToken) {
-    navigate("/admin/dashboard");
-    return null;
+  // FIX: redirect-if-logged-in was happening during render (anti-pattern). Move to useEffect.
+  useEffect(() => {
+    const adminToken = localStorage.getItem("admin_token");
+    if (adminToken) {
+      navigate("/admin/dashboard", { replace: true });
+      return;
+    }
+    setCheckingAuth(false);
+  }, [navigate]);
+
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-brand">
+        <div className="animate-spin w-8 h-8 border-4 border-white border-t-transparent rounded-full" />
+      </div>
+    );
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,14 +47,16 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E] flex items-center justify-center px-4">
-      <div className="absolute inset-0 diagonal-stripe opacity-30" />
+    <div className="min-h-screen bg-gradient-to-br from-[#1A1A2E] via-brand to-[#1A1A2E] flex items-center justify-center px-4">
+      <div className="absolute inset-0 diagonal-stripe opacity-30" aria-hidden="true" />
       <div className="relative w-full max-w-md">
         <div className="text-center mb-8">
           <img
             src="/images/PBI_logo.jpg"
             alt="Pacemaker Institute"
             className="h-20 w-auto rounded-lg mx-auto mb-4 shadow-lg"
+            width={80}
+            height={80}
           />
           <h1 className="text-2xl font-bold text-white font-display">
             Admin Portal
@@ -53,46 +67,52 @@ export default function AdminLogin() {
         <Card className="border-0 shadow-2xl">
           <CardContent className="p-8">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-lg bg-[#5E17EB]/10 flex items-center justify-center">
-                <Shield className="w-5 h-5 text-[#5E17EB]" />
+              <div className="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center">
+                <Shield className="w-5 h-5 text-brand" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-[#1A1A2E]">Sign In</h2>
-                <p className="text-sm text-[#6B7280]">Enter your credentials</p>
+                <h2 className="text-lg font-bold text-body">Sign In</h2>
+                <p className="text-sm text-muted-foreground">Enter your credentials</p>
               </div>
             </div>
 
             {error && (
-              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+              <div role="alert" className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
                 {error}
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <Label>Email Address</Label>
+                <Label htmlFor="admin-email">Email Address</Label>
                 <Input
+                  id="admin-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="admin@pacemakerinstitute.ac.rw"
                   required
+                  autoComplete="email"
                 />
               </div>
               <div>
-                <Label>Password</Label>
+                <Label htmlFor="admin-password">Password</Label>
                 <div className="relative">
                   <Input
+                    id="admin-password"
                     type={showPass ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Enter your password"
                     required
+                    autoComplete="current-password"
+                    className="pr-10"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPass(!showPass)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280]"
+                    aria-label={showPass ? "Hide password" : "Show password"}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   >
                     {showPass ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                   </button>
@@ -101,7 +121,7 @@ export default function AdminLogin() {
               <Button
                 type="submit"
                 disabled={loginMutation.isPending}
-                className="w-full bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] hover:from-[#5E17EB] hover:to-[#5E17EB] font-semibold"
+                className="w-full bg-brand text-white hover:bg-brand-dark font-semibold"
               >
                 <LogIn className="w-4 h-4 mr-2" />
                 {loginMutation.isPending ? "Signing in..." : "Sign In"}
@@ -109,7 +129,7 @@ export default function AdminLogin() {
             </form>
 
             <div className="mt-6 pt-6 border-t text-center">
-              <a href="/" className="text-sm text-[#5E17EB] hover:text-[#5E17EB] transition-colors">
+              <a href="/" className="text-sm text-brand hover:text-brand-dark transition-colors">
                 ← Back to Website
               </a>
             </div>

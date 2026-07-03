@@ -51,7 +51,7 @@ async function seed() {
   }
 
   // ─── COURSES ───
-  const courseData = [
+  const courseData: Array<typeof courses.$inferInsert> = [
     {
       slug: "languages-conversational",
       title: "Language Courses",
@@ -535,24 +535,29 @@ async function seed() {
   console.log("✅ 6 gallery items seeded");
 
   // ─── ADMIN USER ───
-  const adminEmail = "mnasida@gmail.com";
-  const adminPassword = "Tonde@123";
-  const hashedPassword = hashSync(adminPassword, 12);
-  const existingAdmin = await db.select().from(adminUsers).where(eq(adminUsers.email, adminEmail));
-  if (existingAdmin.length === 0) {
-    await db.insert(adminUsers).values({
-      name: "System Administrator",
-      email: adminEmail,
-      passwordHash: hashedPassword,
-      role: "super_admin",
-      isActive: true,
-    });
-    console.log(`✅ Admin user created (${adminEmail})`);
+  // SECURITY: Admin credentials are sourced from environment variables.
+  // Never commit real passwords. The seed only CREATES the admin on first run;
+  // it never resets an existing admin's password.
+  const adminEmail = process.env.SEED_ADMIN_EMAIL;
+  const adminPassword = process.env.SEED_ADMIN_PASSWORD;
+  if (adminEmail && adminPassword) {
+    const existingAdmin = await db.select().from(adminUsers).where(eq(adminUsers.email, adminEmail));
+    if (existingAdmin.length === 0) {
+      const hashedPassword = hashSync(adminPassword, 12);
+      await db.insert(adminUsers).values({
+        name: process.env.SEED_ADMIN_NAME ?? "System Administrator",
+        email: adminEmail,
+        passwordHash: hashedPassword,
+        role: "super_admin",
+        isActive: true,
+      });
+      console.log(`✅ Admin user created (${adminEmail})`);
+    } else {
+      console.log(`ℹ️  Admin user already exists (${adminEmail}) — password not changed.`);
+    }
   } else {
-    await db.update(adminUsers)
-      .set({ passwordHash: hashedPassword, isActive: true })
-      .where(eq(adminUsers.email, adminEmail));
-    console.log(`✅ Admin password updated (${adminEmail})`);
+    console.log("⚠️  SEED_ADMIN_EMAIL / SEED_ADMIN_PASSWORD not set — skipping admin seed.");
+    console.log("    Create an admin manually with: npm run db:seed -- --create-admin");
   }
 
   console.log("\n🎉 Seed complete!");

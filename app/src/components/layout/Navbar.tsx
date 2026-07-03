@@ -81,8 +81,17 @@ export default function Navbar() {
                     className="relative"
                     onMouseEnter={() => setDropdownOpen(true)}
                     onMouseLeave={() => setDropdownOpen(false)}
+                    onFocus={() => setDropdownOpen(true)}
+                    onBlur={(e) => {
+                      // Close only if focus leaves the entire dropdown container.
+                      if (!e.currentTarget.contains(e.relatedTarget as Node)) setDropdownOpen(false);
+                    }}
                   >
                     <button
+                      type="button"
+                      aria-haspopup="menu"
+                      aria-expanded={dropdownOpen}
+                      onClick={() => setDropdownOpen((v) => !v)}
                       className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors rounded-md ${
                         showBg
                           ? "text-[#1A1A2E] hover:text-[#5E17EB] hover:bg-[#EDE7FF]"
@@ -93,14 +102,15 @@ export default function Navbar() {
                       <ChevronDown className="w-4 h-4" />
                     </button>
                     {dropdownOpen && (
-                      <div className="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-50">
+                      <div role="menu" className="absolute top-full left-0 mt-1 w-56 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-50">
                         {link.children.map((child) => (
                           <Link
                             key={child.label}
                             to={child.href}
+                            role="menuitem"
                             className="flex items-center gap-2 px-4 py-2.5 text-sm text-[#1A1A2E] hover:bg-[#EDE7FF] hover:text-[#5E17EB] transition-colors"
                           >
-                            <GraduationCap className="w-4 h-4 text-[#5E17EB]" />
+                            <GraduationCap className="w-4 h-4 text-[#5E17EB]" aria-hidden="true" />
                             {child.label}
                           </Link>
                         ))}
@@ -111,6 +121,7 @@ export default function Navbar() {
                   <Link
                     key={link.label}
                     to={link.href}
+                    aria-current={location.pathname === link.href ? "page" : undefined}
                     className={`px-3 py-2 text-sm font-medium transition-colors rounded-md ${
                       showBg
                         ? "text-[#1A1A2E] hover:text-[#5E17EB] hover:bg-[#EDE7FF]"
@@ -136,6 +147,8 @@ export default function Navbar() {
             {/* Mobile Toggle */}
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileOpen}
               className={`lg:hidden p-2 rounded-md ${
                 showBg ? "text-[#1A1A2E]" : "text-white"
               }`}

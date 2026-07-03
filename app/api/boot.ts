@@ -1,5 +1,7 @@
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
+import { secureHeaders } from "hono/secure-headers";
+import { cors } from "hono/cors";
 import type { HttpBindings } from "@hono/node-server";
 import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "./router";
@@ -8,12 +10,31 @@ import { env } from "./lib/env";
 import { createOAuthCallbackHandler } from "./auth/auth";
 import { Paths } from "@contracts/constants";
 import { getDb } from "./queries/connection";
-import { courses, newsEvents } from "@db/schema";
+import { courses, newsEvents, payments } from "@db/schema";
 import { eq, asc, desc } from "drizzle-orm";
+import { buildMomoConfig, checkTransactionStatus } from "./lib/mtn-momo";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
-app.use(bodyLimit({ maxSize: 50 * 1024 * 1024 }));
+// SECURITY: 1 MB is more than enough for tRPC JSON payloads. Was 50 MB.
+app.use(bodyLimit({ maxSize: 1 * 1024 * 1024 }));
+
+// SECURITY: security headers (X-Content-Type-Options, X-Frame-Options, CSP-lite, etc.)
+app.use("*", secureHeaders());
+
+// SECURITY: CORS allowlist. The SPA is same-origin, so we only allow the
+// configured OPEN_URL (used by the OAuth IdP for cross-origin calls if needed).
+if (env.openUrl) {
+  app.use(
+    "/api/*",
+    cors({
+      origin: [env.openUrl],
+      credentials: true,
+      allowMethods: ["GET", "POST", "OPTIONS"],
+      allowHeaders: ["Content-Type", "x-admin-token", "x-trpc-source"],
+    }),
+  );
+}
 
 // Cache control for public API responses
 app.use("/api/trpc/public.settings.*", async (c, next) => {
@@ -25,10 +46,11 @@ app.use("/api/trpc/public.courses.*", async (c, next) => {
   c.res.headers.set("Cache-Control", "public, s-maxage=120, stale-while-revalidate=30");
 });
 
-app.get("/health", (c) => {
+// HEALTH: actually probe the DB instead of fire-and-forget.
+app.get("/health", async (c) => {
   try {
     const db = getDb();
-    db.execute("SELECT 1").catch(() => {});
+    await db.execute("SELECT 1");
     return c.json({
       status: "ok",
       timestamp: new Date().toISOString(),
@@ -37,7 +59,10 @@ app.get("/health", (c) => {
       version: process.env.npm_package_version ?? "unknown",
     });
   } catch (e) {
-    return c.json({ status: "error", db: "disconnected", error: (e as Error).message }, 503);
+    return c.json(
+      { status: "error", db: "disconnected", error: (e as Error).message },
+      503,
+    );
   }
 });
 
@@ -69,6 +94,55 @@ app.get("/sitemap.xml", async (c) => {
 });
 
 app.get(Paths.oauthCallback, createOAuthCallbackHandler());
+
+// MTN MoMo webhook — MTN calls this when a requestToPay completes.
+// Idempotent: safe to receive the same notification multiple times.
+app.post("/api/momo/webhook", async (c) => {
+  try {
+    const body = (await c.req.json().catch(() => null)) as any;
+    if (!body || !body.referenceId) {
+      return c.json({ status: "ignored", reason: "no referenceId" }, 200);
+    }
+    const db = getDb();
+    // Find the local payment row by MTN's referenceId (stored as transactionId).
+    const payment = await db
+      .select()
+      .from(payments)
+      .where(eq(payments.transactionId, body.referenceId))
+      .then(r => r[0] ?? null);
+    if (!payment) {
+      // Not our payment — acknowledge so MTN doesn't retry.
+      return c.json({ status: "ignored", reason: "unknown reference" }, 200);
+    }
+    // Only update if still pending — idempotent.
+    if (payment.status !== "pending") {
+      return c.json({ status: "ok", reason: "already finalized" }, 200);
+    }
+    const momoConfig = buildMomoConfig();
+    if (!momoConfig) {
+      return c.json({ status: "error", reason: "momo not configured" }, 500);
+    }
+    // Verify with MTN before trusting the webhook body.
+    const { status: mtnStatus } = await checkTransactionStatus(momoConfig, body.referenceId);
+    if (mtnStatus === "SUCCESSFUL") {
+      await db
+        .update(payments)
+        .set({ status: "success", verifiedAt: new Date() })
+        .where(eq(payments.id, payment.id));
+    } else if (mtnStatus === "FAILED" || mtnStatus === "CANCELLED") {
+      await db
+        .update(payments)
+        .set({ status: mtnStatus === "CANCELLED" ? "cancelled" : "failed" })
+        .where(eq(payments.id, payment.id));
+    }
+    return c.json({ status: "ok" }, 200);
+  } catch (e) {
+    console.error("[momo webhook] error:", e);
+    // Return 500 so MTN retries.
+    return c.json({ status: "error" }, 500);
+  }
+});
+
 app.use("/api/trpc/*", async (c) => {
   return fetchRequestHandler({
     endpoint: "/api/trpc",
@@ -81,13 +155,37 @@ app.all("/api/*", (c) => c.json({ error: "Not Found" }, 404));
 
 export default app;
 
+// ─── Production server ───
+let server: { close: (cb?: () => void) => void } | null = null;
+
 if (env.isProduction) {
   const { serve } = await import("@hono/node-server");
   const { serveStaticFiles } = await import("./lib/vite");
   serveStaticFiles(app);
 
   const port = parseInt(process.env.PORT || "3000");
-  serve({ fetch: app.fetch, port, hostname: "0.0.0.0" }, () => {
+  server = serve({ fetch: app.fetch, port, hostname: "0.0.0.0" }, () => {
     console.log(`Server running on http://0.0.0.0:${port}/`);
   });
+
+  // GRACEFUL SHUTDOWN: drain in-flight requests and close the DB pool on SIGTERM/SIGINT.
+  // Railway sends SIGTERM when redeploying.
+  const shutdown = (signal: string) => {
+    console.log(`[shutdown] received ${signal}, draining...`);
+    if (server) {
+      server.close(() => {
+        console.log("[shutdown] HTTP server closed.");
+        process.exit(0);
+      });
+      // Force-exit after 10s if drain stalls.
+      setTimeout(() => {
+        console.warn("[shutdown] forcing exit after timeout.");
+        process.exit(1);
+      }, 10_000).unref();
+    } else {
+      process.exit(0);
+    }
+  };
+  process.on("SIGTERM", () => shutdown("SIGTERM"));
+  process.on("SIGINT", () => shutdown("SIGINT"));
 }

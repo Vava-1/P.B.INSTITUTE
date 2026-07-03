@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+/* Fonts loaded via <link> in index.html with preconnect for performance. */
 
 @tailwind base;
 @tailwind components;
@@ -6,41 +6,59 @@
 
 @layer base {
   :root {
-    --color-primary: #1A3C6E;
-    --color-secondary: #F4A400;
-    --color-accent: #00B894;
-    --color-dark: #0D1B2A;
-    --color-light: #F8F9FC;
-    --color-text: #1E1E2E;
-    --color-muted: #6B7280;
-    --color-gold: #F4A400;
-    --color-navy: #001233;
-    --color-midnight: #023E7D;
-    --color-royal: #0353A4;
-    --color-bright: #0466C8;
-    --color-institute-gold: #D4A418;
-    --color-metallic: #E0E0E0;
+    /* Brand palette (single source of truth — Tailwind reads these via tailwind.config.js). */
+    --brand: 263 70% 50%;          /* #5E17EB purple */
+    --brand-foreground: 0 0% 100%; /* white */
+    --brand-light: 263 60% 95%;    /* #EDE7FF lavender */
+    --brand-dark: 263 70% 40%;     /* #4a12c0 hover */
 
+    --gold: 39 95% 50%;            /* #F4A400 */
+    --gold-foreground: 222 47% 11%; /* dark navy text on gold */
+
+    /* shadcn semantic tokens (HSL). primary now matches brand purple, not slate. */
     --background: 0 0% 100%;
     --foreground: 222 47% 11%;
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
-    --primary: 222 47% 11%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
+    --primary: 263 70% 50%;            /* = brand purple */
+    --primary-foreground: 0 0% 100%;   /* white on purple */
+    --secondary: 263 60% 95%;          /* = brand-light lavender */
     --secondary-foreground: 222 47% 11%;
     --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 210 40% 96%;
+    --muted-foreground: 222 20% 35%;   /* darker than before — WCAG AA on lavender bg */
+    --accent: 263 60% 95%;
     --accent-foreground: 222 47% 11%;
     --destructive: 0 84% 60%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive-foreground: 0 0% 100%;
     --border: 214 32% 91%;
     --input: 214 32% 91%;
-    --ring: 222 47% 11%;
+    --ring: 263 70% 50%;
     --radius: 0.5rem;
+  }
+
+  /* Dark mode tokens (ThemeProvider can apply .dark on <html>). */
+  .dark {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 98%;
+    --card: 222 40% 14%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222 40% 14%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 263 70% 60%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 222 30% 20%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 222 30% 20%;
+    --muted-foreground: 210 20% 70%;
+    --accent: 222 30% 20%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 70% 50%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 222 30% 25%;
+    --input: 222 30% 25%;
+    --ring: 263 70% 60%;
   }
 
   * {
@@ -58,6 +76,11 @@
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', serif;
+  }
+
+  /* Visible focus ring for keyboard users. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-brand ring-offset-2 ring-offset-background;
   }
 }
 

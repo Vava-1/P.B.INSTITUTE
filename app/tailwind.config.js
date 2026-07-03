@@ -6,8 +6,14 @@ module.exports = {
     extend: {
       colors: {
         brand: {
-          DEFAULT: "#5E17EB",
-          light: "#EDE7FF",
+          DEFAULT: "hsl(var(--brand))",
+          foreground: "hsl(var(--brand-foreground))",
+          light: "hsl(var(--brand-light))",
+          dark: "hsl(var(--brand-dark))",
+        },
+        gold: {
+          DEFAULT: "hsl(var(--gold))",
+          foreground: "hsl(var(--gold-foreground))",
         },
         body: "#1A1A2E",
         border: "hsl(var(--border))",
@@ -43,16 +49,11 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar-background))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
-        },
+      },
+      fontFamily: {
+        display: ['"Playfair Display"', 'serif'],
+        body: ['Inter', 'sans-serif'],
+        sans: ['Inter', 'sans-serif'],
       },
       borderRadius: {
         xl: "calc(var(--radius) + 4px)",

@@ -1,0 +1,21 @@
+# Railway deployment config.
+# See: https://docs.railway.app/deploy/config-as-code
+
+[deploy]
+# Healthcheck path — Railway polls this to know when the app is ready.
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+# Railway will restart the container if the healthcheck fails this many times.
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 5
+
+# Run DB migrations as a pre-deploy step (before the new release takes traffic).
+# This requires DATABASE_URL to be set in the Railway service.
+[deploy.preDeployHooks]
+# Note: drizzle-kit needs to be available. It's in devDependencies, so we
+# install full deps in the preDeploy hook, run migrations, then the runtime
+# image (which has only production deps) starts.
+commands = [
+  "npm ci",
+  "npm run db:migrate:prod || npm run db:push:dev"
+]

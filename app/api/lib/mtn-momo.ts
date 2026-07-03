@@ -21,6 +21,11 @@ async function getAccessToken(config: MomoConfig): Promise<string> {
   if (cachedToken && Date.now() < cachedToken.expiry) return cachedToken.token;
 
   if (!config.apiUser || !config.apiKey) {
+    // SECURITY: do not auto-provision an API user in production — that would
+    // silently mint credentials and is a sign of misconfiguration. Fail loudly.
+    if (process.env.NODE_ENV === "production") {
+      throw new Error("MTN_MOMO_API_USER / MTN_MOMO_API_KEY must be set in production.");
+    }
     await setupApiUser(config);
   }
 
@@ -76,9 +81,13 @@ async function setupApiUser(config: MomoConfig): Promise<void> {
   (config as any).apiUser = referenceId;
   (config as any).apiKey = keyData.apiKey;
 
-  console.log("[MTN MoMo] Created API User:", referenceId);
-  console.log("[MTN MoMo] API Key:", keyData.apiKey);
-  console.log("[MTN MoMo] Save these in your .env for future runs.");
+  // SECURITY: never log the API key in production. Only emit a one-time
+  // bootstrap message in non-prod so operators know to save the credentials.
+  if (process.env.NODE_ENV !== "production") {
+    console.log("[MTN MoMo] Created API User:", referenceId);
+    console.log("[MTN MoMo] API Key provisioned. Save MTN_MOMO_API_USER and MTN_MOMO_API_KEY to your .env for future runs.");
+    console.log("[MTN MoMo] (API key value intentionally not printed.)");
+  }
 }
 
 export async function requestToPay(

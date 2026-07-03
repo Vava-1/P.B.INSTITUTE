@@ -1,6 +1,25 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY ?? "");
+// Lazy-init so the module loads even when RESEND_API_KEY is unset.
+let _resend: Resend | null = null;
+function getResend(): Resend | null {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return null;
+  if (!_resend) _resend = new Resend(key);
+  return _resend;
+}
+
+// SECURITY: escape user-controlled text before interpolating into HTML.
+// Prevents HTML injection in email clients (phishing via injected <a> tags, etc.).
+function escapeHtml(input: string | undefined | null): string {
+  if (!input) return "";
+  return String(input)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 export async function sendEnrollmentConfirmation(params: {
   to: string;
@@ -9,8 +28,18 @@ export async function sendEnrollmentConfirmation(params: {
   referenceNumber: string;
   schedulePreference?: string;
 }) {
-  if (!process.env.RESEND_API_KEY) return;
+  if (!process.env.RESEND_API_KEY) {
+    console.warn("[email] RESEND_API_KEY not set — skipping enrollment confirmation email.");
+    return;
+  }
 
+  const studentName = escapeHtml(params.studentName);
+  const courseName = escapeHtml(params.courseName);
+  const referenceNumber = escapeHtml(params.referenceNumber);
+  const schedulePreference = params.schedulePreference ? escapeHtml(params.schedulePreference) : null;
+
+  const resend = getResend();
+  if (!resend) return;
   await resend.emails.send({
     from: "Pacemaker Institute <noreply@pacemakerinstitute.ac.rw>",
     to: params.to,
@@ -20,12 +49,12 @@ export async function sendEnrollmentConfirmation(params: {
         <div style="background: linear-gradient(135deg, #1A1A2E, #5E17EB); padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 24px;">
           <h1 style="color: white; font-size: 24px; margin: 0;">Enrollment Received!</h1>
         </div>
-        <p>Dear <strong>${params.studentName}</strong>,</p>
-        <p>Thank you for applying to <strong>${params.courseName}</strong> at Pacemaker Institute.</p>
+        <p>Dear <strong>${studentName}</strong>,</p>
+        <p>Thank you for applying to <strong>${courseName}</strong> at Pacemaker Institute.</p>
         <div style="background: #EDE7FF; border-radius: 8px; padding: 16px; margin: 20px 0;">
-          <p style="margin: 0;"><strong>Reference Number:</strong> ${params.referenceNumber}</p>
-          <p style="margin: 8px 0 0;"><strong>Course:</strong> ${params.courseName}</p>
-          ${params.schedulePreference ? `<p style="margin: 8px 0 0;"><strong>Schedule:</strong> ${params.schedulePreference}</p>` : ""}
+          <p style="margin: 0;"><strong>Reference Number:</strong> ${referenceNumber}</p>
+          <p style="margin: 8px 0 0;"><strong>Course:</strong> ${courseName}</p>
+          ${schedulePreference ? `<p style="margin: 8px 0 0;"><strong>Schedule:</strong> ${schedulePreference}</p>` : ""}
         </div>
         <p>Our team will contact you within <strong>24\u201348 hours</strong> to confirm your enrollment and provide next steps.</p>
         <p>Questions? WhatsApp us: <a href="https://wa.me/250786053720">+250 786 053 720</a></p>
@@ -43,8 +72,18 @@ export async function sendAdminNewEnrollmentAlert(params: {
   referenceNumber: string;
   phone: string;
 }) {
-  if (!process.env.RESEND_API_KEY) return;
+  if (!process.env.RESEND_API_KEY) {
+    console.warn("[email] RESEND_API_KEY not set — skipping admin alert email.");
+    return;
+  }
 
+  const studentName = escapeHtml(params.studentName);
+  const courseName = escapeHtml(params.courseName);
+  const referenceNumber = escapeHtml(params.referenceNumber);
+  const phone = escapeHtml(params.phone);
+
+  const resend = getResend();
+  if (!resend) return;
   await resend.emails.send({
     from: "Pacemaker System <system@pacemakerinstitute.ac.rw>",
     to: params.adminEmail,
@@ -52,10 +91,10 @@ export async function sendAdminNewEnrollmentAlert(params: {
     html: `
       <p><strong>New enrollment received!</strong></p>
       <ul>
-        <li><strong>Student:</strong> ${params.studentName}</li>
-        <li><strong>Course:</strong> ${params.courseName}</li>
-        <li><strong>Phone:</strong> ${params.phone}</li>
-        <li><strong>Reference:</strong> ${params.referenceNumber}</li>
+        <li><strong>Student:</strong> ${studentName}</li>
+        <li><strong>Course:</strong> ${courseName}</li>
+        <li><strong>Phone:</strong> ${phone}</li>
+        <li><strong>Reference:</strong> ${referenceNumber}</li>
       </ul>
       <a href="https://pacemakerinstitute.ac.rw/admin/enrollments" style="display: inline-block; padding: 10px 20px; background: #5E17EB; color: white; border-radius: 6px; text-decoration: none;">View in Admin</a>
     `,

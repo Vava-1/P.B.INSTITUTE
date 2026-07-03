@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createRouter, adminQuery, publicQuery } from "./middleware";
+import { createRouter, adminQuery, superAdminQuery, contentAdminQuery, financeAdminQuery, publicQuery } from "./middleware";
 import { getDb } from "./queries/connection";
 import {
   courses,
@@ -10,12 +10,98 @@ import {
   siteSettings,
   adminUsers,
 } from "@db/schema";
-import { eq, desc, asc, or, like, count } from "drizzle-orm";
+import { eq, desc, asc, or, like, count, sql } from "drizzle-orm";
 import { hashSync, compareSync } from "bcryptjs";
 import { signAdminToken } from "./lib/jwt";
+import { rateLimit } from "./lib/rate-limiter";
+import { TRPCError } from "@trpc/server";
+
+// ─── Explicit Zod schemas (no z.record(z.any()) mass-assignment) ───
+
+const courseUpdateSchema = z.object({
+  slug: z.string().min(1).optional(),
+  title: z.string().min(1).optional(),
+  category: z.enum(["languages", "bakery", "salon", "mechanics", "ai_skills", "private_candidate"]).optional(),
+  languageSubType: z.enum(["conversational", "test_prep"]).optional().nullable(),
+  language: z.string().optional().nullable(),
+  examName: z.string().optional().nullable(),
+  shortDesc: z.string().optional(),
+  description: z.string().optional(),
+  whatYoullLearn: z.string().optional().nullable(),
+  whoIsItFor: z.string().optional().nullable(),
+  modules: z.string().optional().nullable(),
+  requirements: z.string().optional().nullable(),
+  careerOutcomes: z.string().optional().nullable(),
+  duration: z.string().optional(),
+  scheduleOptions: z.string().optional().nullable(),
+  nextIntake: z.string().optional().nullable(),
+  feeRwf: z.number().int().nonnegative().optional().nullable(),
+  installmentAvailable: z.boolean().optional(),
+  imageUrl: z.string().optional().nullable(),
+  isFeatured: z.boolean().optional(),
+  isPublished: z.boolean().optional(),
+  displayOrder: z.number().int().optional(),
+});
+
+const newsUpdateSchema = z.object({
+  slug: z.string().min(1).optional(),
+  title: z.string().min(1).optional(),
+  category: z.enum(["news", "event", "achievement", "announcement"]).optional(),
+  thumbnailUrl: z.string().optional().nullable(),
+  excerpt: z.string().optional(),
+  content: z.string().optional(),
+  authorName: z.string().optional(),
+  eventDate: z.string().optional().nullable(),
+  eventLocation: z.string().optional().nullable(),
+  isPublished: z.boolean().optional(),
+  publishedAt: z.string().optional().nullable(),
+});
+
+const testimonialUpdateSchema = z.object({
+  studentName: z.string().min(1).optional(),
+  photoUrl: z.string().optional().nullable(),
+  linkedinUrl: z.string().optional().nullable(),
+  courseId: z.number().optional().nullable(),
+  courseName: z.string().optional().nullable(),
+  completionYear: z.number().int().optional().nullable(),
+  currentRole: z.string().optional().nullable(),
+  employer: z.string().optional().nullable(),
+  quote: z.string().min(1).optional(),
+  rating: z.number().int().min(1).max(5).optional(),
+  isFeatured: z.boolean().optional(),
+  isApproved: z.boolean().optional(),
+  isPublished: z.boolean().optional(),
+});
+
+const settingsUpdateSchema = z.object({
+  siteName: z.string().optional(),
+  tagline: z.string().optional().nullable(),
+  phone: z.string().optional().nullable(),
+  email: z.string().optional().nullable(),
+  whatsapp: z.string().optional().nullable(),
+  address: z.string().optional().nullable(),
+  mapsEmbedUrl: z.string().optional().nullable(),
+  openingHours: z.string().optional().nullable(),
+  announcementActive: z.boolean().optional(),
+  announcementMessages: z.string().optional().nullable(),
+  nextIntakeDate: z.string().optional().nullable(),
+  enrollmentDeadline: z.string().optional().nullable(),
+  enrollmentOpen: z.boolean().optional(),
+  academicCalendar: z.string().optional().nullable(),
+  facebookUrl: z.string().optional().nullable(),
+  instagramUrl: z.string().optional().nullable(),
+  twitterUrl: z.string().optional().nullable(),
+  linkedinUrl: z.string().optional().nullable(),
+  youtubeUrl: z.string().optional().nullable(),
+  tiktokUrl: z.string().optional().nullable(),
+  emailFromName: z.string().optional(),
+  emailReplyTo: z.string().optional().nullable(),
+  seoTitleSuffix: z.string().optional(),
+  seoDefaultDesc: z.string().optional().nullable(),
+});
 
 export const adminRouter = createRouter({
-  // ─── LOGIN (Public - used for admin login) ───
+  // ─── LOGIN (Public - used for admin login, but rate-limited) ───
   login: publicQuery
     .input(
       z.object({
@@ -23,7 +109,12 @@ export const adminRouter = createRouter({
         password: z.string(),
       })
     )
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      // Rate limit: 10 attempts per 15 min per IP to slow brute force.
+      const ip = ctx.req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+      if (!rateLimit(`admin-login:${ip}`, 10, 15 * 60_000)) {
+        throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "Too many login attempts. Try again in 15 minutes." });
+      }
       const db = getDb();
       const result = await db
         .select()
@@ -31,11 +122,11 @@ export const adminRouter = createRouter({
         .where(eq(adminUsers.email, input.email));
       const user = result[0];
       if (!user || !user.isActive) {
-        throw new Error("Invalid credentials");
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid credentials" });
       }
       const valid = compareSync(input.password, user.passwordHash);
       if (!valid) {
-        throw new Error("Invalid credentials");
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid credentials" });
       }
       await db
         .update(adminUsers)
@@ -59,83 +150,70 @@ export const adminRouter = createRouter({
   // ─── DASHBOARD STATS ───
   stats: adminQuery.query(async () => {
     const db = getDb();
-    const [enrollmentCount] = await db
-      .select({ count: count() })
-      .from(enrollments);
-    const [pendingCount] = await db
-      .select({ count: count() })
-      .from(enrollments)
-      .where(eq(enrollments.status, "pending"));
-    const [enrolledCount] = await db
-      .select({ count: count() })
-      .from(enrollments)
-      .where(eq(enrollments.status, "enrolled"));
-    const [messageCount] = await db
-      .select({ count: count() })
-      .from(contactMessages)
-      .where(eq(contactMessages.isRead, false));
-    const [courseCount] = await db
-      .select({ count: count() })
-      .from(courses);
-    const [testimonialCount] = await db
-      .select({ count: count() })
-      .from(testimonials);
+    // Run all 6 counts in parallel via Promise.all (was sequential).
+    const [
+      enrollmentCount,
+      pendingCount,
+      enrolledCount,
+      messageCount,
+      courseCount,
+      testimonialCount,
+    ] = await Promise.all([
+      db.select({ count: count() }).from(enrollments),
+      db.select({ count: count() }).from(enrollments).where(eq(enrollments.status, "pending")),
+      db.select({ count: count() }).from(enrollments).where(eq(enrollments.status, "enrolled")),
+      db.select({ count: count() }).from(contactMessages).where(eq(contactMessages.isRead, false)),
+      db.select({ count: count() }).from(courses),
+      db.select({ count: count() }).from(testimonials),
+    ]);
 
     return {
-      totalEnrollments: enrollmentCount.count,
-      pendingEnrollments: pendingCount.count,
-      confirmedEnrollments: enrolledCount.count,
-      unreadMessages: messageCount.count,
-      totalCourses: courseCount.count,
-      totalTestimonials: testimonialCount.count,
+      totalEnrollments: enrollmentCount[0].count,
+      pendingEnrollments: pendingCount[0].count,
+      confirmedEnrollments: enrolledCount[0].count,
+      unreadMessages: messageCount[0].count,
+      totalCourses: courseCount[0].count,
+      totalTestimonials: testimonialCount[0].count,
     };
   }),
 
-  // ─── ENROLLMENTS MANAGEMENT ───
-  enrollmentList: adminQuery
+  // ─── ENROLLMENTS MANAGEMENT (finance + super_admin) ───
+  enrollmentList: financeAdminQuery
     .input(
       z.object({
         status: z.string().optional(),
         search: z.string().optional(),
-        limit: z.number().default(50),
-        offset: z.number().default(0),
+        limit: z.number().int().min(1).max(200).default(50),
+        offset: z.number().int().min(0).default(0),
       }).optional()
     )
     .query(async ({ input }) => {
       const db = getDb();
+      const limit = input?.limit ?? 50;
+      const offset = input?.offset ?? 0;
+      const conditions = [];
       if (input?.search) {
-        return db
-          .select()
-          .from(enrollments)
-          .where(
-            or(
-              like(enrollments.fullName, `%${input.search}%`),
-              like(enrollments.email, `%${input.search}%`),
-              like(enrollments.referenceNumber, `%${input.search}%`)
-            )
+        conditions.push(
+          or(
+            like(enrollments.fullName, `%${input.search}%`),
+            like(enrollments.email, `%${input.search}%`),
+            like(enrollments.referenceNumber, `%${input.search}%`)
           )
-          .orderBy(desc(enrollments.submittedAt))
-          .limit(input?.limit ?? 50)
-          .offset(input?.offset ?? 0);
+        );
       }
       if (input?.status) {
-        return db
-          .select()
-          .from(enrollments)
-          .where(eq(enrollments.status, input.status as any))
-          .orderBy(desc(enrollments.submittedAt))
-          .limit(input?.limit ?? 50)
-          .offset(input?.offset ?? 0);
+        conditions.push(eq(enrollments.status, input.status as any));
       }
-      return db
+      const query = db
         .select()
         .from(enrollments)
         .orderBy(desc(enrollments.submittedAt))
-        .limit(input?.limit ?? 50)
-        .offset(input?.offset ?? 0);
+        .limit(limit)
+        .offset(offset);
+      return conditions.length > 0 ? query.where(conditions.length === 1 ? conditions[0]! : sql`${conditions[0]}`) : query;
     }),
 
-  enrollmentUpdate: adminQuery
+  enrollmentUpdate: financeAdminQuery
     .input(
       z.object({
         id: z.number(),
@@ -154,13 +232,13 @@ export const adminRouter = createRouter({
       return { success: true };
     }),
 
-  // ─── COURSES MANAGEMENT ───
-  courseList: adminQuery.query(async () => {
+  // ─── COURSES MANAGEMENT (content + super_admin) ───
+  courseList: contentAdminQuery.query(async () => {
     const db = getDb();
     return db.select().from(courses).orderBy(asc(courses.displayOrder));
   }),
 
-  courseCreate: adminQuery
+  courseCreate: contentAdminQuery
     .input(
       z.object({
         slug: z.string(),
@@ -180,20 +258,24 @@ export const adminRouter = createRouter({
       return { success: true };
     }),
 
-  courseUpdate: adminQuery
+  courseUpdate: contentAdminQuery
     .input(
       z.object({
         id: z.number(),
-        data: z.record(z.string(), z.any()),
+        data: courseUpdateSchema,
       })
     )
     .mutation(async ({ input }) => {
       const db = getDb();
-      await db.update(courses).set(input.data).where(eq(courses.id, input.id));
+      // Only set fields that are present (z.optional + .partial).
+      const data = Object.fromEntries(
+        Object.entries(input.data).filter(([, v]) => v !== undefined)
+      );
+      await db.update(courses).set(data).where(eq(courses.id, input.id));
       return { success: true };
     }),
 
-  courseDelete: adminQuery
+  courseDelete: superAdminQuery
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       const db = getDb();
@@ -201,13 +283,13 @@ export const adminRouter = createRouter({
       return { success: true };
     }),
 
-  // ─── NEWS MANAGEMENT ───
-  newsList: adminQuery.query(async () => {
+  // ─── NEWS MANAGEMENT (content + super_admin) ───
+  newsList: contentAdminQuery.query(async () => {
     const db = getDb();
     return db.select().from(newsEvents).orderBy(desc(newsEvents.createdAt));
   }),
 
-  newsCreate: adminQuery
+  newsCreate: contentAdminQuery
     .input(
       z.object({
         slug: z.string(),
@@ -228,20 +310,33 @@ export const adminRouter = createRouter({
       return { success: true };
     }),
 
-  newsUpdate: adminQuery
+  newsUpdate: contentAdminQuery
     .input(
       z.object({
         id: z.number(),
-        data: z.record(z.string(), z.any()),
+        data: newsUpdateSchema,
       })
     )
     .mutation(async ({ input }) => {
       const db = getDb();
-      await db.update(newsEvents).set(input.data).where(eq(newsEvents.id, input.id));
+      const data: any = Object.fromEntries(
+        Object.entries(input.data).filter(([, v]) => v !== undefined)
+      );
+      // If toggling to published and no publishedAt, set it.
+      if (data.isPublished === true && !data.publishedAt) {
+        data.publishedAt = new Date();
+      }
+      if (data.publishedAt !== undefined && typeof data.publishedAt === "string") {
+        data.publishedAt = data.publishedAt ? new Date(data.publishedAt) : null;
+      }
+      if (data.eventDate !== undefined && typeof data.eventDate === "string") {
+        data.eventDate = data.eventDate ? new Date(data.eventDate) : null;
+      }
+      await db.update(newsEvents).set(data).where(eq(newsEvents.id, input.id));
       return { success: true };
     }),
 
-  newsDelete: adminQuery
+  newsDelete: superAdminQuery
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       const db = getDb();
@@ -249,13 +344,13 @@ export const adminRouter = createRouter({
       return { success: true };
     }),
 
-  // ─── TESTIMONIALS MANAGEMENT ───
-  testimonialList: adminQuery.query(async () => {
+  // ─── TESTIMONIALS MANAGEMENT (content + super_admin) ───
+  testimonialList: contentAdminQuery.query(async () => {
     const db = getDb();
     return db.select().from(testimonials).orderBy(desc(testimonials.submittedAt));
   }),
 
-  testimonialCreate: adminQuery
+  testimonialCreate: contentAdminQuery
     .input(
       z.object({
         studentName: z.string().min(1),
@@ -279,20 +374,23 @@ export const adminRouter = createRouter({
       return { success: true };
     }),
 
-  testimonialUpdate: adminQuery
+  testimonialUpdate: contentAdminQuery
     .input(
       z.object({
         id: z.number(),
-        data: z.record(z.string(), z.any()),
+        data: testimonialUpdateSchema,
       })
     )
     .mutation(async ({ input }) => {
       const db = getDb();
-      await db.update(testimonials).set(input.data).where(eq(testimonials.id, input.id));
+      const data = Object.fromEntries(
+        Object.entries(input.data).filter(([, v]) => v !== undefined)
+      );
+      await db.update(testimonials).set(data).where(eq(testimonials.id, input.id));
       return { success: true };
     }),
 
-  testimonialDelete: adminQuery
+  testimonialDelete: superAdminQuery
     .input(z.object({ id: z.number() }))
     .mutation(async ({ input }) => {
       const db = getDb();
@@ -300,7 +398,7 @@ export const adminRouter = createRouter({
       return { success: true };
     }),
 
-  // ─── CONTACT MESSAGES ───
+  // ─── CONTACT MESSAGES (any admin role) ───
   messageList: adminQuery.query(async () => {
     const db = getDb();
     return db.select().from(contactMessages).orderBy(desc(contactMessages.createdAt));
@@ -323,20 +421,23 @@ export const adminRouter = createRouter({
       return { success: true };
     }),
 
-  // ─── SETTINGS MANAGEMENT ───
-  settingsUpdate: adminQuery
-    .input(z.record(z.string(), z.any()))
+  // ─── SETTINGS MANAGEMENT (super_admin only) ───
+  settingsUpdate: superAdminQuery
+    .input(settingsUpdateSchema)
     .mutation(async ({ input }) => {
       const db = getDb();
+      const data = Object.fromEntries(
+        Object.entries(input).filter(([, v]) => v !== undefined)
+      );
       await db
         .update(siteSettings)
-        .set({ ...input, updatedAt: new Date() })
+        .set({ ...data, updatedAt: new Date() })
         .where(eq(siteSettings.id, "main"));
       return { success: true };
     }),
 
-  // ─── USERS MANAGEMENT (Super Admin only) ───
-  userList: adminQuery.query(async () => {
+  // ─── USERS MANAGEMENT (super_admin only) ───
+  userList: superAdminQuery.query(async () => {
     const db = getDb();
     return db.select({
       id: adminUsers.id,
@@ -349,12 +450,12 @@ export const adminRouter = createRouter({
     }).from(adminUsers);
   }),
 
-  userCreate: adminQuery
+  userCreate: superAdminQuery
     .input(
       z.object({
         name: z.string(),
         email: z.string().email(),
-        password: z.string(),
+        password: z.string().min(8, "Password must be at least 8 characters"),
         role: z.enum(["super_admin", "content_manager", "finance", "support"]),
       })
     )

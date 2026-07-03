@@ -162,10 +162,10 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} Pacemaker Institute. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <Link to="/faqs" className="text-[#E0E0E0]/50 hover:text-[#5E17EB] text-sm transition-colors">
+            <Link to="/contact" className="text-[#E0E0E0]/50 hover:text-[#5E17EB] text-sm transition-colors">
               Privacy Policy
             </Link>
-            <Link to="/faqs" className="text-[#E0E0E0]/50 hover:text-[#5E17EB] text-sm transition-colors">
+            <Link to="/contact" className="text-[#E0E0E0]/50 hover:text-[#5E17EB] text-sm transition-colors">
               Terms of Service
             </Link>
           </div>

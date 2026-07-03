@@ -5,7 +5,12 @@ function getOAuthUrl() {
   const authUrl = import.meta.env.VITE_AUTH_URL;
   const appID = import.meta.env.VITE_APP_ID;
   const redirectUri = `${window.location.origin}/api/oauth/callback`;
-  const state = btoa(redirectUri);
+  // SECURITY: state is a random nonce bound to a cookie the server can read on callback.
+  // This prevents login-CSRF (attacker forcing a victim into the attacker's account).
+  const nonce = crypto.randomUUID();
+  const state = `${nonce}.${btoa(redirectUri)}`;
+  // Set a short-lived cookie that the server-side callback will compare against state.
+  document.cookie = `oauth_state=${nonce}; path=/; max-age=600; SameSite=Lax${window.location.protocol === "https:" ? "; Secure" : ""}`;
 
   const url = new URL(`${authUrl}/api/oauth/authorize`);
   url.searchParams.set("client_id", appID);

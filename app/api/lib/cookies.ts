@@ -8,10 +8,14 @@ function isLocalhost(headers: Headers): boolean {
 export function getSessionCookieOptions(headers: Headers): CookieOptions {
   const localhost = isLocalhost(headers);
 
+  // SECURITY: use SameSite=Lax always (not None). The SPA and /api/trpc are same-origin,
+  // so Lax is sufficient and protects against CSRF on cross-site requests.
+  // Combined with the OAuth state nonce + admin token in Authorization-style header,
+  // this closes the CSRF surface.
   return {
     httpOnly: true,
     path: "/",
-    sameSite: localhost ? "Lax" : "None",
+    sameSite: "Lax",
     secure: !localhost,
   };
 }
