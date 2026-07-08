@@ -28,14 +28,28 @@ export const publicRouter = createRouter({
   homepage: createRouter({
     data: publicQuery.query(async () => {
       const db = getDb();
-      const [featuredCourses, allCoursesList, featuredTestimonials, latestNews, settings] = await Promise.all([
+      // FAULT-TOLERANT: use Promise.allSettled so a broken/missing table doesn't
+      // take down the whole home page. Each section degrades gracefully.
+      const [featured, all, testimonialsR, newsR, settingsR] = await Promise.allSettled([
         db.select().from(courses).where(and(eq(courses.isPublished, true), eq(courses.isFeatured, true))).orderBy(asc(courses.displayOrder)),
         db.select().from(courses).where(eq(courses.isPublished, true)).orderBy(asc(courses.displayOrder)),
         db.select().from(testimonials).where(and(eq(testimonials.isPublished, true), eq(testimonials.isApproved, true), eq(testimonials.isFeatured, true))).orderBy(desc(testimonials.submittedAt)).limit(6),
         db.select().from(newsEvents).where(eq(newsEvents.isPublished, true)).orderBy(desc(newsEvents.publishedAt)).limit(3),
         db.select().from(siteSettings).where(eq(siteSettings.id, "main")).then(r => r[0] ?? null),
       ]);
-      return { featuredCourses, allCourses: allCoursesList, testimonials: featuredTestimonials, news: latestNews, settings };
+      const val = <T,>(r: PromiseSettledResult<T>, fallback: T): T => {
+        if (r.status === "rejected") {
+          console.error("[homepage.data] subquery failed:", (r as PromiseRejectedResult).reason);
+        }
+        return r.status === "fulfilled" ? r.value : fallback;
+      };
+      return {
+        featuredCourses: val(featured, []),
+        allCourses: val(all, []),
+        testimonials: val(testimonialsR, []),
+        news: val(newsR, []),
+        settings: val(settingsR, null),
+      };
     }),
   }),
 
@@ -111,7 +125,14 @@ export const publicRouter = createRouter({
         if (input?.limit) {
           query = query.limit(input.limit) as any;
         }
-        return query;
+        try {
+          return await query;
+        } catch (e) {
+          // Schema drift fallback: if the testimonials table is missing columns
+          // (e.g. linkedin_url not yet migrated), return empty instead of 500.
+          console.error("[testimonials.list] query failed:", (e as Error).message);
+          return [];
+        }
       }),
   }),
 

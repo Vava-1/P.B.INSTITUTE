@@ -128,7 +128,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {courses?.map((course) => {
+            {(allCourses.length > 0 ? allCourses : courses ?? [])?.map((course) => {
               const Icon = categoryIcons[course.category] || BookOpen;
               const color = categoryColors[course.category] || "#5E17EB";
               const skills = parseJsonArray(course.whatYoullLearn);

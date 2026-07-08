@@ -13,4 +13,9 @@ export default defineConfig({
   dbCredentials: {
     url: connectionString,
   },
+  // verbose: true logs every SQL statement during push/migrate.
+  verbose: true,
+  // strict: true would require interactive confirmation for destructive changes;
+  // we disable it so non-interactive `drizzle-kit push --force` works in CI/CD.
+  strict: false,
 });
