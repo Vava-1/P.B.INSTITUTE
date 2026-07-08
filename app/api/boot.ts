@@ -66,6 +66,37 @@ app.get("/health", async (c) => {
   }
 });
 
+// Diagnostic endpoint — shows table counts and can trigger a re-seed.
+app.get("/api/diag", async (c) => {
+  try {
+    const db = getDb();
+    const [tc] = await db.execute("SELECT COUNT(*) as cnt FROM testimonials") as any;
+    const [nc] = await db.execute("SELECT COUNT(*) as cnt FROM news_events") as any;
+    const [cc] = await db.execute("SELECT COUNT(*) as cnt FROM courses") as any;
+    const result: any = {
+      testimonials: tc?.cnt ?? tc?.[0]?.cnt ?? "?",
+      news_events: nc?.cnt ?? nc?.[0]?.cnt ?? "?",
+      courses: cc?.cnt ?? cc?.[0]?.cnt ?? "?",
+    };
+    return c.json(result);
+  } catch (e) {
+    return c.json({ error: (e as Error).message, stack: (e as Error).stack }, 500);
+  }
+});
+
+// Manual re-seed trigger — calls seedIfEmpty and returns the result.
+app.post("/api/reseed", async (c) => {
+  try {
+    const { seedIfEmpty } = await import("../db/seed-if-empty");
+    await seedIfEmpty();
+    const db = getDb();
+    const [tc] = await db.execute("SELECT COUNT(*) as cnt FROM testimonials") as any;
+    return c.json({ success: true, testimonials_count: tc?.cnt ?? tc?.[0]?.cnt ?? "?" });
+  } catch (e) {
+    return c.json({ error: (e as Error).message, stack: (e as Error).stack }, 500);
+  }
+});
+
 app.get("/sitemap.xml", async (c) => {
   try {
     const db = getDb();
