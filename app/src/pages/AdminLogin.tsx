@@ -54,14 +54,14 @@ export default function AdminLogin() {
           <img
             src="/images/PBI_logo.jpg"
             alt="Pacemaker Institute"
-            className="h-20 w-auto rounded-lg mx-auto mb-4 shadow-lg"
+            className="h-20 w-auto rounded-2xl mx-auto mb-4 shadow-warm-lg"
             width={80}
             height={80}
           />
           <h1 className="text-2xl font-bold text-white font-display">
             Admin Portal
           </h1>
-          <p className="text-white/60 mt-1">Pacemaker Institute Management</p>
+          <p className="font-hand text-lg text-[#F4A400] mt-1">Pacemaker Institute Management</p>
         </div>
 
         <Card className="border-0 shadow-2xl">

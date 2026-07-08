@@ -49,7 +49,7 @@ export default function Navbar() {
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           showBg
-            ? "bg-white/95 backdrop-blur-md shadow-md"
+            ? "bg-white/95 backdrop-blur-md shadow-warm"
             : "bg-transparent"
         }`}
       >
@@ -60,13 +60,13 @@ export default function Navbar() {
               <img
                 src="/images/PBI_logo.jpg"
                 alt="Pacemaker Institute"
-                className="h-12 w-auto rounded"
+                className="h-12 w-auto rounded-xl shadow-sm"
               />
               <div className={`hidden sm:block ${showBg ? "text-[#1A1A2E]" : "text-white"}`}>
-                <div className="text-lg font-bold leading-tight font-display">
+                <div className="text-xl font-bold leading-tight font-display">
                   Pacemaker
                 </div>
-                <div className="text-xs uppercase tracking-wider font-medium">
+                <div className="text-xs font-hand text-base leading-none mt-0.5" style={{ color: showBg ? "#5E17EB" : "#F4A400" }}>
                   Institute
                 </div>
               </div>

@@ -31,18 +31,26 @@ export default function About() {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      {/* Hero */}
-      <section className="relative pt-32 pb-20 bg-gradient-to-br from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E]">
-        <div className="absolute inset-0 diagonal-stripe opacity-30" />
+      {/* Hero with real campus photo */}
+      <section className="relative pt-32 pb-20 overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="https://sfile.chatglm.cn/images-ppt/25cff1a6682d.jpg"
+            alt=""
+            aria-hidden="true"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 photo-overlay" />
+        </div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <span className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider">
+            <span className="font-hand text-2xl text-[#F4A400] block mb-2">
               About Us
             </span>
-            <h1 className="mt-4 text-4xl md:text-6xl font-bold text-white font-display">
+            <h1 className="text-4xl md:text-6xl font-bold text-white font-display">
               About Pacemaker Institute
             </h1>
-            <p className="mt-6 text-lg text-white/70 max-w-2xl mx-auto">
+            <p className="mt-6 text-lg text-white/85 max-w-2xl mx-auto">
               Empowering individuals with practical skills, language mastery,
               and professional knowledge to excel in today's competitive world.
             </p>

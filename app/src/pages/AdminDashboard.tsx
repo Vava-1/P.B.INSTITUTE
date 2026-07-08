@@ -82,10 +82,10 @@ export default function AdminDashboard() {
         >
           <div className="p-6 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <img src="/images/PBI_logo.jpg" alt="PBI" className="h-10 w-auto rounded" />
+              <img src="/images/PBI_logo.jpg" alt="PBI" className="h-10 w-auto rounded-xl" />
               <div>
-                <div className="font-bold font-display leading-tight">Pacemaker</div>
-                <div className="text-xs text-white/50">Admin Panel</div>
+                <div className="font-bold font-display leading-tight text-lg">Pacemaker</div>
+                <div className="font-hand text-sm text-[#F4A400] leading-none mt-0.5">Admin Panel</div>
               </div>
             </div>
           </div>

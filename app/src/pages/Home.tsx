@@ -37,6 +37,16 @@ const categoryColors: Record<string, string> = {
   private_candidate: "#10B981",
 };
 
+// Real photos for each course category — humanizes the cards.
+const categoryPhotos: Record<string, string> = {
+  languages: "https://sfile.chatglm.cn/images-ppt/9d1e0bd0c648.png",
+  bakery: "https://sfile.chatglm.cn/images-ppt/cdfb0ab15a32.jpg",
+  salon: "https://sfile.chatglm.cn/images-ppt/656589bdeea2.jpg",
+  mechanics: "https://sfile.chatglm.cn/images-ppt/f41025bf86ea.jpg",
+  ai_skills: "https://sfile.chatglm.cn/images-ppt/530052d7b255.png",
+  private_candidate: "https://sfile.chatglm.cn/images-ppt/8f4abe659dfd.jpg",
+};
+
 // ─── Helpers ───
 
 // Safely parse a JSON-encoded DB text field (e.g. whatYoullLearn, modules).
@@ -116,10 +126,10 @@ export default function Home() {
       <section className="py-32 bg-[#EDE7FF]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider">
+            <span className="font-hand text-2xl text-[#5E17EB] block mb-1">
               What We Teach
             </span>
-            <h2 className="mt-3 text-4xl md:text-5xl font-bold text-[#1A1A2E] font-display">
+            <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A2E] font-display">
               Six Paths to <span className="text-gradient-gold">Excellence</span>
             </h2>
             <p className="mt-4 text-lg text-[#6B7280] max-w-2xl mx-auto">
@@ -131,6 +141,7 @@ export default function Home() {
             {(allCourses.length > 0 ? allCourses : courses ?? [])?.map((course) => {
               const Icon = categoryIcons[course.category] || BookOpen;
               const color = categoryColors[course.category] || "#5E17EB";
+              const photo = categoryPhotos[course.category] || course.imageUrl || "";
               const skills = parseJsonArray(course.whatYoullLearn);
               const previewSkills = skills.slice(0, 3);
               const moreSkills = skills.length - previewSkills.length;
@@ -138,27 +149,33 @@ export default function Home() {
               return (
                 <Card
                   key={course.id}
-                  className="group overflow-hidden bg-white border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col"
+                  className="group overflow-hidden bg-white border-0 shadow-warm hover:shadow-warm-lg transition-all duration-300 hover:-translate-y-1 flex flex-col rounded-2xl"
                 >
-                  <div className="h-1.5" style={{ backgroundColor: color }} />
-                  <CardContent className="p-6 flex flex-col flex-1">
-                    <div
-                      className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
-                      style={{ backgroundColor: `${color}15` }}
-                    >
-                      <Icon className="w-7 h-7" style={{ color }} />
+                  {/* Real photo header with category icon overlay. */}
+                  <div className="relative h-44 overflow-hidden">
+                    <img
+                      src={photo}
+                      alt={course.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${color}DD 0%, ${color}30 50%, transparent 100%)` }} />
+                    <div className="absolute top-3 left-3 w-10 h-10 rounded-xl flex items-center justify-center backdrop-blur-sm" style={{ backgroundColor: "rgba(255,255,255,0.9)" }}>
+                      <Icon className="w-5 h-5" style={{ color }} aria-hidden="true" />
                     </div>
-                    <h3 className="text-xl font-bold text-[#1A1A2E] mb-2 font-display">
+                    <h3 className="absolute bottom-3 left-4 right-4 text-lg font-bold text-white font-display leading-tight drop-shadow-lg">
                       {course.title}
                     </h3>
-                    <p className="text-[#6B7280] text-sm mb-4 line-clamp-2">
+                  </div>
+                  <CardContent className="p-5 flex flex-col flex-1">
+                    <p className="text-[#6B7280] text-sm mb-3 line-clamp-2">
                       {course.shortDesc}
                     </p>
 
                     {/* Skills teaser — makes the user want to see the rest */}
                     {previewSkills.length > 0 && (
-                      <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: `${color}08` }}>
-                        <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color }}>
+                      <div className="mb-3 p-3 rounded-xl" style={{ backgroundColor: `${color}08` }}>
+                        <p className="text-[10px] font-bold uppercase tracking-wider mb-2 font-hand text-base" style={{ color }}>
                           What you&apos;ll master
                         </p>
                         <ul className="space-y-1.5">
@@ -336,186 +353,61 @@ function CoursesSlider({ courses }: { courses: any[] }) {
 }
 
 // ─── HERO SECTION ───
+// Real classroom photo with a warm purple/navy overlay — feels human and inviting,
+// not cold and corporate like the old canvas animation.
 function HeroSection() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef({ x: 0, y: 0 });
-
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (prefersReduced) {
-      canvas.style.display = "none";
-      return;
-    }
-
-    let w = window.innerWidth;
-    let h = window.innerHeight;
-    canvas.width = w;
-    canvas.height = h;
-
-    const ribbons: {
-      y: number;
-      amplitude: number;
-      frequency: number;
-      speed: number;
-      phase: number;
-      width: number;
-      color: string;
-    }[] = [];
-
-    for (let i = 0; i < 6; i++) {
-      ribbons.push({
-        y: h * 0.35 + i * 50,
-        amplitude: 40 + i * 8,
-        frequency: 0.003 + i * 0.0005,
-        speed: 0.3 + i * 0.1,
-        phase: (i * Math.PI) / 3,
-        width: 2,
-        color: i % 2 === 0 ? "rgba(244, 164, 0, 0.15)" : "rgba(4, 102, 200, 0.12)",
-      });
-    }
-
-    let animId: number;
-    let time = 0;
-
-    function draw() {
-      if (!ctx) return;
-      ctx.clearRect(0, 0, w, h);
-
-      // Deep navy gradient background
-      const bg = ctx.createLinearGradient(0, 0, w, h);
-      bg.addColorStop(0, "#1A1A2E");
-      bg.addColorStop(0.5, "#5E17EB");
-      bg.addColorStop(1, "#1A1A2E");
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, w, h);
-
-      // Diagonal gold stripe watermark
-      ctx.save();
-      for (let i = -10; i < 20; i++) {
-        ctx.beginPath();
-        ctx.moveTo(i * 80, 0);
-        ctx.lineTo(i * 80 + 200, h);
-        ctx.strokeStyle = "rgba(244, 164, 0, 0.03)";
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
-      ctx.restore();
-
-      // Animated ribbons
-      ribbons.forEach((ribbon) => {
-        ctx.beginPath();
-        ctx.moveTo(0, ribbon.y);
-        for (let x = 0; x < w; x += 2) {
-          const mx = (mouseRef.current.x / w - 0.5) * 30;
-          const my = (mouseRef.current.y / h - 0.5) * 15;
-          const y =
-            ribbon.y +
-            Math.sin(x * ribbon.frequency + time * ribbon.speed + ribbon.phase) *
-              ribbon.amplitude +
-            mx * Math.sin(x * 0.002) +
-            my;
-          ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = ribbon.color;
-        ctx.lineWidth = ribbon.width;
-        ctx.stroke();
-
-        // Glow line
-        ctx.beginPath();
-        ctx.moveTo(0, ribbon.y);
-        for (let x = 0; x < w; x += 4) {
-          const mx = (mouseRef.current.x / w - 0.5) * 30;
-          const my = (mouseRef.current.y / h - 0.5) * 15;
-          const y =
-            ribbon.y +
-            Math.sin(x * ribbon.frequency + time * ribbon.speed + ribbon.phase) *
-              ribbon.amplitude +
-            mx * Math.sin(x * 0.002) +
-            my;
-          ctx.lineTo(x, y);
-        }
-        ctx.strokeStyle = ribbon.color.replace(/[\d.]+\)$/, "0.05)");
-        ctx.lineWidth = 12;
-        ctx.stroke();
-      });
-
-      // Spotlight effect
-      const spotX = w * 0.5 + (mouseRef.current.x - w * 0.5) * 0.05;
-      const spotY = h * 0.3 + (mouseRef.current.y - h * 0.3) * 0.05;
-      const spot = ctx.createRadialGradient(spotX, spotY, 0, spotX, spotY, h * 0.6);
-      spot.addColorStop(0, "rgba(212, 164, 24, 0.08)");
-      spot.addColorStop(0.5, "rgba(4, 102, 200, 0.04)");
-      spot.addColorStop(1, "transparent");
-      ctx.fillStyle = spot;
-      ctx.fillRect(0, 0, w, h);
-
-      time += 0.015;
-      animId = requestAnimationFrame(draw);
-    }
-
-    draw();
-
-    const handleResize = () => {
-      w = window.innerWidth;
-      h = window.innerHeight;
-      canvas.width = w;
-      canvas.height = h;
-    };
-
-    let mouseThrottleId: number;
-    const handleMouse = (e: MouseEvent) => {
-      cancelAnimationFrame(mouseThrottleId);
-      mouseThrottleId = requestAnimationFrame(() => {
-        mouseRef.current = { x: e.clientX, y: e.clientY };
-      });
-    };
-
-    window.addEventListener("resize", handleResize, { passive: true });
-    window.addEventListener("mousemove", handleMouse, { passive: true });
-
-    return () => {
-      cancelAnimationFrame(animId);
-      cancelAnimationFrame(mouseThrottleId);
-      window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", handleMouse);
-    };
-  }, []);
-
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden">
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 w-full h-full"
-      />
-      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
-        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 font-display leading-tight">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Real photo background — students in a classroom. */}
+      <div className="absolute inset-0">
+        <img
+          src="https://sfile.chatglm.cn/images-ppt/c896710cc274.jpg"
+          alt=""
+          aria-hidden="true"
+          className="w-full h-full object-cover"
+          loading="eager"
+          fetchPriority="high"
+        />
+        {/* Warm overlay — keeps text readable while letting the photo breathe. */}
+        <div className="absolute inset-0 photo-overlay" />
+        {/* Subtle texture for warmth. */}
+        <div className="absolute inset-0 diagonal-stripe opacity-30" />
+      </div>
+
+      <div className="relative z-10 text-center px-4 max-w-4xl mx-auto pt-20">
+        {/* Handwritten accent label — human touch. */}
+        <p className="font-hand text-2xl md:text-3xl text-[#F4A400] mb-3 animate-fade-up">
+          Welcome to Pacemaker Institute
+        </p>
+        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 font-display leading-tight animate-fade-up" style={{ animationDelay: "0.1s" }}>
           Master a Skill.
           <br />
           <span className="text-gradient-gold">Transform Your Future.</span>
         </h1>
-        <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10 leading-relaxed">
+        <p className="text-lg md:text-xl text-white/85 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-up" style={{ animationDelay: "0.2s" }}>
           Professional training in Languages, Bakery, Salon, Mechanics,
           AI Skills, and Exam Preparation, all in the heart of Kigali.
         </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up" style={{ animationDelay: "0.3s" }}>
           <Button
             asChild
-            className="bg-gradient-to-r from-[#F4A400] to-[#FFD166] text-[#1A1A2E] font-bold rounded-full px-8 py-6 text-lg shadow-lg shadow-[#F4A400]/30 hover:from-[#e09600] hover:to-[#F4A400] transition-all"
+            className="bg-gradient-to-r from-[#F4A400] to-[#FFD166] text-[#1A1A2E] font-bold rounded-full px-8 py-6 text-lg shadow-warm-glow hover:from-[#e09600] hover:to-[#F4A400] transition-all"
           >
             <Link to="/enroll">Enroll Now</Link>
           </Button>
           <Button
             asChild
-            className="border-2 border-white text-white hover:bg-white/10 font-semibold rounded-full px-8 py-6 text-lg backdrop-blur-sm"
+            className="border-2 border-white/80 text-white hover:bg-white/15 font-semibold rounded-full px-8 py-6 text-lg backdrop-blur-sm"
           >
             <Link to="/courses">Browse Courses</Link>
           </Button>
         </div>
+      </div>
+
+      {/* Scroll indicator — gentle human cue. */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 hidden md:flex flex-col items-center gap-2 text-white/50">
+        <span className="font-hand text-sm">scroll to explore</span>
+        <div className="w-px h-8 bg-gradient-to-b from-white/40 to-transparent" />
       </div>
     </section>
   );
@@ -799,10 +691,10 @@ function NewsPreviewSection({ news }: { news: any[] }) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-12">
             <div>
-              <span className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider">
+              <span className="font-hand text-2xl text-[#5E17EB] block mb-1">
                 Latest Updates
               </span>
-              <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#1A1A2E] font-display">
+              <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A2E] font-display">
                 News & Events
               </h2>
               <p className="mt-3 text-[#6B7280] max-w-xl">
@@ -820,20 +712,27 @@ function NewsPreviewSection({ news }: { news: any[] }) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {(news || []).map((item) => {
               const minutes = readingTime(item.content);
+              // Use the thumbnailUrl if set, otherwise use a campus photo based on category.
+              const newsPhoto = item.thumbnailUrl || "https://sfile.chatglm.cn/images-ppt/25cff1a6682d.jpg";
               return (
                 <Card
                   key={item.id}
-                  className="overflow-hidden bg-white border-0 shadow-md hover:shadow-xl transition-all duration-300 group cursor-pointer flex flex-col"
+                  className="overflow-hidden bg-white border-0 shadow-warm hover:shadow-warm-lg transition-all duration-300 group cursor-pointer flex flex-col rounded-2xl"
                   onClick={() => setSelected(item)}
                 >
-                  <div className="h-44 bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center relative overflow-hidden">
-                    {/* Decorative giant first letter */}
-                    <span className="text-7xl font-bold text-white/15 font-display uppercase select-none" aria-hidden="true">
-                      {item.category.charAt(0)}
-                    </span>
+                  <div className="h-44 relative overflow-hidden">
+                    {/* Real photo background. */}
+                    <img
+                      src={newsPhoto}
+                      alt=""
+                      aria-hidden="true"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      loading="lazy"
+                    />
+                    <div className="absolute inset-0 photo-overlay-bottom" />
                     {/* Sparkle accent */}
-                    <Sparkles className="w-6 h-6 text-white/30 absolute top-4 right-4" aria-hidden="true" />
-                    {/* Category chip overlaid on the gradient */}
+                    <Sparkles className="w-5 h-5 text-white/40 absolute top-4 right-4" aria-hidden="true" />
+                    {/* Category chip overlaid on the photo */}
                     <span className="absolute bottom-3 left-4 inline-block px-3 py-1 text-[10px] font-bold tracking-wider rounded-full bg-white/90 text-[#5E17EB] uppercase">
                       {item.category}
                     </span>
@@ -888,11 +787,15 @@ function NewsPreviewSection({ news }: { news: any[] }) {
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto p-0">
           {selected && (
             <>
-              {/* Header banner */}
-              <div className="relative h-40 bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center">
-                <span className="text-7xl font-bold text-white/15 font-display uppercase select-none" aria-hidden="true">
-                  {selected.category.charAt(0)}
-                </span>
+              {/* Header banner with real photo. */}
+              <div className="relative h-44 overflow-hidden">
+                <img
+                  src={selected.thumbnailUrl || "https://sfile.chatglm.cn/images-ppt/25cff1a6682d.jpg"}
+                  alt=""
+                  aria-hidden="true"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 photo-overlay-bottom" />
                 <span className="absolute bottom-3 left-6 inline-block px-3 py-1 text-[10px] font-bold tracking-wider rounded-full bg-white/90 text-[#5E17EB] uppercase">
                   {selected.category}
                 </span>

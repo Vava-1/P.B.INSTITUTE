@@ -15,6 +15,13 @@ module.exports = {
           DEFAULT: "hsl(var(--gold))",
           foreground: "hsl(var(--gold-foreground))",
         },
+        cream: {
+          DEFAULT: "hsl(var(--cream))",
+          dark: "hsl(var(--cream-dark))",
+        },
+        warm: {
+          gray: "hsl(var(--warm-gray))",
+        },
         body: "#1A1A2E",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -51,9 +58,10 @@ module.exports = {
         },
       },
       fontFamily: {
-        display: ['"Playfair Display"', 'serif'],
-        body: ['Inter', 'sans-serif'],
-        sans: ['Inter', 'sans-serif'],
+        display: ['Fraunces', 'Georgia', 'serif'],
+        body: ['"Plus Jakarta Sans"', 'sans-serif'],
+        hand: ['Caveat', 'cursive'],
+        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
       },
       borderRadius: {
         xl: "calc(var(--radius) + 4px)",
@@ -61,9 +69,14 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
         xs: "calc(var(--radius) - 6px)",
+        "2xl": "calc(var(--radius) + 8px)",
+        "3xl": "calc(var(--radius) + 16px)",
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        warm: "0 2px 8px -2px rgb(94 23 235 / 0.08), 0 4px 16px -4px rgb(0 0 0 / 0.06)",
+        "warm-lg": "0 8px 24px -6px rgb(94 23 235 / 0.12), 0 16px 48px -12px rgb(0 0 0 / 0.1)",
+        "warm-glow": "0 0 24px -4px rgb(244 164 0 / 0.25)",
       },
       keyframes: {
         "accordion-down": {
@@ -78,11 +91,16 @@ module.exports = {
           "0%,70%,100%": { opacity: "1" },
           "20%,50%": { opacity: "0" },
         },
+        "fade-up": {
+          "0%": { opacity: "0", transform: "translateY(12px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "caret-blink": "caret-blink 1.25s ease-out infinite",
+        "fade-up": "fade-up 0.5s ease-out",
       },
     },
   },

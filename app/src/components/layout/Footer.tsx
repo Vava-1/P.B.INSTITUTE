@@ -15,13 +15,13 @@ export default function Footer() {
               <img
                 src="/images/PBI_logo.jpg"
                 alt="Pacemaker Institute"
-                className="h-16 w-auto rounded"
+                className="h-16 w-auto rounded-xl shadow-lg"
               />
               <div>
                 <div className="text-xl font-bold leading-tight font-display">
                   Pacemaker
                 </div>
-                <div className="text-xs uppercase tracking-wider text-[#5E17EB]">
+                <div className="font-hand text-lg text-[#F4A400] leading-none mt-0.5">
                   Institute
                 </div>
               </div>
