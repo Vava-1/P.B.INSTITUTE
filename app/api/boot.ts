@@ -68,20 +68,30 @@ app.get("/health", async (c) => {
 
 // Diagnostic endpoint — shows table counts and can trigger a re-seed.
 app.get("/api/diag", async (c) => {
+  const db = getDb();
+  const result: any = {};
   try {
-    const db = getDb();
     const [tc] = await db.execute("SELECT COUNT(*) as cnt FROM testimonials") as any;
-    const [nc] = await db.execute("SELECT COUNT(*) as cnt FROM news_events") as any;
-    const [cc] = await db.execute("SELECT COUNT(*) as cnt FROM courses") as any;
-    const result: any = {
-      testimonials: tc?.cnt ?? tc?.[0]?.cnt ?? "?",
-      news_events: nc?.cnt ?? nc?.[0]?.cnt ?? "?",
-      courses: cc?.cnt ?? cc?.[0]?.cnt ?? "?",
-    };
-    return c.json(result);
-  } catch (e) {
-    return c.json({ error: (e as Error).message, stack: (e as Error).stack }, 500);
+    result.testimonials_count = tc?.cnt ?? tc?.[0]?.cnt ?? "?";
+  } catch (e: any) {
+    result.testimonials_count_error = e.message;
   }
+  try {
+    // Try selecting all columns the Drizzle query uses — if any column is missing, this fails.
+    const [rows] = await db.execute("SELECT id, student_name, photo_url, linkedin_url, course_id, course_name, completion_year, current_role, employer, quote, rating, is_featured, is_approved, is_published, submitted_at, updated_at FROM testimonials WHERE is_published = true AND is_approved = true LIMIT 3") as any;
+    result.testimonials_query = Array.isArray(rows) ? rows : [rows];
+    result.testimonials_query_count = (Array.isArray(rows) ? rows : [rows]).length;
+  } catch (e: any) {
+    result.testimonials_query_error = e.message;
+  }
+  try {
+    // Show the actual column names in the testimonials table.
+    const [cols] = await db.execute("SHOW COLUMNS FROM testimonials") as any;
+    result.testimonials_columns = (Array.isArray(cols) ? cols : [cols]).map((r: any) => r.Field);
+  } catch (e: any) {
+    result.testimonials_columns_error = e.message;
+  }
+  return c.json(result);
 });
 
 // Manual re-seed trigger — calls seedIfEmpty and returns the result.
