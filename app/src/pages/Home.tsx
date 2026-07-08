@@ -39,12 +39,12 @@ const categoryColors: Record<string, string> = {
 
 // Real photos for each course category — humanizes the cards.
 const categoryPhotos: Record<string, string> = {
-  languages: "https://sfile.chatglm.cn/images-ppt/9d1e0bd0c648.png",
+  languages: "https://sfile.chatglm.cn/images-ppt/8f4abe659dfd.jpg",
   bakery: "https://sfile.chatglm.cn/images-ppt/cdfb0ab15a32.jpg",
   salon: "https://sfile.chatglm.cn/images-ppt/656589bdeea2.jpg",
   mechanics: "https://sfile.chatglm.cn/images-ppt/f41025bf86ea.jpg",
-  ai_skills: "https://sfile.chatglm.cn/images-ppt/530052d7b255.png",
-  private_candidate: "https://sfile.chatglm.cn/images-ppt/8f4abe659dfd.jpg",
+  ai_skills: "https://sfile.chatglm.cn/images-ppt/c96b5147d30a.png",
+  private_candidate: "https://sfile.chatglm.cn/images-ppt/17c1ff02f142.jpg",
 };
 
 // ─── Helpers ───
