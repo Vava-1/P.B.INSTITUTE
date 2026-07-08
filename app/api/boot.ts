@@ -166,6 +166,13 @@ if (env.isProduction) {
   const port = parseInt(process.env.PORT || "3000");
   server = serve({ fetch: app.fetch, port, hostname: "0.0.0.0" }, () => {
     console.log(`Server running on http://0.0.0.0:${port}/`);
+
+    // AUTO-SEED: after the server starts, check if any tables are empty and
+    // re-insert seed data if needed. This runs in the background — doesn't
+    // block startup. Recovers data lost by destructive schema pushes.
+    import("../db/seed-if-empty")
+      .then(({ seedIfEmpty }) => seedIfEmpty())
+      .catch((e) => console.error("[auto-seed] failed:", e));
   });
 
   // GRACEFUL SHUTDOWN: drain in-flight requests and close the DB pool on SIGTERM/SIGINT.
