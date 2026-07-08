@@ -4,9 +4,16 @@ import {
   BookOpen, Users, Clock, Award, ArrowRight, Star,
   CheckCircle, GraduationCap, Wrench, Cpu, Languages,
   ChefHat, Scissors, FileText, ChevronLeft, ChevronRight, Linkedin,
+  Calendar, MapPin, X, Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { trpc } from "@/providers/trpc";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -29,6 +36,32 @@ const categoryColors: Record<string, string> = {
   ai_skills: "#8B5CF6",
   private_candidate: "#10B981",
 };
+
+// ─── Helpers ───
+
+// Safely parse a JSON-encoded DB text field (e.g. whatYoullLearn, modules).
+function parseJsonArray(raw: string | null | undefined): string[] {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+
+// Estimate reading time from article content (~200 wpm).
+function readingTime(content: string | null | undefined): number {
+  if (!content) return 1;
+  const words = content.trim().split(/\s+/).length;
+  return Math.max(1, Math.round(words / 200));
+}
+
+// Format RWF with thousands separators.
+function formatRwf(amount: number | null | undefined): string | null {
+  if (!amount || amount <= 0) return null;
+  return new Intl.NumberFormat("en-RW").format(amount);
+}
 
 // ─── HOME PAGE ───
 export default function Home() {
@@ -98,13 +131,17 @@ export default function Home() {
             {courses?.map((course) => {
               const Icon = categoryIcons[course.category] || BookOpen;
               const color = categoryColors[course.category] || "#5E17EB";
+              const skills = parseJsonArray(course.whatYoullLearn);
+              const previewSkills = skills.slice(0, 3);
+              const moreSkills = skills.length - previewSkills.length;
+              const fee = formatRwf(course.feeRwf);
               return (
                 <Card
                   key={course.id}
-                  className="group overflow-hidden bg-white border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  className="group overflow-hidden bg-white border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col"
                 >
                   <div className="h-1.5" style={{ backgroundColor: color }} />
-                  <CardContent className="p-6">
+                  <CardContent className="p-6 flex flex-col flex-1">
                     <div
                       className="w-14 h-14 rounded-xl flex items-center justify-center mb-4"
                       style={{ backgroundColor: `${color}15` }}
@@ -117,22 +154,53 @@ export default function Home() {
                     <p className="text-[#6B7280] text-sm mb-4 line-clamp-2">
                       {course.shortDesc}
                     </p>
-                    <div className="flex items-center gap-3 text-xs text-[#6B7280] mb-4">
+
+                    {/* Skills teaser — makes the user want to see the rest */}
+                    {previewSkills.length > 0 && (
+                      <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: `${color}08` }}>
+                        <p className="text-[10px] font-bold uppercase tracking-wider mb-2" style={{ color }}>
+                          What you&apos;ll master
+                        </p>
+                        <ul className="space-y-1.5">
+                          {previewSkills.map((skill, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs text-[#1A1A2E]">
+                              <CheckCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color }} aria-hidden="true" />
+                              <span className="line-clamp-1">{skill}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        {moreSkills > 0 && (
+                          <p className="text-[11px] text-[#6B7280] mt-2 italic">
+                            + {moreSkills} more skill{moreSkills > 1 ? "s" : ""} in the full curriculum
+                          </p>
+                        )}
+                      </div>
+                    )}
+
+                    <div className="flex items-center gap-3 text-xs text-[#6B7280] mb-4 mt-auto">
                       <span className="flex items-center gap-1">
-                        <Clock className="w-3.5 h-3.5" />
+                        <Clock className="w-3.5 h-3.5" aria-hidden="true" />
                         {course.duration}
                       </span>
+                      {fee && (
+                        <span className="flex items-center gap-1 font-medium text-[#1A1A2E]">
+                          · {fee} RWF
+                          {course.installmentAvailable && (
+                            <span className="text-[#6B7280] font-normal">/ installments ok</span>
+                          )}
+                        </span>
+                      )}
                     </div>
                     <div className="flex items-center gap-3">
                       <Link
                         to={`/courses/${course.slug}`}
                         className="text-sm font-medium text-[#5E17EB] hover:text-[#5E17EB] transition-colors flex items-center gap-1"
                       >
-                        Learn More <ArrowRight className="w-4 h-4" />
+                        See full curriculum <ArrowRight className="w-4 h-4" />
                       </Link>
                       <Link
                         to="/enroll"
-                        className="text-sm font-medium px-4 py-1.5 rounded-full text-white transition-colors"
+                        className="text-sm font-medium px-4 py-1.5 rounded-full text-white transition-colors ml-auto"
                         style={{ backgroundColor: color }}
                       >
                         Enroll
@@ -163,58 +231,7 @@ export default function Home() {
       <TestimonialsSection testimonials={testimonialsData} />
 
       {/* News Preview */}
-      <section className="py-32 bg-[#EDE7FF]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between mb-12">
-            <div>
-              <span className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider">
-                Latest Updates
-              </span>
-              <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#1A1A2E] font-display">
-                News & Events
-              </h2>
-            </div>
-            <Link
-              to="/news"
-              className="hidden sm:flex items-center gap-1 text-[#5E17EB] hover:text-[#5E17EB] font-medium transition-colors"
-            >
-              View All <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {news?.map((item) => (
-              <Card
-                key={item.id}
-                className="overflow-hidden bg-white border-0 shadow-md hover:shadow-xl transition-all duration-300 group"
-              >
-                <div className="h-48 bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center">
-                  <span className="text-5xl font-bold text-white/20 font-display uppercase">
-                    {item.category.charAt(0)}
-                  </span>
-                </div>
-                <CardContent className="p-6">
-                  <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-[#5E17EB]/10 text-[#5E17EB] mb-3 uppercase">
-                    {item.category}
-                  </span>
-                  <h3 className="text-lg font-bold text-[#1A1A2E] mb-2 font-display group-hover:text-[#5E17EB] transition-colors line-clamp-2">
-                    {item.title}
-                  </h3>
-                  <p className="text-sm text-[#6B7280] line-clamp-2 mb-4">
-                    {item.excerpt}
-                  </p>
-                  <span className="text-xs text-[#6B7280]">
-                    By {item.authorName} ·{" "}
-                    {item.publishedAt
-                      ? new Date(item.publishedAt).toLocaleDateString()
-                      : "Recently"}
-                  </span>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      <NewsPreviewSection news={news} />
 
       {/* CTA Banner */}
       <section className="py-16 bg-gradient-to-br from-[#C8E6C9] via-[#E8F5E9] to-[#C8E6C9]">
@@ -769,5 +786,192 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
         </div>
       </div>
     </section>
+  );
+}
+
+// ─── NEWS PREVIEW SECTION (with article modal) ───
+function NewsPreviewSection({ news }: { news: any[] }) {
+  const [selected, setSelected] = useState<any | null>(null);
+
+  return (
+    <>
+      <section className="py-32 bg-[#EDE7FF]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-12">
+            <div>
+              <span className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider">
+                Latest Updates
+              </span>
+              <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#1A1A2E] font-display">
+                News & Events
+              </h2>
+              <p className="mt-3 text-[#6B7280] max-w-xl">
+                Stories, milestones, and announcements from the Pacemaker community. Tap any card to read the full story.
+              </p>
+            </div>
+            <Link
+              to="/news"
+              className="hidden sm:flex items-center gap-1 text-[#5E17EB] hover:text-[#5E17EB] font-medium transition-colors shrink-0"
+            >
+              View All <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {(news || []).map((item) => {
+              const minutes = readingTime(item.content);
+              return (
+                <Card
+                  key={item.id}
+                  className="overflow-hidden bg-white border-0 shadow-md hover:shadow-xl transition-all duration-300 group cursor-pointer flex flex-col"
+                  onClick={() => setSelected(item)}
+                >
+                  <div className="h-44 bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center relative overflow-hidden">
+                    {/* Decorative giant first letter */}
+                    <span className="text-7xl font-bold text-white/15 font-display uppercase select-none" aria-hidden="true">
+                      {item.category.charAt(0)}
+                    </span>
+                    {/* Sparkle accent */}
+                    <Sparkles className="w-6 h-6 text-white/30 absolute top-4 right-4" aria-hidden="true" />
+                    {/* Category chip overlaid on the gradient */}
+                    <span className="absolute bottom-3 left-4 inline-block px-3 py-1 text-[10px] font-bold tracking-wider rounded-full bg-white/90 text-[#5E17EB] uppercase">
+                      {item.category}
+                    </span>
+                  </div>
+                  <CardContent className="p-6 flex flex-col flex-1">
+                    <h3 className="text-lg font-bold text-[#1A1A2E] mb-2 font-display group-hover:text-[#5E17EB] transition-colors line-clamp-2">
+                      {item.title}
+                    </h3>
+
+                    {/* Teaser excerpt with fade-out mask — hints at more content */}
+                    <div className="relative mb-4">
+                      <p className="text-sm text-[#6B7280] line-clamp-3 pr-2">
+                        {item.excerpt}
+                      </p>
+                      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-white to-transparent" aria-hidden="true" />
+                    </div>
+
+                    <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
+                      <span className="text-xs text-[#6B7280]">
+                        By {item.authorName} ·{" "}
+                        {item.publishedAt
+                          ? new Date(item.publishedAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
+                          : "Recently"}
+                      </span>
+                      <span className="text-xs text-[#5E17EB] font-medium flex items-center gap-1">
+                        {minutes} min read
+                      </span>
+                    </div>
+
+                    {/* "Read more" affordance — appears on hover */}
+                    <div className="mt-3 flex items-center gap-1 text-sm font-semibold text-[#5E17EB] opacity-80 group-hover:opacity-100 transition-opacity">
+                      Read full story
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+
+          {/* Mobile "View All" link */}
+          <div className="text-center mt-10 sm:hidden">
+            <Button asChild variant="outline" className="border-[#5E17EB] text-[#5E17EB] hover:bg-[#5E17EB] hover:text-white rounded-full px-8">
+              <Link to="/news">View All News <ArrowRight className="w-4 h-4 ml-1" /></Link>
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Article Modal */}
+      <Dialog open={!!selected} onOpenChange={(open) => { if (!open) setSelected(null); }}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto p-0">
+          {selected && (
+            <>
+              {/* Header banner */}
+              <div className="relative h-40 bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center">
+                <span className="text-7xl font-bold text-white/15 font-display uppercase select-none" aria-hidden="true">
+                  {selected.category.charAt(0)}
+                </span>
+                <span className="absolute bottom-3 left-6 inline-block px-3 py-1 text-[10px] font-bold tracking-wider rounded-full bg-white/90 text-[#5E17EB] uppercase">
+                  {selected.category}
+                </span>
+                <button
+                  onClick={() => setSelected(null)}
+                  aria-label="Close article"
+                  className="absolute top-3 right-3 p-1.5 rounded-full bg-white/20 hover:bg-white/30 text-white transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              <DialogHeader className="p-6 pb-2">
+                <DialogTitle className="text-2xl font-bold text-[#1A1A2E] font-display leading-tight">
+                  {selected.title}
+                </DialogTitle>
+                <div className="flex flex-wrap items-center gap-3 text-xs text-[#6B7280] mt-2">
+                  <span>By <strong className="text-[#1A1A2E]">{selected.authorName}</strong></span>
+                  <span>·</span>
+                  <span>
+                    {selected.publishedAt
+                      ? new Date(selected.publishedAt).toLocaleDateString(undefined, { month: "long", day: "numeric", year: "numeric" })
+                      : "Recently"}
+                  </span>
+                  <span>·</span>
+                  <span>{readingTime(selected.content)} min read</span>
+                  {selected.eventDate && (
+                    <>
+                      <span>·</span>
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3" aria-hidden="true" />
+                        {new Date(selected.eventDate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                      </span>
+                    </>
+                  )}
+                  {selected.eventLocation && (
+                    <>
+                      <span>·</span>
+                      <span className="flex items-center gap-1">
+                        <MapPin className="w-3 h-3" aria-hidden="true" />
+                        {selected.eventLocation}
+                      </span>
+                    </>
+                  )}
+                </div>
+              </DialogHeader>
+
+              <div className="px-6 pb-8">
+                {/* Pull-quote excerpt */}
+                <blockquote className="border-l-4 border-[#5E17EB] pl-4 py-1 my-4 text-[#1A1A2E] italic font-medium">
+                  {selected.excerpt}
+                </blockquote>
+
+                {/* Full article content — preserves paragraphs */}
+                <div className="prose prose-sm max-w-none text-[#1A1A2E] leading-relaxed space-y-4">
+                  {selected.content?.split(/\n\n+/).map((para: string, i: number) => (
+                    <p key={i} className="whitespace-pre-line">{para}</p>
+                  ))}
+                </div>
+
+                {/* Footer CTA */}
+                <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <p className="text-sm text-[#6B7280] text-center sm:text-left">
+                    Want to be part of the next story?
+                  </p>
+                  <div className="flex gap-3">
+                    <Button asChild className="bg-[#5E17EB] text-white hover:bg-[#1A1A2E] rounded-full">
+                      <Link to="/enroll">Enroll Now</Link>
+                    </Button>
+                    <Button asChild variant="outline" className="border-[#5E17EB] text-[#5E17EB] hover:bg-[#5E17EB] hover:text-white rounded-full">
+                      <Link to="/news">More News</Link>
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
