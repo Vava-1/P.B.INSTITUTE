@@ -208,12 +208,24 @@ if (env.isProduction) {
   server = serve({ fetch: app.fetch, port, hostname: "0.0.0.0" }, () => {
     console.log(`Server running on http://0.0.0.0:${port}/`);
 
-    // AUTO-SEED: after the server starts, check if any tables are empty and
-    // re-insert seed data if needed. This runs in the background — doesn't
-    // block startup. Recovers data lost by destructive schema pushes.
-    import("../db/seed-if-empty")
-      .then(({ seedIfEmpty }) => seedIfEmpty())
-      .catch((e) => console.error("[auto-seed] failed:", e));
+    // AUTO-MIGRATE + AUTO-SEED: after the server starts, run raw SQL migrations
+    // to add any missing columns (drizzle-kit push sometimes skips new columns),
+    // then check if any tables are empty and re-insert seed data if needed.
+    // Both run in the background — doesn't block startup.
+    (async () => {
+      try {
+        const { runMigrations } = await import("../db/migrate");
+        await runMigrations();
+      } catch (e) {
+        console.error("[auto-migrate] failed:", e);
+      }
+      try {
+        const { seedIfEmpty } = await import("../db/seed-if-empty");
+        await seedIfEmpty();
+      } catch (e) {
+        console.error("[auto-seed] failed:", e);
+      }
+    })();
   });
 
   // GRACEFUL SHUTDOWN: drain in-flight requests and close the DB pool on SIGTERM/SIGINT.
