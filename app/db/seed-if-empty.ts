@@ -1,11 +1,11 @@
 import { getDb } from "../api/queries/connection";
 import { testimonials } from "./schema";
-import { count, eq } from "drizzle-orm";
+import { count } from "drizzle-orm";
 
 /**
  * Auto-seed: runs on every container startup after migrations.
- * Only inserts seed data when a table is EMPTY — never overwrites existing rows.
- * Also deduplicates by studentName if duplicate seed runs happened.
+ * Only inserts seed data when a table is COMPLETELY EMPTY — never deletes
+ * or modifies existing rows. This is safe to run repeatedly.
  */
 export async function seedIfEmpty() {
   const db = getDb();
@@ -15,22 +15,8 @@ export async function seedIfEmpty() {
       console.log("🌱 [auto-seed] Testimonials table is empty — inserting seed data...");
       await db.insert(testimonials).values(SEED_TESTIMONIALS);
       console.log("✅ [auto-seed] 6 testimonials inserted");
-    } else if (result.count > 6) {
-      // Deduplicate: if multiple seed runs created duplicates, trim back to 6.
-      console.log(`🧹 [auto-seed] Testimonials has ${result.count} rows — deduplicating...`);
-      const seen = new Set<string>();
-      const rows = await db.select().from(testimonials);
-      for (const row of rows) {
-        if (seen.has(row.studentName)) {
-          await db.delete(testimonials).where(eq(testimonials.id, row.id));
-        } else {
-          seen.add(row.studentName);
-        }
-      }
-      const [after] = await db.select({ count: count() }).from(testimonials);
-      console.log(`✅ [auto-seed] Deduplicated to ${after.count} testimonials`);
     } else {
-      console.log(`ℹ️  [auto-seed] Testimonials table has ${result.count} rows — skipping`);
+      console.log(`ℹ️  [auto-seed] Testimonials table has ${result.count} rows — skipping (never modify existing data)`);
     }
   } catch (e) {
     console.error("⚠️  [auto-seed] Failed:", (e as Error).message);

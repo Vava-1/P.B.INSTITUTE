@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import {
   BookOpen, Users, Clock, Award, ArrowRight, Star,
   CheckCircle, GraduationCap, Wrench, Cpu, Languages,
-  ChefHat, Scissors, FileText, Linkedin,
+  ChefHat, Scissors, FileText, ChevronLeft, ChevronRight, Linkedin,
   Calendar, MapPin, X, Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -575,12 +575,26 @@ function WhyChooseSection() {
   );
 }
 
-// ─── TESTIMONIALS SECTION (grid showing ALL testimonials) ───
+// ─── TESTIMONIALS SECTION (carousel showing ALL testimonials) ───
 function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
+  const [current, setCurrent] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  // Auto-rotate every 5 seconds (pauses on hover).
+  useEffect(() => {
+    if (paused || testimonials.length <= 1) return;
+    const iv = setInterval(() => setCurrent((p) => (p + 1) % testimonials.length), 5000);
+    return () => clearInterval(iv);
+  }, [paused, testimonials.length]);
+
   if (!testimonials.length) return null;
 
+  const next = () => setCurrent((p) => (p + 1) % testimonials.length);
+  const prev = () => setCurrent((p) => (p - 1 + testimonials.length) % testimonials.length);
+  const t = testimonials[current];
+
   return (
-    <section className="py-32 bg-white">
+    <section className="py-32 bg-gradient-to-b from-white to-[#EDE7FF]/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
           <span className="font-hand text-2xl text-[#5E17EB] block mb-1">
@@ -594,63 +608,101 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {testimonials.map((t, idx) => (
-            <Card
-              key={t.id ?? idx}
-              className="group overflow-hidden bg-gradient-to-br from-[#EDE7FF]/40 to-white rounded-2xl shadow-warm hover:shadow-warm-lg transition-all duration-300 hover:-translate-y-1 border border-purple-100/50 flex flex-col"
-            >
-              <CardContent className="p-6 flex flex-col flex-1">
-                {/* Quote mark */}
-                <div className="text-5xl text-[#5E17EB]/20 font-display leading-none mb-3">
-                  &ldquo;
-                </div>
-                {/* Stars */}
-                <div className="flex items-center gap-1 mb-3">
-                  {Array.from({ length: t?.rating || 5 }).map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-[#F4A400] text-[#F4A400]" />
-                  ))}
-                </div>
-                {/* Quote */}
-                <p className="text-sm text-[#1A1A2E] leading-relaxed mb-6 flex-1 italic line-clamp-6">
-                  {t?.quote}
-                </p>
-                {/* Author */}
-                <div className="flex items-center gap-3 pt-4 border-t border-purple-100/60">
-                  {t?.photoUrl ? (
-                    <div className="relative w-12 h-12 shrink-0">
-                      <img src={t.photoUrl} alt={t.studentName} className="w-12 h-12 rounded-full object-cover" />
-                      {t?.linkedinUrl && (
-                        <a href={t.linkedinUrl} target="_blank" rel="noopener noreferrer"
-                          className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#0A66C2] rounded-full flex items-center justify-center shadow hover:scale-110 transition-transform">
-                          <Linkedin className="w-3 h-3 text-white" />
-                        </a>
-                      )}
+        {/* Carousel */}
+        <div
+          className="max-w-4xl mx-auto"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+        >
+          <div
+            key={t.id}
+            className="relative bg-gradient-to-br from-[#EDE7FF] to-white rounded-3xl shadow-warm-lg p-8 md:p-12 border border-purple-100 animate-fade-up"
+          >
+            <div className="text-6xl text-[#5E17EB]/30 font-display leading-none mb-6">
+              &ldquo;
+            </div>
+            <p className="text-lg md:text-xl text-[#1A1A2E] leading-relaxed mb-8 italic">
+              {t?.quote}
+            </p>
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <div className="flex items-center gap-4">
+                {t?.photoUrl ? (
+                  <div className="relative w-14 h-14 shrink-0">
+                    <img src={t.photoUrl} alt={t.studentName} className="w-14 h-14 rounded-full object-cover" />
+                    {t?.linkedinUrl && (
+                      <a href={t.linkedinUrl} target="_blank" rel="noopener noreferrer"
+                        className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#0A66C2] rounded-full flex items-center justify-center shadow hover:scale-110 transition-transform">
+                        <Linkedin className="w-3.5 h-3.5 text-white" />
+                      </a>
+                    )}
+                  </div>
+                ) : (
+                  <div className="relative w-14 h-14 shrink-0">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center text-white font-bold text-lg">
+                      {t?.studentName?.charAt(0)}
                     </div>
-                  ) : (
-                    <div className="relative w-12 h-12 shrink-0">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center text-white font-bold text-lg">
-                        {t?.studentName?.charAt(0)}
-                      </div>
-                      {t?.linkedinUrl && (
-                        <a href={t.linkedinUrl} target="_blank" rel="noopener noreferrer"
-                          className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#0A66C2] rounded-full flex items-center justify-center shadow hover:scale-110 transition-transform">
-                          <Linkedin className="w-3 h-3 text-white" />
-                        </a>
-                      )}
-                    </div>
-                  )}
-                  <div className="min-w-0">
-                    <div className="font-bold text-[#1A1A2E] truncate">{t?.studentName}</div>
-                    <div className="text-xs text-[#6B7280] truncate">
-                      {t?.courseName}{t?.currentRole ? ` · ${t.currentRole}` : ""}
-                      {t?.employer ? ` at ${t.employer}` : ""}
-                    </div>
+                    {t?.linkedinUrl && (
+                      <a href={t.linkedinUrl} target="_blank" rel="noopener noreferrer"
+                        className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#0A66C2] rounded-full flex items-center justify-center shadow hover:scale-110 transition-transform">
+                        <Linkedin className="w-3.5 h-3.5 text-white" />
+                      </a>
+                    )}
+                  </div>
+                )}
+                <div>
+                  <div className="font-bold text-[#1A1A2E]">{t?.studentName}</div>
+                  <div className="text-sm text-[#6B7280]">
+                    {t?.courseName} · {t?.currentRole}
+                    {t?.employer ? ` at ${t.employer}` : ""}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))}
+              </div>
+              <div className="flex items-center gap-1">
+                {Array.from({ length: t?.rating || 5 }).map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-[#F4A400] text-[#F4A400]" />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation */}
+          {testimonials.length > 1 && (
+            <div className="flex items-center justify-center gap-3 mt-8">
+              <button
+                onClick={prev}
+                aria-label="Previous testimonial"
+                className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#EDE7FF] transition-colors"
+              >
+                <ChevronLeft className="w-5 h-5" aria-hidden="true" />
+              </button>
+              {/* Dots */}
+              <div className="flex items-center gap-1.5 flex-wrap justify-center max-w-md">
+                {testimonials.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrent(i)}
+                    aria-label={`Go to testimonial ${i + 1}`}
+                    aria-current={i === current}
+                    className={`h-2 rounded-full transition-all ${
+                      i === current ? "bg-[#5E17EB] w-6" : "bg-gray-300 w-2 hover:bg-gray-400"
+                    }`}
+                  />
+                ))}
+              </div>
+              <button
+                onClick={next}
+                aria-label="Next testimonial"
+                className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#EDE7FF] transition-colors"
+              >
+                <ChevronRight className="w-5 h-5" aria-hidden="true" />
+              </button>
+            </div>
+          )}
+
+          {/* Counter */}
+          <p className="text-center text-sm text-[#6B7280] mt-4 font-hand text-base">
+            {current + 1} of {testimonials.length} stories
+          </p>
         </div>
       </div>
     </section>

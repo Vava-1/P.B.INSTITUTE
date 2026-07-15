@@ -16,8 +16,9 @@ import { buildMomoConfig, checkTransactionStatus } from "./lib/mtn-momo";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
-// SECURITY: 1 MB is more than enough for tRPC JSON payloads. Was 50 MB.
-app.use(bodyLimit({ maxSize: 1 * 1024 * 1024 }));
+// SECURITY: 5 MB allows for base64-encoded photos in testimonials/news.
+// Was 50 MB (too large), then 1 MB (too small for base64 images).
+app.use(bodyLimit({ maxSize: 5 * 1024 * 1024 }));
 
 // SECURITY: security headers (X-Content-Type-Options, X-Frame-Options, CSP-lite, etc.)
 app.use("*", secureHeaders());
