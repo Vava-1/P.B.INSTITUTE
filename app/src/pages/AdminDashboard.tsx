@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 import { trpc } from "@/providers/trpc";
 import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
+import { ImageUpload } from "@/components/ImageUpload";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin/dashboard" },
@@ -671,11 +672,12 @@ function TestimonialsAdminPage() {
   const [form, setForm] = useState({
     studentName: "", photoUrl: "", linkedinUrl: "", courseName: "",
     currentRole: "", employer: "", quote: "", rating: 5,
+    isPublished: true, isFeatured: false,
   });
 
   const openNew = () => {
     setEditId(null);
-    setForm({ studentName: "", photoUrl: "", linkedinUrl: "", courseName: "", currentRole: "", employer: "", quote: "", rating: 5 });
+    setForm({ studentName: "", photoUrl: "", linkedinUrl: "", courseName: "", currentRole: "", employer: "", quote: "", rating: 5, isPublished: true, isFeatured: false });
     setDialogOpen(true);
   };
 
@@ -685,6 +687,7 @@ function TestimonialsAdminPage() {
       studentName: t.studentName, photoUrl: t.photoUrl ?? "", linkedinUrl: t.linkedinUrl ?? "",
       courseName: t.courseName ?? "", currentRole: t.currentRole ?? "", employer: t.employer ?? "",
       quote: t.quote, rating: t.rating ?? 5,
+      isPublished: t.isPublished ?? true, isFeatured: t.isFeatured ?? false,
     });
     setDialogOpen(true);
   };
@@ -721,10 +724,11 @@ function TestimonialsAdminPage() {
                 <Input value={form.studentName} onChange={(e) => setForm({ ...form, studentName: e.target.value })} />
               </div>
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Photo URL</Label>
-                  <Input value={form.photoUrl} onChange={(e) => setForm({ ...form, photoUrl: e.target.value })} placeholder="https://..." />
-                </div>
+                <ImageUpload
+                  value={form.photoUrl}
+                  onChange={(dataUrl) => setForm({ ...form, photoUrl: dataUrl })}
+                  label="Student Photo"
+                />
                 <div>
                   <Label>LinkedIn URL</Label>
                   <Input value={form.linkedinUrl} onChange={(e) => setForm({ ...form, linkedinUrl: e.target.value })} placeholder="https://linkedin.com/in/..." />
@@ -753,6 +757,26 @@ function TestimonialsAdminPage() {
               <div>
                 <Label>Testimony</Label>
                 <Textarea rows={3} value={form.quote} onChange={(e) => setForm({ ...form, quote: e.target.value })} />
+              </div>
+              <div className="flex items-center gap-6 pt-2">
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.isPublished}
+                    onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
+                    className="w-4 h-4 rounded accent-[#5E17EB]"
+                  />
+                  Published (visible on website)
+                </label>
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={form.isFeatured}
+                    onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })}
+                    className="w-4 h-4 rounded accent-[#5E17EB]"
+                  />
+                  Featured (shown on home page)
+                </label>
               </div>
               <div className="flex justify-end gap-3 pt-2">
                 <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>

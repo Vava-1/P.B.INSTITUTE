@@ -17,9 +17,13 @@ export async function runMigrations() {
       sql: "ALTER TABLE testimonials ADD COLUMN linkedin_url text",
     },
     {
+      name: "testimonials.photo_url_mediumtext",
+      // Change photo_url from TEXT (65KB) to MEDIUMTEXT (16MB) so it can hold
+      // base64-encoded uploaded images.
+      sql: "ALTER TABLE testimonials MODIFY COLUMN photo_url mediumtext",
+    },
+    {
       name: "testimonials.course_id_type_fix",
-      // Ensure course_id is int (not bigint) to match courses.id.
-      // This is a no-op if already int; the error is ignored.
       sql: "ALTER TABLE testimonials MODIFY COLUMN course_id int",
     },
     {

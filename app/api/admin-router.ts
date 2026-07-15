@@ -364,8 +364,10 @@ export const adminRouter = createRouter({
         quote: z.string().min(1),
         rating: z.number().min(1).max(5).default(5),
         isFeatured: z.boolean().default(false),
-        isPublished: z.boolean().default(false),
-        isApproved: z.boolean().default(false),
+        // Admin-created testimonials are published + approved by default
+        // (the admin is explicitly creating them, not a public submission).
+        isPublished: z.boolean().default(true),
+        isApproved: z.boolean().default(true),
       })
     )
     .mutation(async ({ input }) => {
