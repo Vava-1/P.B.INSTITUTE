@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import {
   BookOpen, Users, Clock, Award, ArrowRight, Star,
   CheckCircle, GraduationCap, Wrench, Cpu, Languages,
-  ChefHat, Scissors, FileText, ChevronLeft, ChevronRight, Linkedin,
+  ChefHat, Scissors, FileText, Linkedin,
   Calendar, MapPin, X, Sparkles,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -575,106 +575,82 @@ function WhyChooseSection() {
   );
 }
 
-// ─── TESTIMONIALS SECTION ───
+// ─── TESTIMONIALS SECTION (grid showing ALL testimonials) ───
 function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
-  const [current, setCurrent] = useState(0);
-
   if (!testimonials.length) return null;
-
-  const next = () => setCurrent((p) => (p + 1) % testimonials.length);
-  const prev = () => setCurrent((p) => (p - 1 + testimonials.length) % testimonials.length);
-
-  const t = testimonials[current];
 
   return (
     <section className="py-32 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <span className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider">
+          <span className="font-hand text-2xl text-[#5E17EB] block mb-1">
             Testimonials
           </span>
-          <h2 className="mt-3 text-4xl md:text-5xl font-bold text-[#1A1A2E] font-display">
+          <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A2E] font-display">
             What Our <span className="text-gradient-gold">Students Say</span>
           </h2>
+          <p className="mt-4 text-lg text-[#6B7280] max-w-2xl mx-auto">
+            Real stories from graduates who transformed their lives through Pacemaker Institute.
+          </p>
         </div>
 
-        <div className="max-w-4xl mx-auto">
-          <div className="relative bg-gradient-to-br from-[#EDE7FF] to-white rounded-2xl shadow-xl p-8 md:p-12 border border-gray-100">
-            <div className="text-6xl text-[#5E17EB]/30 font-display leading-none mb-6">
-              "
-            </div>
-            <p className="text-lg md:text-xl text-[#1A1A2E] leading-relaxed mb-8 italic">
-              {t?.quote}
-            </p>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                {t?.photoUrl ? (
-                  <div className="relative w-14 h-14 shrink-0">
-                    <img src={t.photoUrl} alt={t.studentName} className="w-14 h-14 rounded-full object-cover" />
-                    {t?.linkedinUrl && (
-                      <a href={t.linkedinUrl} target="_blank" rel="noopener noreferrer"
-                        className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#0A66C2] rounded-full flex items-center justify-center shadow hover:scale-110 transition-transform">
-                        <Linkedin className="w-3.5 h-3.5 text-white" />
-                      </a>
-                    )}
-                  </div>
-                ) : (
-                  <div className="relative w-14 h-14 shrink-0">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center text-white font-bold text-lg">
-                      {t?.studentName?.charAt(0)}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {testimonials.map((t, idx) => (
+            <Card
+              key={t.id ?? idx}
+              className="group overflow-hidden bg-gradient-to-br from-[#EDE7FF]/40 to-white rounded-2xl shadow-warm hover:shadow-warm-lg transition-all duration-300 hover:-translate-y-1 border border-purple-100/50 flex flex-col"
+            >
+              <CardContent className="p-6 flex flex-col flex-1">
+                {/* Quote mark */}
+                <div className="text-5xl text-[#5E17EB]/20 font-display leading-none mb-3">
+                  &ldquo;
+                </div>
+                {/* Stars */}
+                <div className="flex items-center gap-1 mb-3">
+                  {Array.from({ length: t?.rating || 5 }).map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-[#F4A400] text-[#F4A400]" />
+                  ))}
+                </div>
+                {/* Quote */}
+                <p className="text-sm text-[#1A1A2E] leading-relaxed mb-6 flex-1 italic line-clamp-6">
+                  {t?.quote}
+                </p>
+                {/* Author */}
+                <div className="flex items-center gap-3 pt-4 border-t border-purple-100/60">
+                  {t?.photoUrl ? (
+                    <div className="relative w-12 h-12 shrink-0">
+                      <img src={t.photoUrl} alt={t.studentName} className="w-12 h-12 rounded-full object-cover" />
+                      {t?.linkedinUrl && (
+                        <a href={t.linkedinUrl} target="_blank" rel="noopener noreferrer"
+                          className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#0A66C2] rounded-full flex items-center justify-center shadow hover:scale-110 transition-transform">
+                          <Linkedin className="w-3 h-3 text-white" />
+                        </a>
+                      )}
                     </div>
-                    {t?.linkedinUrl && (
-                      <a href={t.linkedinUrl} target="_blank" rel="noopener noreferrer"
-                        className="absolute -bottom-1 -right-1 w-6 h-6 bg-[#0A66C2] rounded-full flex items-center justify-center shadow hover:scale-110 transition-transform">
-                        <Linkedin className="w-3.5 h-3.5 text-white" />
-                      </a>
-                    )}
-                  </div>
-                )}
-                <div>
-                  <div className="font-bold text-[#1A1A2E]">{t?.studentName}</div>
-                  <div className="text-sm text-[#6B7280]">
-                    {t?.courseName} · {t?.currentRole}
-                    {t?.employer ? ` at ${t.employer}` : ""}
+                  ) : (
+                    <div className="relative w-12 h-12 shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center text-white font-bold text-lg">
+                        {t?.studentName?.charAt(0)}
+                      </div>
+                      {t?.linkedinUrl && (
+                        <a href={t.linkedinUrl} target="_blank" rel="noopener noreferrer"
+                          className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#0A66C2] rounded-full flex items-center justify-center shadow hover:scale-110 transition-transform">
+                          <Linkedin className="w-3 h-3 text-white" />
+                        </a>
+                      )}
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <div className="font-bold text-[#1A1A2E] truncate">{t?.studentName}</div>
+                    <div className="text-xs text-[#6B7280] truncate">
+                      {t?.courseName}{t?.currentRole ? ` · ${t.currentRole}` : ""}
+                      {t?.employer ? ` at ${t.employer}` : ""}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-1">
-                {Array.from({ length: t?.rating || 5 }).map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-[#5E17EB] text-[#5E17EB]" />
-                ))}
-              </div>
-            </div>
-
-            {/* Navigation */}
-            <div className="flex items-center justify-center gap-3 mt-8">
-              <button
-                onClick={prev}
-                aria-label="Previous testimonial"
-                className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#EDE7FF] transition-colors"
-              >
-                <ChevronLeft className="w-5 h-5" aria-hidden="true" />
-              </button>
-              {testimonials.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrent(i)}
-                  aria-label={`Go to testimonial ${i + 1}`}
-                  aria-current={i === current}
-                  className={`w-2.5 h-2.5 rounded-full transition-colors ${
-                    i === current ? "bg-[#5E17EB]" : "bg-gray-300"
-                  }`}
-                />
-              ))}
-              <button
-                onClick={next}
-                aria-label="Next testimonial"
-                className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#EDE7FF] transition-colors"
-              >
-                <ChevronRight className="w-5 h-5" aria-hidden="true" />
-              </button>
-            </div>
-          </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     </section>

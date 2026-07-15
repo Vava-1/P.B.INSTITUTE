@@ -510,6 +510,7 @@ function NewsAdminPage() {
 
   const [showModal, setShowModal] = useState(false);
   const [editing, setEditing] = useState<any>(null);
+  const [filterCategory, setFilterCategory] = useState<string>("all");
   const [form, setForm] = useState({
     slug: "", title: "", category: "news", excerpt: "", content: "",
     authorName: "", isPublished: false,
@@ -555,6 +556,23 @@ function NewsAdminPage() {
         <Button onClick={openCreate} className="bg-[#5E17EB] text-white hover:bg-[#1A1A2E]">
           <Plus className="w-4 h-4 mr-2" /> Add Article
         </Button>
+      </div>
+
+      {/* Category filter tabs */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {["all", "news", "event", "achievement", "announcement"].map((cat) => (
+          <button
+            key={cat}
+            onClick={() => setFilterCategory(cat)}
+            className={`px-4 py-2 text-sm font-medium rounded-full transition-colors capitalize ${
+              filterCategory === cat
+                ? "bg-[#5E17EB] text-white"
+                : "bg-white text-[#6B7280] hover:bg-[#5E17EB]/10 hover:text-[#5E17EB] border border-gray-200"
+            }`}
+          >
+            {cat === "all" ? "All" : cat + "s"}
+          </button>
+        ))}
       </div>
 
       {showModal && (
@@ -614,8 +632,14 @@ function NewsAdminPage() {
       )}
 
       <div className="space-y-4">
-        {(newsItems || []).length === 0 && <p className="text-[#6B7280]">No articles yet</p>}
-        {(newsItems || []).map((item: any) => (
+        {(() => {
+          const filtered = (newsItems || []).filter(
+            (item: any) => filterCategory === "all" || item.category === filterCategory
+          );
+          if (filtered.length === 0) {
+            return <p className="text-[#6B7280]">No {filterCategory === "all" ? "" : filterCategory + " "}articles yet</p>;
+          }
+          return filtered.map((item: any) => (
           <Card key={item.id} className="border-0 shadow-sm group">
             <CardContent className="p-5">
               <div className="flex items-start justify-between gap-4">
@@ -652,7 +676,8 @@ function NewsAdminPage() {
               </div>
             </CardContent>
           </Card>
-        ))}
+          ));
+        })()}
       </div>
       {confirmNode}
     </div>

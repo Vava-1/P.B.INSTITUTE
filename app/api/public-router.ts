@@ -33,7 +33,7 @@ export const publicRouter = createRouter({
       const [featured, all, testimonialsR, newsR, settingsR] = await Promise.allSettled([
         db.select().from(courses).where(and(eq(courses.isPublished, true), eq(courses.isFeatured, true))).orderBy(asc(courses.displayOrder)),
         db.select().from(courses).where(eq(courses.isPublished, true)).orderBy(asc(courses.displayOrder)),
-        db.select().from(testimonials).where(and(eq(testimonials.isPublished, true), eq(testimonials.isApproved, true), eq(testimonials.isFeatured, true))).orderBy(desc(testimonials.submittedAt)).limit(6),
+        db.select().from(testimonials).where(and(eq(testimonials.isPublished, true), eq(testimonials.isApproved, true))).orderBy(desc(testimonials.submittedAt)).limit(50),
         db.select().from(newsEvents).where(eq(newsEvents.isPublished, true)).orderBy(desc(newsEvents.publishedAt)).limit(3),
         db.select().from(siteSettings).where(eq(siteSettings.id, "main")).then(r => r[0] ?? null),
       ]);

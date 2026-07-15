@@ -1,5 +1,5 @@
 import { useRef, useState, type ChangeEvent } from "react";
-import { Upload, X, User } from "lucide-react";
+import { Upload, X } from "lucide-react";
 
 interface ImageUploadProps {
   value: string;
