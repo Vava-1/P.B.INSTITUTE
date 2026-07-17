@@ -7,7 +7,20 @@ import type { ReactNode } from "react";
 
 export const trpc = createTRPCReact<AppRouter>();
 
-const queryClient = new QueryClient();
+// Configure QueryClient with sensible defaults:
+// - staleTime: 0 means data is immediately stale (always refetch on mount/refocus)
+// - refetchOnWindowFocus: true refetches when the user returns to the tab
+//   (so admin sees fresh data after switching to the website and back)
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 0,
+      refetchOnWindowFocus: true,
+      retry: 1,
+    },
+  },
+});
+
 const trpcClient = trpc.createClient({
   links: [
     httpBatchLink({

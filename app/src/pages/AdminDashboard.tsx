@@ -22,6 +22,7 @@ import {
 import { trpc } from "@/providers/trpc";
 import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
 import { ImageUpload } from "@/components/ImageUpload";
+import { toast } from "sonner";
 
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin/dashboard" },
@@ -257,8 +258,9 @@ function DashboardOverview() {
 
 // ─── ENROLLMENTS PAGE ───
 function EnrollmentsPage() {
-  const { data: enrollments, refetch } = trpc.admin.enrollmentList.useQuery({ limit: 50, offset: 0 }, { retry: false });
-  const updateMutation = trpc.admin.enrollmentUpdate.useMutation({ onSuccess: () => refetch() });
+  const utils = trpc.useUtils();
+  const { data: enrollments } = trpc.admin.enrollmentList.useQuery({ limit: 50, offset: 0 }, { retry: false });
+  const updateMutation = trpc.admin.enrollmentUpdate.useMutation({ onSuccess: () => utils.admin.enrollmentList.invalidate() });
 
   return (
     <div className="p-6 lg:p-8">
@@ -335,10 +337,21 @@ function EnrollmentsPage() {
 
 // ─── COURSES ADMIN ───
 function CoursesAdminPage() {
-  const { data: courses, refetch } = trpc.admin.courseList.useQuery(undefined, { retry: false });
-  const createMutation = trpc.admin.courseCreate.useMutation({ onSuccess: () => refetch() });
-  const updateMutation = trpc.admin.courseUpdate.useMutation({ onSuccess: () => refetch() });
-  const deleteMutation = trpc.admin.courseDelete.useMutation({ onSuccess: () => refetch() });
+  const utils = trpc.useUtils();
+  const { data: courses } = trpc.admin.courseList.useQuery(undefined, { retry: false });
+  const invalidateCourses = () => Promise.all([utils.admin.courseList.invalidate(), utils.public.courses.list.invalidate(), utils.public.homepage.data.invalidate()]);
+  const createMutation = trpc.admin.courseCreate.useMutation({
+    onSuccess: () => { invalidateCourses(); toast.success("Course created"); },
+    onError: (e) => toast.error("Failed to create: " + e.message),
+  });
+  const updateMutation = trpc.admin.courseUpdate.useMutation({
+    onSuccess: () => { invalidateCourses(); toast.success("Course updated"); },
+    onError: (e) => toast.error("Failed to update: " + e.message),
+  });
+  const deleteMutation = trpc.admin.courseDelete.useMutation({
+    onSuccess: () => { invalidateCourses(); toast.success("Course deleted"); },
+    onError: (e) => toast.error("Failed to delete: " + e.message),
+  });
   const [confirmNode, confirm] = useConfirmDialog();
 
   const [showModal, setShowModal] = useState(false);
@@ -502,10 +515,21 @@ function CoursesAdminPage() {
 
 // ─── NEWS ADMIN ───
 function NewsAdminPage() {
-  const { data: newsItems, refetch } = trpc.admin.newsList.useQuery(undefined, { retry: false });
-  const createMutation = trpc.admin.newsCreate.useMutation({ onSuccess: () => refetch() });
-  const updateMutation = trpc.admin.newsUpdate.useMutation({ onSuccess: () => refetch() });
-  const deleteMutation = trpc.admin.newsDelete.useMutation({ onSuccess: () => refetch() });
+  const utils = trpc.useUtils();
+  const { data: newsItems } = trpc.admin.newsList.useQuery(undefined, { retry: false });
+  const invalidateNews = () => Promise.all([utils.admin.newsList.invalidate(), utils.public.news.list.invalidate(), utils.public.homepage.data.invalidate()]);
+  const createMutation = trpc.admin.newsCreate.useMutation({
+    onSuccess: () => { invalidateNews(); toast.success("Article created"); },
+    onError: (e) => toast.error("Failed to create: " + e.message),
+  });
+  const updateMutation = trpc.admin.newsUpdate.useMutation({
+    onSuccess: () => { invalidateNews(); toast.success("Article updated"); },
+    onError: (e) => toast.error("Failed to update: " + e.message),
+  });
+  const deleteMutation = trpc.admin.newsDelete.useMutation({
+    onSuccess: () => { invalidateNews(); toast.success("Article deleted"); },
+    onError: (e) => toast.error("Failed to delete: " + e.message),
+  });
   const [confirmNode, confirm] = useConfirmDialog();
 
   const [showModal, setShowModal] = useState(false);
@@ -686,11 +710,26 @@ function NewsAdminPage() {
 
 // ─── TESTIMONIALS ADMIN ───
 function TestimonialsAdminPage() {
-  const { data: testimonials, refetch } = trpc.admin.testimonialList.useQuery(undefined, { retry: false });
+  const utils = trpc.useUtils();
+  const { data: testimonials } = trpc.admin.testimonialList.useQuery(undefined, { retry: false });
   const [confirmNode, confirm] = useConfirmDialog();
-  const updateMutation = trpc.admin.testimonialUpdate.useMutation({ onSuccess: () => refetch() });
-  const deleteMutation = trpc.admin.testimonialDelete.useMutation({ onSuccess: () => refetch() });
-  const createMutation = trpc.admin.testimonialCreate.useMutation({ onSuccess: () => refetch() });
+  const invalidate = () => Promise.all([
+    utils.admin.testimonialList.invalidate(),
+    utils.public.testimonials.list.invalidate(),
+    utils.public.homepage.data.invalidate(),
+  ]);
+  const updateMutation = trpc.admin.testimonialUpdate.useMutation({
+    onSuccess: () => { invalidate(); toast.success("Testimonial updated"); },
+    onError: (e) => toast.error("Failed to update: " + e.message),
+  });
+  const deleteMutation = trpc.admin.testimonialDelete.useMutation({
+    onSuccess: () => { invalidate(); toast.success("Testimonial deleted"); },
+    onError: (e) => toast.error("Failed to delete: " + e.message),
+  });
+  const createMutation = trpc.admin.testimonialCreate.useMutation({
+    onSuccess: () => { invalidate(); toast.success("Testimonial created — now visible on website"); },
+    onError: (e) => toast.error("Failed to create: " + e.message),
+  });
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
@@ -881,8 +920,9 @@ function TestimonialsAdminPage() {
 
 // ─── MESSAGES ADMIN ───
 function MessagesAdminPage() {
-  const { data: messages, refetch } = trpc.admin.messageList.useQuery(undefined, { retry: false });
-  const updateMutation = trpc.admin.messageUpdate.useMutation({ onSuccess: () => refetch() });
+  const utils = trpc.useUtils();
+  const { data: messages } = trpc.admin.messageList.useQuery(undefined, { retry: false });
+  const updateMutation = trpc.admin.messageUpdate.useMutation({ onSuccess: () => utils.admin.messageList.invalidate() });
 
   return (
     <div className="p-6 lg:p-8">
@@ -930,8 +970,9 @@ function MessagesAdminPage() {
 
 // ─── SETTINGS ADMIN ───
 function SettingsAdminPage() {
-  const { data: settings, refetch } = trpc.public.settings.get.useQuery();
-  const updateMutation = trpc.admin.settingsUpdate.useMutation({ onSuccess: () => refetch() });
+  const utils = trpc.useUtils();
+  const { data: settings } = trpc.public.settings.get.useQuery();
+  const updateMutation = trpc.admin.settingsUpdate.useMutation({ onSuccess: () => Promise.all([utils.public.settings.get.invalidate(), utils.public.homepage.data.invalidate()]) });
   const [form, setForm] = useState<Record<string, string>>({});
 
   useEffect(() => {
