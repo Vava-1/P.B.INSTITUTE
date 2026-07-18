@@ -1,4 +1,6 @@
 import { z } from "zod";
+import * as cookie from "cookie";
+import { nanoid } from "nanoid";
 import { createRouter, adminQuery, superAdminQuery, contentAdminQuery, financeAdminQuery, publicQuery } from "./middleware";
 import { getDb } from "./queries/connection";
 import {
@@ -9,11 +11,15 @@ import {
   enrollments,
   siteSettings,
   adminUsers,
+  payments,
 } from "@db/schema";
-import { eq, desc, asc, or, like, count, sql } from "drizzle-orm";
+import { eq, desc, asc, or, like, count, sql, and } from "drizzle-orm";
 import { hashSync, compareSync } from "bcryptjs";
 import { signAdminToken } from "./lib/jwt";
 import { rateLimit } from "./lib/rate-limiter";
+import { getSessionCookieOptions } from "./lib/cookies";
+import { buildMomoConfig, checkTransactionStatus } from "./lib/mtn-momo";
+import { AdminSession } from "@contracts/constants";
 import { TRPCError } from "@trpc/server";
 
 // ─── Explicit Zod schemas (no z.record(z.any()) mass-assignment) ───
@@ -138,14 +144,67 @@ export const adminRouter = createRouter({
         email: user.email,
         role: user.role,
       });
+      const csrfToken = nanoid(32);
+      const cookieOpts = getSessionCookieOptions(ctx.req.headers);
+      // Admin session JWT: httpOnly (not readable by JS, not exfiltrable via XSS).
+      ctx.resHeaders.append(
+        "set-cookie",
+        cookie.serialize(AdminSession.cookieName, token, {
+          httpOnly: true,
+          path: cookieOpts.path,
+          sameSite: cookieOpts.sameSite?.toLowerCase() as "lax" | "none",
+          secure: cookieOpts.secure,
+          maxAge: AdminSession.maxAgeMs / 1000,
+        }),
+      );
+      // CSRF token: non-httpOnly so client JS can read it and put it in the
+      // x-csrf-token header. SameSite=Lax prevents cross-site submission.
+      ctx.resHeaders.append(
+        "set-cookie",
+        cookie.serialize(AdminSession.csrfCookieName, csrfToken, {
+          httpOnly: false,
+          path: cookieOpts.path,
+          sameSite: cookieOpts.sameSite?.toLowerCase() as "lax" | "none",
+          secure: cookieOpts.secure,
+          maxAge: AdminSession.maxAgeMs / 1000,
+        }),
+      );
       return {
         id: user.id,
         name: user.name,
         email: user.email,
         role: user.role,
-        token,
       };
     }),
+
+  // ─── ME (returns the logged-in admin's info from the JWT cookie) ───
+  me: adminQuery.query(({ ctx }) => {
+    if (!ctx.admin) {
+      throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" });
+    }
+    return {
+      id: ctx.admin.id,
+      name: ctx.admin.name,
+      email: ctx.admin.email,
+      role: ctx.admin.role,
+    };
+  }),
+
+  // ─── LOGOUT (clears both admin cookies server-side) ───
+  logout: adminQuery.mutation(({ ctx }) => {
+    const cookieOpts = getSessionCookieOptions(ctx.req.headers);
+    const clear = (name: string) =>
+      cookie.serialize(name, "", {
+        httpOnly: name === AdminSession.cookieName,
+        path: cookieOpts.path,
+        sameSite: cookieOpts.sameSite?.toLowerCase() as "lax" | "none",
+        secure: cookieOpts.secure,
+        maxAge: 0,
+      });
+    ctx.resHeaders.append("set-cookie", clear(AdminSession.cookieName));
+    ctx.resHeaders.append("set-cookie", clear(AdminSession.csrfCookieName));
+    return { success: true };
+  }),
 
   // ─── DASHBOARD STATS ───
   stats: adminQuery.query(async () => {
@@ -470,6 +529,139 @@ export const adminRouter = createRouter({
         passwordHash: hashedPassword,
         role: input.role,
       });
+      return { success: true };
+    }),
+
+  // ─── PAYMENTS MANAGEMENT (finance + super_admin) ───
+
+  paymentList: financeAdminQuery
+    .input(
+      z.object({
+        status: z.enum(["pending", "success", "failed", "cancelled"]).optional(),
+        provider: z.enum(["MOMO", "AIRTEL"]).optional(),
+        search: z.string().optional(),
+        limit: z.number().int().min(1).max(200).default(50),
+        offset: z.number().int().min(0).default(0),
+      }).optional()
+    )
+    .query(async ({ input }) => {
+      const db = getDb();
+      const limit = input?.limit ?? 50;
+      const offset = input?.offset ?? 0;
+      const conditions = [];
+      if (input?.status) {
+        conditions.push(eq(payments.status, input.status));
+      }
+      if (input?.provider) {
+        conditions.push(eq(payments.provider, input.provider));
+      }
+      if (input?.search) {
+        conditions.push(
+          or(
+            like(payments.phoneNumber, `%${input.search}%`),
+            like(payments.referenceNumber, `%${input.search}%`)
+          )
+        );
+      }
+      const query = db
+        .select()
+        .from(payments)
+        .orderBy(desc(payments.initiatedAt))
+        .limit(limit)
+        .offset(offset);
+      return conditions.length > 0
+        ? query.where(conditions.length === 1 ? conditions[0]! : and(...conditions))
+        : query;
+    }),
+
+  paymentGet: financeAdminQuery
+    .input(z.object({ referenceNumber: z.string().min(1).max(50) }))
+    .query(async ({ input }) => {
+      const db = getDb();
+      const payment = await db
+        .select()
+        .from(payments)
+        .where(eq(payments.referenceNumber, input.referenceNumber))
+        .then((r) => r[0] ?? null);
+      if (!payment) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Payment not found" });
+      }
+      // Left-join the linked enrollment (if any) on enrollmentRef → enrollments.referenceNumber.
+      let linkedEnrollment = null;
+      if (payment.enrollmentRef) {
+        linkedEnrollment = await db
+          .select({
+            id: enrollments.id,
+            referenceNumber: enrollments.referenceNumber,
+            fullName: enrollments.fullName,
+            email: enrollments.email,
+            phone: enrollments.phone,
+            status: enrollments.status,
+            paymentStatus: enrollments.paymentStatus,
+            courseId: enrollments.courseId,
+          })
+          .from(enrollments)
+          .where(eq(enrollments.referenceNumber, payment.enrollmentRef))
+          .then((r) => r[0] ?? null);
+      }
+      return { payment, enrollment: linkedEnrollment };
+    }),
+
+  paymentManualReconcile: financeAdminQuery
+    .input(
+      z.object({
+        referenceNumber: z.string().min(1).max(50),
+        status: z.enum(["success", "failed", "cancelled"]),
+        note: z.string().min(1, "A note is required for manual reconciliation"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const db = getDb();
+      const payment = await db
+        .select()
+        .from(payments)
+        .where(eq(payments.referenceNumber, input.referenceNumber))
+        .then((r) => r[0] ?? null);
+      if (!payment) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "Payment not found" });
+      }
+
+      // For MOMO payments with a transactionId, attempt a live status check first.
+      // Only allow the manual override if the check is inconclusive, throws, or
+      // the payment has no transactionId.
+      if (payment.provider === "MOMO" && payment.transactionId) {
+        const momoConfig = buildMomoConfig();
+        if (momoConfig) {
+          try {
+            const { status: mtnStatus } = await checkTransactionStatus(
+              momoConfig,
+              payment.transactionId,
+            );
+            if (mtnStatus === "SUCCESSFUL" || mtnStatus === "FAILED" || mtnStatus === "CANCELLED") {
+              throw new TRPCError({
+                code: "CONFLICT",
+                message: `MTN reports this payment as ${mtnStatus}. Manual override is not allowed when the provider returns a definitive status. Use the provider's status instead.`,
+              });
+            }
+            // PENDING or any other value = inconclusive → allow manual override.
+          } catch (e) {
+            // If the error is the TRPCError we just threw, re-throw it.
+            if (e instanceof TRPCError) throw e;
+            // Otherwise the status check itself threw → allow manual override.
+            console.error("[paymentManualReconcile] MTN status check threw, allowing manual override:", (e as Error).message);
+          }
+        }
+      }
+
+      await db
+        .update(payments)
+        .set({
+          status: input.status,
+          adminNotes: input.note,
+          verifiedAt: new Date(),
+        })
+        .where(eq(payments.id, payment.id));
+
       return { success: true };
     }),
 });

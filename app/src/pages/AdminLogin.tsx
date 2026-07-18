@@ -14,19 +14,19 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState("");
-  const [checkingAuth, setCheckingAuth] = useState(true);
 
-  // FIX: redirect-if-logged-in was happening during render (anti-pattern). Move to useEffect.
+  // Check if already logged in by calling admin.me — if it succeeds, the
+  // httpOnly admin_session cookie is present and valid.
+  const meQuery = trpc.admin.me.useQuery(undefined, { retry: false });
+
   useEffect(() => {
-    const adminToken = localStorage.getItem("admin_token");
-    if (adminToken) {
+    if (meQuery.isSuccess) {
       navigate("/admin/dashboard", { replace: true });
-      return;
     }
-    setCheckingAuth(false);
-  }, [navigate]);
+  }, [meQuery.isSuccess, navigate]);
 
-  if (checkingAuth) {
+  // While the auth check is loading, show a spinner.
+  if (meQuery.isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-brand">
         <div className="animate-spin w-8 h-8 border-4 border-white border-t-transparent rounded-full" />
@@ -38,8 +38,9 @@ export default function AdminLogin() {
     e.preventDefault();
     setError("");
     try {
-      const result = await loginMutation.mutateAsync({ email, password });
-      localStorage.setItem("admin_token", result.token);
+      // The login mutation sets the admin_session + admin_csrf cookies server-side.
+      // No token is stored client-side.
+      await loginMutation.mutateAsync({ email, password });
       navigate("/admin/dashboard");
     } catch (err: any) {
       setError(err.message || "Invalid credentials");

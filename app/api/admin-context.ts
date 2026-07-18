@@ -1,5 +1,7 @@
+import * as cookie from "cookie";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { verifyAdminToken } from "./lib/jwt";
+import { AdminSession } from "@contracts/constants";
 
 export type AdminContext = {
   req: Request;
@@ -12,7 +14,9 @@ export async function createAdminContext(
 ): Promise<AdminContext> {
   const ctx: AdminContext = { req: opts.req, resHeaders: opts.resHeaders };
 
-  const adminToken = opts.req.headers.get("x-admin-token");
+  // Read the admin JWT from the httpOnly cookie (not the x-admin-token header).
+  const cookies = cookie.parse(opts.req.headers.get("cookie") || "");
+  const adminToken = cookies[AdminSession.cookieName];
   if (adminToken) {
     const payload = await verifyAdminToken(adminToken);
     if (payload) {

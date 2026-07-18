@@ -290,6 +290,7 @@ export const payments = mysqlTable("payments", {
   transactionId: varchar("transaction_id", { length: 100 }),
   initiatedAt: timestamp("initiated_at").defaultNow().notNull(),
   verifiedAt: timestamp("verified_at"),
+  adminNotes: text("admin_notes"),
 }, (t) => ({
   referenceIdx: uniqueIndex("payments_reference_idx").on(t.referenceNumber),
   // Lookup payments by enrollment ref (admin "show payments for enrollment").

@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "mysql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1784333933371,
+      "tag": "0000_add_payments_admin_notes",
+      "breakpoints": true
+    }
+  ]
+}

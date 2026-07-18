@@ -4,8 +4,16 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import superjson from "superjson";
 import type { AppRouter } from "../../api/router";
 import type { ReactNode } from "react";
+import { AdminSession } from "@contracts/constants";
 
 export const trpc = createTRPCReact<AppRouter>();
+
+// Read a cookie value by name from document.cookie (for the CSRF token).
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const match = document.cookie.match(new RegExp("(?:^|; )" + name.replace(/([.$?*|{}()[\]\\/+^])/g, "\\$1") + "=([^;]*)"));
+  return match ? decodeURIComponent(match[1]) : null;
+}
 
 // Configure QueryClient with sensible defaults:
 // - staleTime: 0 means data is immediately stale (always refetch on mount/refocus)
@@ -27,9 +35,14 @@ const trpcClient = trpc.createClient({
       url: "/api/trpc",
       transformer: superjson,
       headers() {
-        const adminToken = localStorage.getItem("admin_token");
+        // The admin JWT is sent automatically via the httpOnly admin_session
+        // cookie (credentials: "include" below). We only need to attach the
+        // CSRF token as a header — it's read from the non-httpOnly admin_csrf
+        // cookie and sent on every request; the server only validates it on
+        // mutations.
+        const csrfToken = getCookie(AdminSession.csrfCookieName);
         return {
-          ...(adminToken ? { "x-admin-token": adminToken } : {}),
+          ...(csrfToken ? { "x-csrf-token": csrfToken } : {}),
         };
       },
       fetch(input, init) {

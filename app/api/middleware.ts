@@ -1,4 +1,5 @@
-import { ErrorMessages } from "@contracts/constants";
+import * as cookie from "cookie";
+import { ErrorMessages, AdminSession } from "@contracts/constants";
 import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import type { TrpcContext, AdminContext } from "./context";
@@ -26,12 +27,32 @@ const requireAuth = t.middleware(async (opts) => {
 
 export const authedQuery = t.procedure.use(requireAuth);
 
-// Admin auth: accepts an x-admin-token JWT OR falls back to ctx.user.role === "admin".
-// Resolves ctx.admin with the admin user's id/name/email/role for downstream RBAC.
+// Admin auth: reads the JWT from the `admin_session` httpOnly cookie.
+// Falls back to ctx.user.role === "admin" (OAuth user promoted to admin).
+// For mutations, also validates the x-csrf-token header against the
+// admin_csrf cookie value (double-submit cookie CSRF defense).
 const requireAdmin = t.middleware(async (opts) => {
-  const { ctx, next } = opts;
+  const { ctx, next, type } = opts;
 
-  const adminToken = ctx.req.headers.get("x-admin-token");
+  // ── CSRF check for mutations ──
+  // The x-csrf-token header must match the admin_csrf cookie value.
+  // This is the "double-submit cookie" pattern: an attacker cannot read the
+  // CSRF cookie (cross-origin) and therefore cannot forge the header.
+  if (type === "mutation") {
+    const cookies = cookie.parse(ctx.req.headers.get("cookie") || "");
+    const csrfCookie = cookies[AdminSession.csrfCookieName];
+    const csrfHeader = ctx.req.headers.get("x-csrf-token");
+    if (!csrfCookie || !csrfHeader || csrfCookie !== csrfHeader) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "CSRF token mismatch. Please refresh the page and try again.",
+      });
+    }
+  }
+
+  // ── Read admin JWT from httpOnly cookie ──
+  const cookies = cookie.parse(ctx.req.headers.get("cookie") || "");
+  const adminToken = cookies[AdminSession.cookieName];
 
   if (adminToken) {
     const payload = await verifyAdminToken(adminToken);

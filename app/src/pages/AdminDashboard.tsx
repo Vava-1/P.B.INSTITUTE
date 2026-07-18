@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, BookOpen, Newspaper,
   Settings, LogOut, Mail,
   TrendingUp, Clock, CheckCircle, AlertCircle, Eye, Menu, X,
-  Star, Plus, Edit, Trash2, Linkedin,
+  Star, Plus, Edit, Trash2, Linkedin, CreditCard,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -27,6 +27,7 @@ import { toast } from "sonner";
 const navItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/admin/dashboard" },
   { icon: Users, label: "Enrollments", path: "/admin/enrollments" },
+  { icon: CreditCard, label: "Payments", path: "/admin/payments" },
   { icon: BookOpen, label: "Courses", path: "/admin/courses" },
   { icon: Newspaper, label: "News", path: "/admin/news" },
   { icon: Star, label: "Testimonials", path: "/admin/testimonials" },
@@ -38,25 +39,27 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [admin, setAdmin] = useState<{ name: string; email: string; role: string } | null>(null);
+  // Auth: call admin.me to verify the httpOnly admin_session cookie is valid.
+  // No localStorage read — the JWT lives only in the cookie.
+  const meQuery = trpc.admin.me.useQuery(undefined, { retry: false });
+  const logoutMutation = trpc.admin.logout.useMutation();
+  const admin = meQuery.data
+    ? { name: meQuery.data.name, email: meQuery.data.email, role: meQuery.data.role }
+    : null;
 
   useEffect(() => {
-    const token = localStorage.getItem("admin_token");
-    if (!token) {
-      navigate("/admin");
-      return;
+    if (meQuery.isError) {
+      navigate("/admin", { replace: true });
     }
-    // Decode the JWT to get the admin's name/email/role for the sidebar.
-    try {
-      const payload = JSON.parse(atob(token.split(".")[1] ?? ""));
-      setAdmin({ name: payload.name ?? "Admin", email: payload.email ?? "", role: payload.role ?? "admin" });
-    } catch {
-      setAdmin({ name: "Admin", email: "", role: "admin" });
-    }
-  }, [navigate]);
+  }, [meQuery.isError, navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("admin_token");
+  const handleLogout = async () => {
+    // Server-side: expire both the admin_session and admin_csrf cookies.
+    try {
+      await logoutMutation.mutateAsync();
+    } catch {
+      // Even if the server call fails, navigate away — the cookie will expire.
+    }
     navigate("/admin");
   };
 
@@ -141,6 +144,7 @@ export default function AdminDashboard() {
           <Routes>
             <Route path="dashboard" element={<DashboardOverview />} />
             <Route path="enrollments" element={<EnrollmentsPage />} />
+            <Route path="payments" element={<PaymentsPage />} />
             <Route path="courses" element={<CoursesAdminPage />} />
             <Route path="news" element={<NewsAdminPage />} />
             <Route path="testimonials" element={<TestimonialsAdminPage />} />
@@ -331,6 +335,184 @@ function EnrollmentsPage() {
           </table>
         </div>
       </Card>
+    </div>
+  );
+}
+
+// ─── PAYMENTS PAGE ───
+function PaymentsPage() {
+  const utils = trpc.useUtils();
+  const [statusFilter, setStatusFilter] = useState<"pending" | "success" | "failed" | "cancelled" | "">("");
+  const [providerFilter, setProviderFilter] = useState<"MOMO" | "AIRTEL" | "">("");
+  const [search, setSearch] = useState("");
+  const [reconcileTarget, setReconcileTarget] = useState<any | null>(null);
+
+  const { data: payments } = trpc.admin.paymentList.useQuery(
+    {
+      status: statusFilter || undefined,
+      provider: providerFilter || undefined,
+      search: search || undefined,
+      limit: 50,
+      offset: 0,
+    },
+    { retry: false }
+  );
+  const reconcileMutation = trpc.admin.paymentManualReconcile.useMutation({
+    onSuccess: () => { utils.admin.paymentList.invalidate(); toast.success("Payment reconciled"); setReconcileTarget(null); },
+    onError: (e) => toast.error("Failed to reconcile: " + e.message),
+  });
+
+  const statusColor = (s: string) =>
+    s === "success" ? "bg-[#00B894]/10 text-[#00B894]"
+    : s === "pending" ? "bg-[#5E17EB]/10 text-[#5E17EB]"
+    : s === "failed" ? "bg-red-100 text-red-600"
+    : "bg-gray-100 text-gray-600";
+
+  return (
+    <div className="p-6 lg:p-8">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-[#1A1A2E] font-display">Payments</h1>
+        <p className="text-[#6B7280]">View and reconcile MTN MoMo / Airtel payments</p>
+      </div>
+
+      {/* Filters */}
+      <div className="flex flex-wrap gap-3 mb-6">
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value as "pending" | "success" | "failed" | "cancelled" | "")}
+          className="text-sm px-3 py-2 rounded-lg border border-gray-200 bg-white"
+        >
+          <option value="">All statuses</option>
+          <option value="pending">Pending</option>
+          <option value="success">Success</option>
+          <option value="failed">Failed</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <select
+          value={providerFilter}
+          onChange={(e) => setProviderFilter(e.target.value as "MOMO" | "AIRTEL" | "")}
+          className="text-sm px-3 py-2 rounded-lg border border-gray-200 bg-white"
+        >
+          <option value="">All providers</option>
+          <option value="MOMO">MTN MoMo</option>
+          <option value="AIRTEL">Airtel</option>
+        </select>
+        <Input
+          placeholder="Search by phone or reference..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="max-w-xs"
+        />
+      </div>
+
+      <Card className="border-0 shadow-md overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-[#EDE7FF]">
+              <tr>
+                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Reference</th>
+                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Provider</th>
+                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Amount</th>
+                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Phone</th>
+                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Status</th>
+                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Enrollment</th>
+                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {(payments || []).length === 0 && (
+                <tr><td colSpan={7} className="p-8 text-center text-[#6B7280]">No payments found</td></tr>
+              )}
+              {(payments || []).map((p: any) => (
+                <tr key={p.id} className="border-t border-gray-50 hover:bg-[#EDE7FF]">
+                  <td className="p-4 text-sm font-mono">{p.referenceNumber}</td>
+                  <td className="p-4 text-sm">{p.provider}</td>
+                  <td className="p-4 text-sm font-medium">{p.amount?.toLocaleString()} RWF</td>
+                  <td className="p-4 text-sm">{p.phoneNumber}</td>
+                  <td className="p-4">
+                    <Badge className={statusColor(p.status)}>{p.status}</Badge>
+                  </td>
+                  <td className="p-4 text-sm">
+                    {p.enrollmentRef ? (
+                      <Link to="/admin/enrollments" className="text-[#5E17EB] hover:underline font-mono text-xs">
+                        {p.enrollmentRef}
+                      </Link>
+                    ) : (
+                      <span className="text-[#6B7280]">—</span>
+                    )}
+                  </td>
+                  <td className="p-4">
+                    <button
+                      className="text-xs px-2 py-1 bg-[#5E17EB] text-white rounded hover:bg-[#1A1A2E] transition-colors"
+                      onClick={() => setReconcileTarget(p)}
+                      disabled={p.status === "success"}
+                      title={p.status === "success" ? "Already successful" : "Manually reconcile"}
+                    >
+                      Reconcile
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Card>
+
+      {/* Reconcile dialog */}
+      {reconcileTarget && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setReconcileTarget(null)}>
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-md m-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex items-center justify-between p-6 border-b">
+              <h2 className="text-lg font-bold text-[#1A1A2E]">Manual Reconcile</h2>
+              <button onClick={() => setReconcileTarget(null)}><X className="w-5 h-5 text-[#6B7280]" /></button>
+            </div>
+            <div className="p-6 space-y-4">
+              <p className="text-sm text-[#6B7280]">
+                Payment <span className="font-mono">{reconcileTarget.referenceNumber}</span> ({reconcileTarget.amount?.toLocaleString()} RWF via {reconcileTarget.provider})
+              </p>
+              <div>
+                <Label>New Status</Label>
+                <select
+                  id="reconcile-status"
+                  defaultValue="success"
+                  className="w-full px-3 py-2 border rounded-md text-sm mt-1"
+                >
+                  <option value="success">Success</option>
+                  <option value="failed">Failed</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </div>
+              <div>
+                <Label htmlFor="reconcile-note">Note (required)</Label>
+                <Textarea
+                  id="reconcile-note"
+                  rows={3}
+                  placeholder="Explain why this payment is being manually reconciled..."
+                  className="mt-1"
+                />
+              </div>
+              <div className="flex justify-end gap-3 pt-2">
+                <Button variant="outline" onClick={() => setReconcileTarget(null)}>Cancel</Button>
+                <Button
+                  className="bg-[#5E17EB] text-white hover:bg-[#1A1A2E]"
+                  disabled={reconcileMutation.isPending}
+                  onClick={() => {
+                    const statusEl = document.getElementById("reconcile-status") as HTMLSelectElement;
+                    const noteEl = document.getElementById("reconcile-note") as HTMLTextAreaElement;
+                    reconcileMutation.mutate({
+                      referenceNumber: reconcileTarget.referenceNumber,
+                      status: statusEl.value as "success" | "failed" | "cancelled",
+                      note: noteEl.value,
+                    });
+                  }}
+                >
+                  {reconcileMutation.isPending ? "Reconciling..." : "Confirm Reconcile"}
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
