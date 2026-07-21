@@ -8,6 +8,7 @@ const About = lazy(() => import('./pages/About'))
 const Courses = lazy(() => import('./pages/Courses'))
 const CourseDetail = lazy(() => import('./pages/CourseDetail'))
 const Enroll = lazy(() => import('./pages/Enroll'))
+const TrackEnrollment = lazy(() => import('./pages/TrackEnrollment'))
 const Contact = lazy(() => import('./pages/Contact'))
 const Faqs = lazy(() => import('./pages/Faqs'))
 const News = lazy(() => import('./pages/News'))
@@ -40,6 +41,7 @@ export default function App() {
             <Route path="/courses" element={<Courses />} />
             <Route path="/courses/:slug" element={<CourseDetail />} />
             <Route path="/enroll" element={<Enroll />} />
+            <Route path="/track" element={<TrackEnrollment />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/faqs" element={<Faqs />} />
             <Route path="/news" element={<News />} />

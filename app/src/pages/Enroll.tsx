@@ -14,6 +14,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { trpc } from "@/providers/trpc";
+import { toast } from "sonner";
 
 export default function Enroll() {
   const { data: courses } = trpc.public.courses.list.useQuery();
@@ -155,9 +156,11 @@ export default function Enroll() {
       if (result.success) {
         setRefNum(result.referenceNumber);
         setSubmitted(true);
+        toast.success("Enrollment submitted successfully!");
       }
-    } catch (e) {
+    } catch (e: any) {
       console.error("Enrollment failed:", e);
+      toast.error(e?.message || "Enrollment failed. Please try again or contact us on WhatsApp.");
     }
   };
 
@@ -201,8 +204,11 @@ export default function Enroll() {
                   your class schedule.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Button asChild className="bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] font-semibold rounded-full px-8">
+                  <Button asChild className="bg-[#5E17EB] text-white hover:bg-[#4a12c0] font-semibold rounded-full px-8">
                     <Link to="/">Back to Home</Link>
+                  </Button>
+                  <Button asChild variant="outline" className="border-[#5E17EB] text-[#5E17EB] hover:bg-[#5E17EB] hover:text-white rounded-full px-8">
+                    <Link to={`/track?ref=${refNum}`}>Track My Enrollment</Link>
                   </Button>
                   <a
                     href={`https://wa.me/${(settings?.whatsapp || "250786053720").replace(/\+/g, "")}?text=Hello%2C%20I%20just%20submitted%20my%20enrollment%20(Ref%3A%20${refNum})`}

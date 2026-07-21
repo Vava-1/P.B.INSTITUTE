@@ -20,6 +20,7 @@ const navLinks = [
     ],
   },
   { label: "News", href: "/news" },
+  { label: "Track", href: "/track" },
   { label: "Contact", href: "/contact" },
   { label: "FAQs", href: "/faqs" },
 ];
