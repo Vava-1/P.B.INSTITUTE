@@ -34,6 +34,10 @@ export async function runMigrations() {
       name: "certificates.enrollment_id_type_fix",
       sql: "ALTER TABLE certificates MODIFY COLUMN enrollment_id int",
     },
+    {
+      name: "payments.admin_notes",
+      sql: "ALTER TABLE payments ADD COLUMN admin_notes text",
+    },
   ];
 
   for (const migration of migrations) {
