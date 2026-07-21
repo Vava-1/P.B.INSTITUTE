@@ -492,12 +492,24 @@ export const publicRouter = createRouter({
               };
             } catch (e: any) {
               console.error("[MTN MoMo] Initiate failed (reference:", refNum, "):", e.message);
-              // SECURITY: don't leak upstream response body to client.
-              return {
-                success: false,
+              // FALLBACK: Instead of showing "Payment Failed" (which blocks enrollment),
+              // record the payment as "pending" and tell the user our team will contact
+              // them to complete payment manually. This way the enrollment can proceed.
+              await db.insert(payments).values({
                 referenceNumber: refNum,
-                status: "failed",
-                message: "Payment request failed. Please try again or contact us on WhatsApp.",
+                provider: "MOMO",
+                amount,
+                phoneNumber: input.phoneNumber,
+                status: "pending",
+              });
+              return {
+                success: true,
+                referenceNumber: refNum,
+                provider: "MOMO",
+                amount,
+                phoneNumber: input.phoneNumber,
+                status: "pending",
+                message: "We're setting up our mobile payment system. Your enrollment is received and our team will contact you on WhatsApp shortly to complete the payment of " + amount.toLocaleString() + " RWF.",
               };
             }
           }

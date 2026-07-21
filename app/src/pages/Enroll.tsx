@@ -93,10 +93,11 @@ export default function Enroll() {
         setPaymentStatus("success");
       } else {
         setPaymentStatus("failed");
-        setPaymentMessage(result.message || "Payment failed. Please try again.");
+        setPaymentMessage(result.message || "Payment failed. Please try again or contact us on WhatsApp.");
       }
-    } catch {
+    } catch (e: any) {
       setPaymentStatus("failed");
+      setPaymentMessage(e?.message || "Payment failed. Please try again or contact us on WhatsApp.");
     }
   };
 
@@ -512,8 +513,8 @@ export default function Enroll() {
                     {paymentStatus === "failed" && (
                       <div className="text-center py-6 bg-red-50 rounded-lg border border-red-200">
                         <p className="font-semibold text-red-600 mb-2">Payment Failed</p>
-                        <p className="text-xs text-red-500 mb-3">The transaction could not be completed. Please try again.</p>
-                        <Button onClick={() => { setPaymentStatus("idle"); setPaymentRef(""); }} variant="outline" size="sm">
+                        <p className="text-xs text-red-500 mb-3">{paymentMessage || "The transaction could not be completed. Please try again."}</p>
+                        <Button onClick={() => { setPaymentStatus("idle"); setPaymentRef(""); setPaymentMessage(""); }} variant="outline" size="sm">
                           Try Again
                         </Button>
                       </div>
