@@ -63,11 +63,11 @@ export default function Navbar() {
                 alt="Pacemaker Institute"
                 className="h-12 w-auto rounded-xl shadow-sm"
               />
-              <div className={`hidden sm:block ${showBg ? "text-[#1A1A2E]" : "text-white"}`}>
+              <div className={`hidden sm:block ${showBg ? "text-foreground" : "text-white"}`}>
                 <div className="text-xl font-bold leading-tight font-display">
                   Pacemaker
                 </div>
-                <div className="text-xs font-hand text-base leading-none mt-0.5" style={{ color: showBg ? "#5E17EB" : "#F4A400" }}>
+                <div className={`text-xs font-hand text-base leading-none mt-0.5 ${showBg ? "text-brand" : "text-gold"}`}>
                   Institute
                 </div>
               </div>
@@ -95,7 +95,7 @@ export default function Navbar() {
                       onClick={() => setDropdownOpen((v) => !v)}
                       className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors rounded-md ${
                         showBg
-                          ? "text-[#1A1A2E] hover:text-[#5E17EB] hover:bg-[#EDE7FF]"
+                          ? "text-foreground hover:text-brand hover:bg-brand-light"
                           : "text-white/90 hover:text-white hover:bg-white/10"
                       }`}
                     >
@@ -109,9 +109,9 @@ export default function Navbar() {
                             key={child.label}
                             to={child.href}
                             role="menuitem"
-                            className="flex items-center gap-2 px-4 py-2.5 text-sm text-[#1A1A2E] hover:bg-[#EDE7FF] hover:text-[#5E17EB] transition-colors"
+                            className="flex items-center gap-2 px-4 py-2.5 text-sm text-foreground hover:bg-brand-light hover:text-brand transition-colors"
                           >
-                            <GraduationCap className="w-4 h-4 text-[#5E17EB]" aria-hidden="true" />
+                            <GraduationCap className="w-4 h-4 text-brand" aria-hidden="true" />
                             {child.label}
                           </Link>
                         ))}
@@ -125,7 +125,7 @@ export default function Navbar() {
                     aria-current={location.pathname === link.href ? "page" : undefined}
                     className={`px-3 py-2 text-sm font-medium transition-colors rounded-md ${
                       showBg
-                        ? "text-[#1A1A2E] hover:text-[#5E17EB] hover:bg-[#EDE7FF]"
+                        ? "text-foreground hover:text-brand hover:bg-brand-light"
                         : "text-white/90 hover:text-white hover:bg-white/10"
                     } ${location.pathname === link.href ? "font-semibold" : ""}`}
                   >
@@ -139,7 +139,7 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-3">
               <Button
                 asChild
-                className="bg-[#F4A400] text-[#1A1A2E] hover:bg-[#e09600] font-bold rounded-full px-6 transition-colors"
+                className="bg-gold text-foreground hover:bg-gold font-bold rounded-full px-6 transition-colors"
               >
                 <Link to="/enroll">Enroll Now</Link>
               </Button>
@@ -151,7 +151,7 @@ export default function Navbar() {
               aria-label="Toggle navigation menu"
               aria-expanded={mobileOpen}
               className={`lg:hidden p-2 rounded-md ${
-                showBg ? "text-[#1A1A2E]" : "text-white"
+                showBg ? "text-foreground" : "text-white"
               }`}
             >
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -167,7 +167,7 @@ export default function Navbar() {
             className="absolute inset-0 bg-black/50"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="absolute right-0 top-0 bottom-0 w-80 max-w-[85vw] bg-[#1A1A2E] shadow-2xl overflow-y-auto">
+          <div className="absolute right-0 top-0 bottom-0 w-80 max-w-[85vw] bg-brand-dark shadow-2xl overflow-y-auto">
             <div className="p-6">
               <div className="flex items-center justify-between mb-8">
                 <img
@@ -186,14 +186,14 @@ export default function Navbar() {
                 {navLinks.map((link) =>
                   link.children ? (
                     <div key={link.label} className="space-y-1">
-                      <div className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider px-3 py-2">
+                      <div className="text-brand font-semibold text-sm uppercase tracking-wider px-3 py-2">
                         {link.label}
                       </div>
                       {link.children.map((child) => (
                         <Link
                           key={child.label}
                           to={child.href}
-                          className="flex items-center gap-2 px-3 py-2.5 text-sm text-white/80 hover:text-[#5E17EB] hover:bg-white/5 rounded-md transition-colors"
+                          className="flex items-center gap-2 px-3 py-2.5 text-sm text-white/80 hover:text-brand hover:bg-white/5 rounded-md transition-colors"
                         >
                           <GraduationCap className="w-4 h-4 shrink-0" />
                           {child.label}
@@ -206,7 +206,7 @@ export default function Navbar() {
                       to={link.href}
                       className={`block px-3 py-2.5 text-sm font-medium rounded-md transition-colors ${
                         location.pathname === link.href
-                          ? "text-[#5E17EB] bg-white/5"
+                          ? "text-brand bg-white/5"
                           : "text-white/80 hover:text-white hover:bg-white/5"
                       }`}
                     >
@@ -218,7 +218,7 @@ export default function Navbar() {
               <div className="mt-8 pt-6 border-t border-white/10">
                 <Button
                   asChild
-                  className="w-full bg-[#F4A400] text-[#1A1A2E] hover:bg-[#e09600] font-bold rounded-full"
+                  className="w-full bg-gold text-foreground hover:bg-gold font-bold rounded-full"
                 >
                   <Link to="/enroll">Enroll Now</Link>
                 </Button>
@@ -226,7 +226,7 @@ export default function Navbar() {
                   href="https://wa.me/250786053720"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 mt-3 text-sm text-white/60 hover:text-[#00B894] transition-colors"
+                  className="flex items-center justify-center gap-2 mt-3 text-sm text-white/60 hover:text-gold transition-colors"
                 >
                   <Phone className="w-4 h-4" />
                   Chat on WhatsApp

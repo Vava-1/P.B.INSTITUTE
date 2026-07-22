@@ -28,15 +28,6 @@ const categoryIcons: Record<string, any> = {
   private_candidate: FileText,
 };
 
-const categoryColors: Record<string, string> = {
-  languages: "#3B82F6",
-  bakery: "#F59E0B",
-  salon: "#EC4899",
-  mechanics: "#6B7280",
-  ai_skills: "#8B5CF6",
-  private_candidate: "#10B981",
-};
-
 // Real photos for each course category — humanizes the cards.
 const categoryPhotos: Record<string, string> = {
   languages: "https://sfile.chatglm.cn/images-ppt/8f4abe659dfd.jpg",
@@ -105,7 +96,7 @@ export default function Home() {
 
       {/* Announcement Ticker */}
       {settings?.announcementActive && announcementMsgs.length > 0 && (
-        <div className="fixed top-20 left-0 right-0 z-40 bg-[#5E17EB] text-white py-2.5 px-4 text-center text-sm font-medium shadow-md">
+        <div className="fixed top-20 left-0 right-0 z-40 bg-brand text-white py-2.5 px-4 text-center text-sm font-medium shadow-md">
           <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
             <span className="animate-pulse">📣</span>
             <span>{announcementMsgs[announceIdx]}</span>
@@ -123,16 +114,16 @@ export default function Home() {
       <StatsSection />
 
       {/* Courses Section */}
-      <section className="py-32 bg-[#EDE7FF]">
+      <section className="py-32 bg-brand-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <span className="font-hand text-2xl text-[#5E17EB] block mb-1">
+            <span className="font-hand text-2xl text-brand block mb-1">
               What We Teach
             </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A2E] font-display">
+            <h2 className="text-4xl md:text-5xl font-bold text-foreground font-display">
               Six Paths to <span className="text-gradient-gold">Excellence</span>
             </h2>
-            <p className="mt-4 text-lg text-[#6B7280] max-w-2xl mx-auto">
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
               Choose your course and start building real skills that employers and clients value.
             </p>
           </div>
@@ -140,7 +131,6 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {(allCourses.length > 0 ? allCourses : courses ?? [])?.map((course) => {
               const Icon = categoryIcons[course.category] || BookOpen;
-              const color = categoryColors[course.category] || "#5E17EB";
               const photo = categoryPhotos[course.category] || course.imageUrl || "";
               const skills = parseJsonArray(course.whatYoullLearn);
               const previewSkills = skills.slice(0, 3);
@@ -159,51 +149,51 @@ export default function Home() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       loading="lazy"
                     />
-                    <div className="absolute inset-0" style={{ background: `linear-gradient(to top, ${color}DD 0%, ${color}30 50%, transparent 100%)` }} />
-                    <div className="absolute top-3 left-3 w-10 h-10 rounded-xl flex items-center justify-center backdrop-blur-sm" style={{ backgroundColor: "rgba(255,255,255,0.9)" }}>
-                      <Icon className="w-5 h-5" style={{ color }} aria-hidden="true" />
+                    <div className="absolute inset-0" style={{ background: "linear-gradient(to top, hsl(var(--brand) / 0.87) 0%, hsl(var(--brand) / 0.19) 50%, transparent 100%)" }} />
+                    <div className="absolute top-3 left-3 w-10 h-10 rounded-xl flex items-center justify-center backdrop-blur-sm bg-white/90">
+                      <Icon className="w-5 h-5 text-brand" aria-hidden="true" />
                     </div>
                     <h3 className="absolute bottom-3 left-4 right-4 text-lg font-bold text-white font-display leading-tight drop-shadow-lg">
                       {course.title}
                     </h3>
                   </div>
                   <CardContent className="p-5 flex flex-col flex-1">
-                    <p className="text-[#6B7280] text-sm mb-3 line-clamp-2">
+                    <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
                       {course.shortDesc}
                     </p>
 
                     {/* Skills teaser — makes the user want to see the rest */}
                     {previewSkills.length > 0 && (
-                      <div className="mb-3 p-3 rounded-xl" style={{ backgroundColor: `${color}08` }}>
-                        <p className="text-[10px] font-bold uppercase tracking-wider mb-2 font-hand text-base" style={{ color }}>
+                      <div className="mb-3 p-3 rounded-xl bg-brand/[0.04]">
+                        <p className="text-[10px] font-bold uppercase tracking-wider mb-2 font-hand text-base text-brand">
                           What you&apos;ll master
                         </p>
                         <ul className="space-y-1.5">
                           {previewSkills.map((skill, i) => (
-                            <li key={i} className="flex items-start gap-2 text-xs text-[#1A1A2E]">
-                              <CheckCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" style={{ color }} aria-hidden="true" />
+                            <li key={i} className="flex items-start gap-2 text-xs text-foreground">
+                              <CheckCircle className="w-3.5 h-3.5 shrink-0 mt-0.5 text-brand" aria-hidden="true" />
                               <span className="line-clamp-1">{skill}</span>
                             </li>
                           ))}
                         </ul>
                         {moreSkills > 0 && (
-                          <p className="text-[11px] text-[#6B7280] mt-2 italic">
+                          <p className="text-[11px] text-muted-foreground mt-2 italic">
                             + {moreSkills} more skill{moreSkills > 1 ? "s" : ""} in the full curriculum
                           </p>
                         )}
                       </div>
                     )}
 
-                    <div className="flex items-center gap-3 text-xs text-[#6B7280] mb-4 mt-auto">
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground mb-4 mt-auto">
                       <span className="flex items-center gap-1">
                         <Clock className="w-3.5 h-3.5" aria-hidden="true" />
                         {course.duration}
                       </span>
                       {fee && (
-                        <span className="flex items-center gap-1 font-medium text-[#1A1A2E]">
+                        <span className="flex items-center gap-1 font-medium text-foreground">
                           · {fee} RWF
                           {course.installmentAvailable && (
-                            <span className="text-[#6B7280] font-normal">/ installments ok</span>
+                            <span className="text-muted-foreground font-normal">/ installments ok</span>
                           )}
                         </span>
                       )}
@@ -211,14 +201,13 @@ export default function Home() {
                     <div className="flex items-center gap-3">
                       <Link
                         to={`/courses/${course.slug}`}
-                        className="text-sm font-medium text-[#5E17EB] hover:text-[#5E17EB] transition-colors flex items-center gap-1"
+                        className="text-sm font-medium text-brand hover:text-brand transition-colors flex items-center gap-1"
                       >
                         See full curriculum <ArrowRight className="w-4 h-4" />
                       </Link>
                       <Link
                         to="/enroll"
-                        className="text-sm font-medium px-4 py-1.5 rounded-full text-white transition-colors ml-auto"
-                        style={{ backgroundColor: color }}
+                        className="text-sm font-medium px-4 py-1.5 rounded-full text-white bg-brand hover:bg-brand-dark transition-colors ml-auto"
                       >
                         Enroll
                       </Link>
@@ -233,7 +222,7 @@ export default function Home() {
             <Button
               asChild
               variant="outline"
-              className="border-[#5E17EB] text-[#5E17EB] hover:bg-[#5E17EB] hover:text-white rounded-full px-8"
+              className="border-brand text-brand hover:bg-brand hover:text-white rounded-full px-8"
             >
               <Link to="/courses">View All Courses</Link>
             </Button>
@@ -251,18 +240,18 @@ export default function Home() {
       <NewsPreviewSection news={news} />
 
       {/* CTA Banner */}
-      <section className="py-16 bg-gradient-to-br from-[#C8E6C9] via-[#E8F5E9] to-[#C8E6C9]">
+      <section className="py-16 bg-gradient-to-br from-gold via-gold to-gold">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl md:text-4xl font-bold text-[#2E7D32] mb-3 font-display">
+          <h2 className="text-2xl md:text-4xl font-bold text-gold mb-3 font-display">
             Ready to Start Your Training?
           </h2>
-          <p className="text-base text-[#2E7D32]/80 mb-6 max-w-2xl mx-auto">
+          <p className="text-base text-gold/80 mb-6 max-w-2xl mx-auto">
             Join hundreds of Pacemaker graduates building better careers.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
               asChild
-              className="bg-[#2E7D32] text-white hover:bg-[#1B5E20] font-semibold rounded-full px-8 py-5 text-base"
+              className="bg-gold text-white hover:bg-gold font-semibold rounded-full px-8 py-5 text-base"
             >
               <Link to="/enroll">Enroll Today</Link>
             </Button>
@@ -270,7 +259,7 @@ export default function Home() {
               href={`https://wa.me/${(settings?.whatsapp || "250786053720").replace(/\+/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-white text-[#2E7D32] font-semibold rounded-full hover:bg-[#EDE7FF] transition-colors"
+              className="inline-flex items-center gap-2 px-6 py-2.5 bg-white text-gold font-semibold rounded-full hover:bg-brand-light transition-colors"
             >
               Talk to Us on WhatsApp
             </a>
@@ -298,35 +287,33 @@ function CoursesSlider({ courses }: { courses: any[] }) {
 
   const course = courses[idx];
   const Icon = categoryIcons[course.category] || BookOpen;
-  const color = categoryColors[course.category] || "#5E17EB";
 
   return (
-    <section className="bg-gradient-to-r from-[#5E17EB] via-[#5E17EB] to-[#5E17EB] py-6">
+    <section className="bg-gradient-to-r from-brand via-brand to-brand py-6">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative overflow-hidden rounded-xl bg-white/20 backdrop-blur-sm">
           <div className="flex items-center gap-6 p-4 sm:p-6">
             <div
-              className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0"
-              style={{ backgroundColor: `${color}20` }}
+              className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 bg-brand/20"
             >
-              <Icon className="w-7 h-7" style={{ color }} />
+              <Icon className="w-7 h-7 text-brand" />
             </div>
             <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 text-xs text-[#1A1A2E]/60 uppercase tracking-wider font-medium mb-0.5">
+              <div className="flex items-center gap-2 text-xs text-foreground/60 uppercase tracking-wider font-medium mb-0.5">
                 <span>Explore our programs</span>
                 <span>·</span>
                 <span>{course.category.replace(/_/g, " ")}</span>
               </div>
-              <h3 className="text-lg sm:text-xl font-bold text-[#1A1A2E] font-display truncate">
+              <h3 className="text-lg sm:text-xl font-bold text-foreground font-display truncate">
                 {course.title}
               </h3>
-              <p className="text-sm text-[#1A1A2E]/70 mt-0.5 line-clamp-1">
+              <p className="text-sm text-foreground/70 mt-0.5 line-clamp-1">
                 {course.shortDesc}
               </p>
             </div>
             <Link
               to={`/courses/${course.slug}`}
-              className="shrink-0 flex items-center gap-1 px-4 py-2 bg-[#1A1A2E] text-white text-sm font-medium rounded-lg hover:bg-[#5E17EB] transition-colors"
+              className="shrink-0 flex items-center gap-1 px-4 py-2 bg-brand-dark text-white text-sm font-medium rounded-lg hover:bg-brand transition-colors"
             >
               View <ArrowRight className="w-4 h-4" />
             </Link>
@@ -340,7 +327,7 @@ function CoursesSlider({ courses }: { courses: any[] }) {
                   key={i}
                   onClick={() => setIdx(i)}
                   className={`w-2 h-2 rounded-full transition-all ${
-                    i === idx ? "bg-[#1A1A2E] w-4" : "bg-[#1A1A2E]/30"
+                    i === idx ? "bg-brand-dark w-4" : "bg-brand-dark/30"
                   }`}
                 />
               ))}
@@ -376,7 +363,7 @@ function HeroSection() {
 
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto pt-20">
         {/* Handwritten accent label — human touch. */}
-        <p className="font-hand text-2xl md:text-3xl text-[#F4A400] mb-3 animate-fade-up">
+        <p className="font-hand text-2xl md:text-3xl text-gold mb-3 animate-fade-up">
           Welcome to Pacemaker Institute
         </p>
         <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 font-display leading-tight animate-fade-up" style={{ animationDelay: "0.1s" }}>
@@ -391,7 +378,7 @@ function HeroSection() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up" style={{ animationDelay: "0.3s" }}>
           <Button
             asChild
-            className="bg-gradient-to-r from-[#F4A400] to-[#FFD166] text-[#1A1A2E] font-bold rounded-full px-8 py-6 text-lg shadow-warm-glow hover:from-[#e09600] hover:to-[#F4A400] transition-all"
+            className="bg-gradient-to-r from-gold to-gold text-foreground font-bold rounded-full px-8 py-6 text-lg shadow-warm-glow hover:from-gold hover:to-gold transition-all"
           >
             <Link to="/enroll">Enroll Now</Link>
           </Button>
@@ -439,17 +426,17 @@ function StatsSection() {
   return (
     <section
       ref={statsRef}
-      className="relative py-32 bg-gradient-to-r from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E]"
+      className="relative py-32 bg-gradient-to-r from-brand-dark via-brand to-brand-dark"
     >
       <div className="absolute inset-0 diagonal-stripe opacity-50" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
           {stats.map((stat, i) => (
             <div key={stat.label} className="text-center">
-              <stat.icon className="w-8 h-8 text-[#F4A400] mx-auto mb-3" />
+              <stat.icon className="w-8 h-8 text-gold mx-auto mb-3" />
               <div className="text-4xl md:text-5xl font-bold text-white font-display mb-1">
                 {visible ? <CountUp end={stat.value} duration={2000} delay={i * 200} /> : "0"}
-                <span className="text-[#F4A400]">{stat.suffix}</span>
+                <span className="text-gold">{stat.suffix}</span>
               </div>
               <div className="text-sm text-white/70">{stat.label}</div>
             </div>
@@ -518,11 +505,11 @@ function WhyChooseSection() {
     <section className="py-32 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <span className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider">
+          <span className="text-brand font-semibold text-sm uppercase tracking-wider">
             Why Pacemaker
           </span>
-          <h2 className="mt-3 text-4xl md:text-5xl font-bold text-[#1A1A2E] font-display">
-            Why Choose <span className="text-[#5E17EB]">Pacemaker Institute?</span>
+          <h2 className="mt-3 text-4xl md:text-5xl font-bold text-foreground font-display">
+            Why Choose <span className="text-brand">Pacemaker Institute?</span>
           </h2>
         </div>
 
@@ -532,21 +519,21 @@ function WhyChooseSection() {
             {features.map((f) => (
               <Card
                 key={f.title}
-                className="border-0 shadow-md hover:shadow-lg transition-shadow bg-[#EDE7FF]"
+                className="border-0 shadow-md hover:shadow-lg transition-shadow bg-brand-light"
               >
                 <CardContent className="p-6">
-                  <div className="w-12 h-12 rounded-lg bg-[#5E17EB]/10 flex items-center justify-center mb-4">
-                    <f.icon className="w-6 h-6 text-[#5E17EB]" />
+                  <div className="w-12 h-12 rounded-lg bg-brand/10 flex items-center justify-center mb-4">
+                    <f.icon className="w-6 h-6 text-brand" />
                   </div>
-                  <h3 className="text-lg font-bold text-[#1A1A2E] mb-2">{f.title}</h3>
-                  <p className="text-sm text-[#6B7280]">{f.desc}</p>
+                  <h3 className="text-lg font-bold text-foreground mb-2">{f.title}</h3>
+                  <p className="text-sm text-muted-foreground">{f.desc}</p>
                 </CardContent>
               </Card>
             ))}
           </div>
 
           {/* Comparison table */}
-          <div className="bg-[#1A1A2E] rounded-2xl p-8">
+          <div className="bg-brand-dark rounded-2xl p-8">
             <h3 className="text-xl font-bold text-white mb-6 font-display">
               Pacemaker vs Others
             </h3>
@@ -558,7 +545,7 @@ function WhyChooseSection() {
                 >
                   <span className="text-white/80 text-sm">{c.feature}</span>
                   <div className="flex items-center gap-6">
-                    <span className="text-[#00B894] text-sm font-medium">
+                    <span className="text-gold text-sm font-medium">
                       {c.pbi ? "✓ Yes" : ""}
                     </span>
                     <span className="text-white/40 text-sm w-16 text-right">
@@ -594,16 +581,16 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
   const t = testimonials[current];
 
   return (
-    <section className="py-32 bg-gradient-to-b from-white to-[#EDE7FF]/30">
+    <section className="py-32 bg-gradient-to-b from-white to-brand-light/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <span className="font-hand text-2xl text-[#5E17EB] block mb-1">
+          <span className="font-hand text-2xl text-brand block mb-1">
             Testimonials
           </span>
-          <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A2E] font-display">
+          <h2 className="text-4xl md:text-5xl font-bold text-foreground font-display">
             What Our <span className="text-gradient-gold">Students Say</span>
           </h2>
-          <p className="mt-4 text-lg text-[#6B7280] max-w-2xl mx-auto">
+          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
             Real stories from graduates who transformed their lives through Pacemaker Institute.
           </p>
         </div>
@@ -616,12 +603,12 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
         >
           <div
             key={t.id}
-            className="relative bg-gradient-to-br from-[#EDE7FF] to-white rounded-3xl shadow-warm-lg p-8 md:p-12 border border-purple-100 animate-fade-up"
+            className="relative bg-gradient-to-br from-brand-light to-white rounded-3xl shadow-warm-lg p-8 md:p-12 border border-purple-100 animate-fade-up"
           >
-            <div className="text-6xl text-[#5E17EB]/30 font-display leading-none mb-6">
+            <div className="text-6xl text-brand/30 font-display leading-none mb-6">
               &ldquo;
             </div>
-            <p className="text-lg md:text-xl text-[#1A1A2E] leading-relaxed mb-8 italic">
+            <p className="text-lg md:text-xl text-foreground leading-relaxed mb-8 italic">
               {t?.quote}
             </p>
             <div className="flex items-center justify-between flex-wrap gap-4">
@@ -638,7 +625,7 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
                   </div>
                 ) : (
                   <div className="relative w-14 h-14 shrink-0">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center text-white font-bold text-lg">
                       {t?.studentName?.charAt(0)}
                     </div>
                     {t?.linkedinUrl && (
@@ -650,8 +637,8 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
                   </div>
                 )}
                 <div>
-                  <div className="font-bold text-[#1A1A2E]">{t?.studentName}</div>
-                  <div className="text-sm text-[#6B7280]">
+                  <div className="font-bold text-foreground">{t?.studentName}</div>
+                  <div className="text-sm text-muted-foreground">
                     {t?.courseName} · {t?.currentRole}
                     {t?.employer ? ` at ${t.employer}` : ""}
                   </div>
@@ -659,7 +646,7 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
               </div>
               <div className="flex items-center gap-1">
                 {Array.from({ length: t?.rating || 5 }).map((_, i) => (
-                  <Star key={i} className="w-5 h-5 fill-[#F4A400] text-[#F4A400]" />
+                  <Star key={i} className="w-5 h-5 fill-gold text-gold" />
                 ))}
               </div>
             </div>
@@ -671,7 +658,7 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
               <button
                 onClick={prev}
                 aria-label="Previous testimonial"
-                className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#EDE7FF] transition-colors"
+                className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-brand-light transition-colors"
               >
                 <ChevronLeft className="w-5 h-5" aria-hidden="true" />
               </button>
@@ -684,7 +671,7 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
                     aria-label={`Go to testimonial ${i + 1}`}
                     aria-current={i === current}
                     className={`h-2 rounded-full transition-all ${
-                      i === current ? "bg-[#5E17EB] w-6" : "bg-gray-300 w-2 hover:bg-gray-400"
+                      i === current ? "bg-brand w-6" : "bg-gray-300 w-2 hover:bg-gray-400"
                     }`}
                   />
                 ))}
@@ -692,7 +679,7 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
               <button
                 onClick={next}
                 aria-label="Next testimonial"
-                className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-[#EDE7FF] transition-colors"
+                className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center hover:bg-brand-light transition-colors"
               >
                 <ChevronRight className="w-5 h-5" aria-hidden="true" />
               </button>
@@ -700,7 +687,7 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
           )}
 
           {/* Counter */}
-          <p className="text-center text-sm text-[#6B7280] mt-4 font-hand text-base">
+          <p className="text-center text-sm text-muted-foreground mt-4 font-hand text-base">
             {current + 1} of {testimonials.length} stories
           </p>
         </div>
@@ -715,23 +702,23 @@ function NewsPreviewSection({ news }: { news: any[] }) {
 
   return (
     <>
-      <section className="py-32 bg-[#EDE7FF]">
+      <section className="py-32 bg-brand-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-12">
             <div>
-              <span className="font-hand text-2xl text-[#5E17EB] block mb-1">
+              <span className="font-hand text-2xl text-brand block mb-1">
                 Latest Updates
               </span>
-              <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A2E] font-display">
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground font-display">
                 News & Events
               </h2>
-              <p className="mt-3 text-[#6B7280] max-w-xl">
+              <p className="mt-3 text-muted-foreground max-w-xl">
                 Stories, milestones, and announcements from the Pacemaker community. Tap any card to read the full story.
               </p>
             </div>
             <Link
               to="/news"
-              className="hidden sm:flex items-center gap-1 text-[#5E17EB] hover:text-[#5E17EB] font-medium transition-colors shrink-0"
+              className="hidden sm:flex items-center gap-1 text-brand hover:text-brand font-medium transition-colors shrink-0"
             >
               View All <ArrowRight className="w-4 h-4" />
             </Link>
@@ -761,37 +748,37 @@ function NewsPreviewSection({ news }: { news: any[] }) {
                     {/* Sparkle accent */}
                     <Sparkles className="w-5 h-5 text-white/40 absolute top-4 right-4" aria-hidden="true" />
                     {/* Category chip overlaid on the photo */}
-                    <span className="absolute bottom-3 left-4 inline-block px-3 py-1 text-[10px] font-bold tracking-wider rounded-full bg-white/90 text-[#5E17EB] uppercase">
+                    <span className="absolute bottom-3 left-4 inline-block px-3 py-1 text-[10px] font-bold tracking-wider rounded-full bg-white/90 text-brand uppercase">
                       {item.category}
                     </span>
                   </div>
                   <CardContent className="p-6 flex flex-col flex-1">
-                    <h3 className="text-lg font-bold text-[#1A1A2E] mb-2 font-display group-hover:text-[#5E17EB] transition-colors line-clamp-2">
+                    <h3 className="text-lg font-bold text-foreground mb-2 font-display group-hover:text-brand transition-colors line-clamp-2">
                       {item.title}
                     </h3>
 
                     {/* Teaser excerpt with fade-out mask — hints at more content */}
                     <div className="relative mb-4">
-                      <p className="text-sm text-[#6B7280] line-clamp-3 pr-2">
+                      <p className="text-sm text-muted-foreground line-clamp-3 pr-2">
                         {item.excerpt}
                       </p>
                       <div className="pointer-events-none absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t from-white to-transparent" aria-hidden="true" />
                     </div>
 
                     <div className="flex items-center justify-between mt-auto pt-3 border-t border-gray-100">
-                      <span className="text-xs text-[#6B7280]">
+                      <span className="text-xs text-muted-foreground">
                         By {item.authorName} ·{" "}
                         {item.publishedAt
                           ? new Date(item.publishedAt).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "numeric" })
                           : "Recently"}
                       </span>
-                      <span className="text-xs text-[#5E17EB] font-medium flex items-center gap-1">
+                      <span className="text-xs text-brand font-medium flex items-center gap-1">
                         {minutes} min read
                       </span>
                     </div>
 
                     {/* "Read more" affordance — appears on hover */}
-                    <div className="mt-3 flex items-center gap-1 text-sm font-semibold text-[#5E17EB] opacity-80 group-hover:opacity-100 transition-opacity">
+                    <div className="mt-3 flex items-center gap-1 text-sm font-semibold text-brand opacity-80 group-hover:opacity-100 transition-opacity">
                       Read full story
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
@@ -803,7 +790,7 @@ function NewsPreviewSection({ news }: { news: any[] }) {
 
           {/* Mobile "View All" link */}
           <div className="text-center mt-10 sm:hidden">
-            <Button asChild variant="outline" className="border-[#5E17EB] text-[#5E17EB] hover:bg-[#5E17EB] hover:text-white rounded-full px-8">
+            <Button asChild variant="outline" className="border-brand text-brand hover:bg-brand hover:text-white rounded-full px-8">
               <Link to="/news">View All News <ArrowRight className="w-4 h-4 ml-1" /></Link>
             </Button>
           </div>
@@ -824,7 +811,7 @@ function NewsPreviewSection({ news }: { news: any[] }) {
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 photo-overlay-bottom" />
-                <span className="absolute bottom-3 left-6 inline-block px-3 py-1 text-[10px] font-bold tracking-wider rounded-full bg-white/90 text-[#5E17EB] uppercase">
+                <span className="absolute bottom-3 left-6 inline-block px-3 py-1 text-[10px] font-bold tracking-wider rounded-full bg-white/90 text-brand uppercase">
                   {selected.category}
                 </span>
                 <button
@@ -837,11 +824,11 @@ function NewsPreviewSection({ news }: { news: any[] }) {
               </div>
 
               <DialogHeader className="p-6 pb-2">
-                <DialogTitle className="text-2xl font-bold text-[#1A1A2E] font-display leading-tight">
+                <DialogTitle className="text-2xl font-bold text-foreground font-display leading-tight">
                   {selected.title}
                 </DialogTitle>
-                <div className="flex flex-wrap items-center gap-3 text-xs text-[#6B7280] mt-2">
-                  <span>By <strong className="text-[#1A1A2E]">{selected.authorName}</strong></span>
+                <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground mt-2">
+                  <span>By <strong className="text-foreground">{selected.authorName}</strong></span>
                   <span>·</span>
                   <span>
                     {selected.publishedAt
@@ -873,12 +860,12 @@ function NewsPreviewSection({ news }: { news: any[] }) {
 
               <div className="px-6 pb-8">
                 {/* Pull-quote excerpt */}
-                <blockquote className="border-l-4 border-[#5E17EB] pl-4 py-1 my-4 text-[#1A1A2E] italic font-medium">
+                <blockquote className="border-l-4 border-brand pl-4 py-1 my-4 text-foreground italic font-medium">
                   {selected.excerpt}
                 </blockquote>
 
                 {/* Full article content — preserves paragraphs */}
-                <div className="prose prose-sm max-w-none text-[#1A1A2E] leading-relaxed space-y-4">
+                <div className="prose prose-sm max-w-none text-foreground leading-relaxed space-y-4">
                   {selected.content?.split(/\n\n+/).map((para: string, i: number) => (
                     <p key={i} className="whitespace-pre-line">{para}</p>
                   ))}
@@ -886,14 +873,14 @@ function NewsPreviewSection({ news }: { news: any[] }) {
 
                 {/* Footer CTA */}
                 <div className="mt-8 pt-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                  <p className="text-sm text-[#6B7280] text-center sm:text-left">
+                  <p className="text-sm text-muted-foreground text-center sm:text-left">
                     Want to be part of the next story?
                   </p>
                   <div className="flex gap-3">
-                    <Button asChild className="bg-[#5E17EB] text-white hover:bg-[#1A1A2E] rounded-full">
+                    <Button asChild className="bg-brand text-white hover:bg-brand-dark rounded-full">
                       <Link to="/enroll">Enroll Now</Link>
                     </Button>
-                    <Button asChild variant="outline" className="border-[#5E17EB] text-[#5E17EB] hover:bg-[#5E17EB] hover:text-white rounded-full">
+                    <Button asChild variant="outline" className="border-brand text-brand hover:bg-brand hover:text-white rounded-full">
                       <Link to="/news">More News</Link>
                     </Button>
                   </div>

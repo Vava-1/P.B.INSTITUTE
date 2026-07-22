@@ -21,15 +21,6 @@ const categoryIcons: Record<string, any> = {
   private_candidate: FileText,
 };
 
-const categoryColors: Record<string, string> = {
-  languages: "#3B82F6",
-  bakery: "#F59E0B",
-  salon: "#EC4899",
-  mechanics: "#6B7280",
-  ai_skills: "#8B5CF6",
-  private_candidate: "#10B981",
-};
-
 const categoryLabels: Record<string, string> = {
   languages: "Languages",
   bakery: "Vocational",
@@ -58,11 +49,11 @@ export default function Courses() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative pt-32 pb-16 bg-gradient-to-br from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E]">
+      <section className="relative pt-32 pb-16 bg-gradient-to-br from-brand-dark via-brand to-brand-dark">
         <div className="absolute inset-0 diagonal-stripe opacity-30" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <span className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider">
+            <span className="text-brand font-semibold text-sm uppercase tracking-wider">
               Course Catalog
             </span>
             <h1 className="mt-4 text-4xl md:text-5xl font-bold text-white font-display">
@@ -81,7 +72,7 @@ export default function Courses() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
             <div className="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0">
-              <Filter className="w-4 h-4 text-[#6B7280] shrink-0" />
+              <Filter className="w-4 h-4 text-muted-foreground shrink-0" />
               {[
                 { key: "all", label: "All Courses" },
                 { key: "languages", label: "Languages" },
@@ -96,8 +87,8 @@ export default function Courses() {
                   onClick={() => setActiveCategory(cat.key)}
                   className={`px-4 py-2 text-sm font-medium rounded-full whitespace-nowrap transition-colors ${
                     activeCategory === cat.key
-                      ? "bg-[#5E17EB] text-white"
-                      : "bg-[#EDE7FF] text-[#6B7280] hover:bg-[#5E17EB]/10 hover:text-[#5E17EB]"
+                      ? "bg-brand text-white"
+                      : "bg-brand-light text-muted-foreground hover:bg-brand/10 hover:text-brand"
                   }`}
                 >
                   {cat.label}
@@ -105,7 +96,7 @@ export default function Courses() {
               ))}
             </div>
             <div className="relative sm:w-64 shrink-0">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
                 placeholder="Search courses..."
                 value={search}
@@ -118,22 +109,21 @@ export default function Courses() {
       </section>
 
       {/* Course Grid */}
-      <section className="py-16 bg-[#EDE7FF]">
+      <section className="py-16 bg-brand-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-6 text-sm text-[#6B7280]">
+          <div className="mb-6 text-sm text-muted-foreground">
             Showing {filtered.length} of {courses?.length || 0} courses
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filtered.map((course) => {
               const Icon = categoryIcons[course.category] || BookOpen;
-              const color = categoryColors[course.category] || "#5E17EB";
               return (
                 <Card
                   key={course.id}
                   className="group overflow-hidden bg-white border-0 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                 >
-                  <div className="h-2" style={{ backgroundColor: color }} />
-                  <div className="h-40 bg-gradient-to-br from-[#1A1A2E] to-[#5E17EB] flex items-center justify-center relative overflow-hidden">
+                  <div className="h-2 bg-brand" />
+                  <div className="h-40 bg-gradient-to-br from-brand-dark to-brand flex items-center justify-center relative overflow-hidden">
                     <div className="absolute inset-0 opacity-10">
                       <div className="absolute top-4 left-4 w-20 h-20 rounded-full bg-white/20" />
                       <div className="absolute bottom-4 right-4 w-32 h-32 rounded-full bg-white/10" />
@@ -143,26 +133,25 @@ export default function Courses() {
                   <CardContent className="p-6">
                     <div className="flex items-center gap-2 mb-3">
                       <span
-                        className="px-3 py-1 text-xs font-medium rounded-full text-white"
-                        style={{ backgroundColor: color }}
+                        className="px-3 py-1 text-xs font-medium rounded-full text-white bg-brand"
                       >
                         {categoryLabels[course.category] || course.category}
                       </span>
                     </div>
-                    <h3 className="text-xl font-bold text-[#1A1A2E] mb-2 font-display group-hover:text-[#5E17EB] transition-colors">
+                    <h3 className="text-xl font-bold text-foreground mb-2 font-display group-hover:text-brand transition-colors">
                       {course.title}
                     </h3>
-                    <p className="text-sm text-[#6B7280] mb-4 line-clamp-2">
+                    <p className="text-sm text-muted-foreground mb-4 line-clamp-2">
                       {course.shortDesc}
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="flex items-center gap-1 text-sm text-[#6B7280]">
+                      <span className="flex items-center gap-1 text-sm text-muted-foreground">
                         <Clock className="w-4 h-4" />
                         {course.duration}
                       </span>
                       <Link
                         to={`/courses/${course.slug}`}
-                        className="flex items-center gap-1 text-sm font-medium text-[#5E17EB] hover:text-[#5E17EB] transition-colors"
+                        className="flex items-center gap-1 text-sm font-medium text-brand hover:text-brand transition-colors"
                       >
                         Details <ArrowRight className="w-4 h-4" />
                       </Link>
@@ -175,7 +164,7 @@ export default function Courses() {
           {filtered.length === 0 && (
             <div className="text-center py-20">
               <BookOpen className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-lg text-[#6B7280]">No courses found matching your criteria.</p>
+              <p className="text-lg text-muted-foreground">No courses found matching your criteria.</p>
               <Button
                 variant="outline"
                 className="mt-4"

@@ -167,11 +167,11 @@ export default function Enroll() {
   const stepLabels = ["Personal Info", "Course Selection", "Payment", "Declaration", "Review"];
 
   return (
-    <div className="min-h-screen bg-[#EDE7FF]">
+    <div className="min-h-screen bg-brand-light">
       <Navbar />
 
       {/* Hero */}
-      <section className="pt-32 pb-12 bg-gradient-to-br from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E]">
+      <section className="pt-32 pb-12 bg-gradient-to-br from-brand-dark via-brand to-brand-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white font-display">
             Enroll at <span className="text-gradient-gold">Pacemaker</span>
@@ -189,25 +189,25 @@ export default function Enroll() {
           {submitted ? (
             <Card className="border-0 shadow-xl">
               <CardContent className="p-12 text-center">
-                <div className="w-20 h-20 rounded-full bg-[#00B894]/10 flex items-center justify-center mx-auto mb-6">
-                  <CheckCircle className="w-10 h-10 text-[#00B894]" />
+                <div className="w-20 h-20 rounded-full bg-gold/10 flex items-center justify-center mx-auto mb-6">
+                  <CheckCircle className="w-10 h-10 text-gold" />
                 </div>
-                <h2 className="text-2xl font-bold text-[#1A1A2E] mb-3 font-display">
+                <h2 className="text-2xl font-bold text-foreground mb-3 font-display">
                   Enrollment Submitted!
                 </h2>
-                <p className="text-[#6B7280] mb-2">
+                <p className="text-muted-foreground mb-2">
                   Your reference number:
                 </p>
-                <p className="text-2xl font-bold text-[#5E17EB] font-mono mb-6">{refNum}</p>
-                <p className="text-sm text-[#6B7280] mb-8">
+                <p className="text-2xl font-bold text-brand font-mono mb-6">{refNum}</p>
+                <p className="text-sm text-muted-foreground mb-8">
                   Our admissions team will contact you within 2 business days to confirm
                   your class schedule.
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                  <Button asChild className="bg-[#5E17EB] text-white hover:bg-[#4a12c0] font-semibold rounded-full px-8">
+                  <Button asChild className="bg-brand text-white hover:bg-brand-dark font-semibold rounded-full px-8">
                     <Link to="/">Back to Home</Link>
                   </Button>
-                  <Button asChild variant="outline" className="border-[#5E17EB] text-[#5E17EB] hover:bg-[#5E17EB] hover:text-white rounded-full px-8">
+                  <Button asChild variant="outline" className="border-brand text-brand hover:bg-brand hover:text-white rounded-full px-8">
                     <Link to={`/track?ref=${refNum}`}>Track My Enrollment</Link>
                   </Button>
                   <a
@@ -231,7 +231,7 @@ export default function Enroll() {
                       <div
                         key={label}
                         className={`text-xs font-medium ${
-                          i + 1 <= step ? "text-[#5E17EB]" : "text-[#6B7280]"
+                          i + 1 <= step ? "text-brand" : "text-muted-foreground"
                         }`}
                       >
                         <span className="hidden sm:inline">{label}</span>
@@ -241,7 +241,7 @@ export default function Enroll() {
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] transition-all duration-500"
+                      className="h-full bg-gradient-to-r from-brand to-brand transition-all duration-500"
                       style={{ width: `${(step / 5) * 100}%` }}
                     />
                   </div>
@@ -250,8 +250,8 @@ export default function Enroll() {
                 {/* Step 1: Personal Info */}
                 {step === 1 && (
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-[#1A1A2E] font-display flex items-center gap-2">
-                      <User className="w-5 h-5 text-[#5E17EB]" /> Personal Information
+                    <h2 className="text-xl font-bold text-foreground font-display flex items-center gap-2">
+                      <User className="w-5 h-5 text-brand" /> Personal Information
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -303,8 +303,8 @@ export default function Enroll() {
                 {/* Step 2: Course Selection */}
                 {step === 2 && (
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-[#1A1A2E] font-display flex items-center gap-2">
-                      <GraduationCap className="w-5 h-5 text-[#5E17EB]" /> Course Selection
+                    <h2 className="text-xl font-bold text-foreground font-display flex items-center gap-2">
+                      <GraduationCap className="w-5 h-5 text-brand" /> Course Selection
                     </h2>
                     <div>
                       <Label>Select Course *</Label>
@@ -415,16 +415,16 @@ export default function Enroll() {
                 {/* Step 3: Payment */}
                 {step === 3 && (
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-[#1A1A2E] font-display flex items-center gap-2">
-                      <CreditCard className="w-5 h-5 text-[#5E17EB]" /> Payment
+                    <h2 className="text-xl font-bold text-foreground font-display flex items-center gap-2">
+                      <CreditCard className="w-5 h-5 text-brand" /> Payment
                     </h2>
                     {selectedCourse && (
-                      <div className="bg-[#EDE7FF] rounded-lg p-4">
-                        <div className="text-sm text-[#6B7280]">Course Fee</div>
-                        <div className="text-2xl font-bold text-[#1A1A2E]">
+                      <div className="bg-brand-light rounded-lg p-4">
+                        <div className="text-sm text-muted-foreground">Course Fee</div>
+                        <div className="text-2xl font-bold text-foreground">
                           {courseFee > 0 ? `${courseFee.toLocaleString()} RWF` : "Contact us for fee"}
                         </div>
-                        <div className="text-xs text-[#6B7280] mt-1">{selectedCourse.title}</div>
+                        <div className="text-xs text-muted-foreground mt-1">{selectedCourse.title}</div>
                       </div>
                     )}
                     {courseFee === 0 && (
@@ -440,11 +440,11 @@ export default function Enroll() {
                           onClick={() => update("paymentProvider", "MOMO")}
                           className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all ${
                             formData.paymentProvider === "MOMO"
-                              ? "border-[#5E17EB] bg-[#5E17EB]/5"
+                              ? "border-brand bg-brand/5"
                               : "border-gray-200 hover:border-gray-300"
                           }`}
                         >
-                          <Smartphone className="w-6 h-6 text-[#5E17EB]" />
+                          <Smartphone className="w-6 h-6 text-brand" />
                           <span className="text-sm font-medium">MTN MoMo</span>
                         </button>
                         <button
@@ -452,11 +452,11 @@ export default function Enroll() {
                           onClick={() => update("paymentProvider", "AIRTEL")}
                           className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all ${
                             formData.paymentProvider === "AIRTEL"
-                              ? "border-[#5E17EB] bg-[#5E17EB]/5"
+                              ? "border-brand bg-brand/5"
                               : "border-gray-200 hover:border-gray-300"
                           }`}
                         >
-                          <Smartphone className="w-6 h-6 text-[#E53935]" />
+                          <Smartphone className="w-6 h-6 text-destructive" />
                           <span className="text-sm font-medium">Airtel Money</span>
                         </button>
                       </div>
@@ -477,12 +477,12 @@ export default function Enroll() {
                         <Button
                           onClick={handlePayNow}
                           disabled={payMutation.isPending}
-                          className="w-full bg-gradient-to-r from-[#00B894] to-[#00C9A7] text-white font-semibold py-6 text-lg"
+                          className="w-full bg-gradient-to-r from-gold to-gold text-white font-semibold py-6 text-lg"
                         >
                           <CreditCard className="w-5 h-5 mr-2" />
                           {payMutation.isPending ? "Processing..." : `Pay ${courseFee.toLocaleString()} RWF`}
                         </Button>
-                        <p className="text-center text-xs text-[#6B7280]">or</p>
+                        <p className="text-center text-xs text-muted-foreground">or</p>
                         <Button
                           variant="outline"
                           onClick={() => setStep(4)}
@@ -495,24 +495,24 @@ export default function Enroll() {
 
                     {paymentStatus === "processing" && (
                       <div className="text-center py-8">
-                        <Loader2 className="w-10 h-10 animate-spin text-[#5E17EB] mx-auto mb-3" />
-                        <p className="text-[#1A1A2E] font-semibold">Payment request sent to your phone</p>
-                        {paymentMessage && <p className="text-sm text-[#6B7280] mt-1">{paymentMessage}</p>}
+                        <Loader2 className="w-10 h-10 animate-spin text-brand mx-auto mb-3" />
+                        <p className="text-foreground font-semibold">Payment request sent to your phone</p>
+                        {paymentMessage && <p className="text-sm text-muted-foreground mt-1">{paymentMessage}</p>}
                         <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg text-sm text-yellow-800">
                           <p className="font-medium">Check your phone and enter your PIN to confirm</p>
                           <p className="text-xs mt-1">Waiting for confirmation... This page will update automatically.</p>
                         </div>
-                        <p className="text-xs text-[#6B7280] mt-3">
+                        <p className="text-xs text-muted-foreground mt-3">
                           {formData.paymentProvider === "MOMO" ? "MTN MoMo" : "Airtel Money"} • {courseFee.toLocaleString()} RWF
                         </p>
                       </div>
                     )}
 
                     {paymentStatus === "success" && (
-                      <div className="text-center py-6 bg-[#00B894]/5 rounded-lg border border-[#00B894]/20">
-                        <CheckCircle className="w-10 h-10 text-[#00B894] mx-auto mb-2" />
-                        <p className="font-semibold text-[#00B894]">Payment Successful!</p>
-                        <p className="text-xs text-[#6B7280] mt-1">Ref: {paymentRef}</p>
+                      <div className="text-center py-6 bg-gold/5 rounded-lg border border-gold/20">
+                        <CheckCircle className="w-10 h-10 text-gold mx-auto mb-2" />
+                        <p className="font-semibold text-gold">Payment Successful!</p>
+                        <p className="text-xs text-muted-foreground mt-1">Ref: {paymentRef}</p>
                       </div>
                     )}
 
@@ -537,8 +537,8 @@ export default function Enroll() {
                 {/* Step 4: Declaration */}
                 {step === 4 && (
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-[#1A1A2E] font-display flex items-center gap-2">
-                      <BookOpen className="w-5 h-5 text-[#5E17EB]" /> Background & Declaration
+                    <h2 className="text-xl font-bold text-foreground font-display flex items-center gap-2">
+                      <BookOpen className="w-5 h-5 text-brand" /> Background & Declaration
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <div>
@@ -608,53 +608,53 @@ export default function Enroll() {
                 {/* Step 5: Review */}
                 {step === 5 && (
                   <div className="space-y-4">
-                    <h2 className="text-xl font-bold text-[#1A1A2E] font-display">Review Your Application</h2>
-                    <div className="bg-[#EDE7FF] rounded-lg p-6 space-y-4">
+                    <h2 className="text-xl font-bold text-foreground font-display">Review Your Application</h2>
+                    <div className="bg-brand-light rounded-lg p-6 space-y-4">
                       <div>
-                        <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Name</div>
+                        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Name</div>
                         <div className="font-medium">{formData.fullName}</div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Phone</div>
+                          <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Phone</div>
                           <div className="font-medium">{formData.phone}</div>
                         </div>
                         <div>
-                          <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Email</div>
+                          <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Email</div>
                           <div className="font-medium">{formData.email || "-"}</div>
                         </div>
                       </div>
                       <div>
-                        <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Course</div>
+                        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Course</div>
                         <div className="font-medium">{selectedCourse?.title}</div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Schedule</div>
+                          <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Schedule</div>
                           <div className="font-medium">{formData.schedulePreference}</div>
                         </div>
                         {formData.languageOption && (
                           <div>
-                            <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Language</div>
+                            <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Language</div>
                             <div className="font-medium">{formData.languageOption} {formData.languageLevel}</div>
                           </div>
                         )}
                       </div>
                       <div>
-                        <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Payment</div>
+                        <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Payment</div>
                         {paymentStatus === "success" ? (
                           <>
-                            <div className="font-medium text-[#00B894]">
+                            <div className="font-medium text-gold">
                               {courseFee.toLocaleString()} RWF via {formData.paymentProvider}
                             </div>
-                            <div className="text-xs text-[#6B7280]">Ref: {paymentRef}</div>
+                            <div className="text-xs text-muted-foreground">Ref: {paymentRef}</div>
                           </>
                         ) : (
-                          <div className="text-sm text-[#6B7280]">To be arranged</div>
+                          <div className="text-sm text-muted-foreground">To be arranged</div>
                         )}
                       </div>
                     </div>
-                    <p className="text-sm text-[#6B7280] text-center">
+                    <p className="text-sm text-muted-foreground text-center">
                       By submitting, you agree to our terms and conditions.
                     </p>
                   </div>
@@ -670,14 +670,14 @@ export default function Enroll() {
                     <div />
                   )}
                   {step < 5 ? (
-                    <Button onClick={handleNext} className="bg-[#5E17EB] hover:bg-[#1A1A2E] flex items-center gap-1">
+                    <Button onClick={handleNext} className="bg-brand hover:bg-brand-dark flex items-center gap-1">
                       Next <ChevronRight className="w-4 h-4" />
                     </Button>
                   ) : (
                     <Button
                       onClick={handleSubmit}
                       disabled={enrollMutation.isPending}
-                      className="bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] hover:from-[#5E17EB] hover:to-[#5E17EB] font-semibold px-8"
+                      className="bg-gradient-to-r from-brand to-brand text-foreground hover:from-brand hover:to-brand font-semibold px-8"
                     >
                       {enrollMutation.isPending ? "Submitting..." : "Submit Enrollment"}
                     </Button>

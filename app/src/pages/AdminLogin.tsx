@@ -48,7 +48,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1A1A2E] via-brand to-[#1A1A2E] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-brand-dark via-brand to-brand-dark flex items-center justify-center px-4">
       <div className="absolute inset-0 diagonal-stripe opacity-30" aria-hidden="true" />
       <div className="relative w-full max-w-md">
         <div className="text-center mb-8">
@@ -62,7 +62,7 @@ export default function AdminLogin() {
           <h1 className="text-2xl font-bold text-white font-display">
             Admin Portal
           </h1>
-          <p className="font-hand text-lg text-[#F4A400] mt-1">Pacemaker Institute Management</p>
+          <p className="font-hand text-lg text-gold mt-1">Pacemaker Institute Management</p>
         </div>
 
         <Card className="border-0 shadow-2xl">

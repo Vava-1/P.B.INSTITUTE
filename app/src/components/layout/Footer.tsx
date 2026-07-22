@@ -6,7 +6,7 @@ export default function Footer() {
   const { data: settings } = trpc.public.settings.get.useQuery();
 
   return (
-    <footer className="bg-[#001233] text-white">
+    <footer className="bg-brand-dark text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
           {/* Brand */}
@@ -21,38 +21,38 @@ export default function Footer() {
                 <div className="text-xl font-bold leading-tight font-display">
                   Pacemaker
                 </div>
-                <div className="font-hand text-lg text-[#F4A400] leading-none mt-0.5">
+                <div className="font-hand text-lg text-gold leading-none mt-0.5">
                   Institute
                 </div>
               </div>
             </Link>
-            <p className="text-[#E0E0E0]/80 text-sm leading-relaxed mb-6">
+            <p className="text-muted/80 text-sm leading-relaxed mb-6">
               Empowering individuals with practical skills, language mastery,
               and professional knowledge to excel in today's competitive world.
             </p>
             <div className="flex items-center gap-3">
               {settings?.facebookUrl && (
-                <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#5E17EB] transition-colors">
+                <a href={settings.facebookUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand transition-colors">
                   <Facebook className="w-4 h-4" />
                 </a>
               )}
               {settings?.instagramUrl && (
-                <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#5E17EB] transition-colors">
+                <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand transition-colors">
                   <Instagram className="w-4 h-4" />
                 </a>
               )}
               {settings?.twitterUrl && (
-                <a href={settings.twitterUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#5E17EB] transition-colors">
+                <a href={settings.twitterUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand transition-colors">
                   <Twitter className="w-4 h-4" />
                 </a>
               )}
               {settings?.linkedinUrl && (
-                <a href={settings.linkedinUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#5E17EB] transition-colors">
+                <a href={settings.linkedinUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand transition-colors">
                   <Linkedin className="w-4 h-4" />
                 </a>
               )}
               {settings?.youtubeUrl && (
-                <a href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-[#5E17EB] transition-colors">
+                <a href={settings.youtubeUrl} target="_blank" rel="noopener noreferrer" className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center hover:bg-brand transition-colors">
                   <Youtube className="w-4 h-4" />
                 </a>
               )}
@@ -61,7 +61,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider mb-6">
+            <h4 className="text-brand font-semibold text-sm uppercase tracking-wider mb-6">
               Quick Links
             </h4>
             <ul className="space-y-3">
@@ -77,7 +77,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.href}
-                    className="text-[#E0E0E0]/70 hover:text-[#5E17EB] text-sm transition-colors"
+                    className="text-muted/70 hover:text-brand text-sm transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -88,7 +88,7 @@ export default function Footer() {
 
           {/* Courses */}
           <div>
-            <h4 className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider mb-6">
+            <h4 className="text-brand font-semibold text-sm uppercase tracking-wider mb-6">
               Our Courses
             </h4>
             <ul className="space-y-3">
@@ -104,7 +104,7 @@ export default function Footer() {
                 <li key={link.label}>
                   <Link
                     to={link.href}
-                    className="text-[#E0E0E0]/70 hover:text-[#5E17EB] text-sm transition-colors"
+                    className="text-muted/70 hover:text-brand text-sm transition-colors"
                   >
                     {link.label}
                   </Link>
@@ -115,31 +115,31 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-[#5E17EB] font-semibold text-sm uppercase tracking-wider mb-6">
+            <h4 className="text-brand font-semibold text-sm uppercase tracking-wider mb-6">
               Contact Us
             </h4>
             <ul className="space-y-4">
               <li className="flex items-start gap-3">
-                <MapPin className="w-5 h-5 text-[#5E17EB] shrink-0 mt-0.5" />
-                <span className="text-[#E0E0E0]/70 text-sm">
+                <MapPin className="w-5 h-5 text-brand shrink-0 mt-0.5" />
+                <span className="text-muted/70 text-sm">
                   {settings?.address || "Centenary House, 8 KN 4 Ave, Kigali, Rwanda"}
                 </span>
               </li>
               <li className="flex items-center gap-3">
-                <Phone className="w-5 h-5 text-[#5E17EB] shrink-0" />
-                <a href={`tel:${settings?.phone || "+250786053720"}`} className="text-[#E0E0E0]/70 text-sm hover:text-[#5E17EB] transition-colors">
+                <Phone className="w-5 h-5 text-brand shrink-0" />
+                <a href={`tel:${settings?.phone || "+250786053720"}`} className="text-muted/70 text-sm hover:text-brand transition-colors">
                   {settings?.phone || "+250 786 053 720"}
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-[#5E17EB] shrink-0" />
-                <a href={`mailto:${settings?.email || "info@pacemakerinstitute.rw"}`} className="text-[#E0E0E0]/70 text-sm hover:text-[#5E17EB] transition-colors">
+                <Mail className="w-5 h-5 text-brand shrink-0" />
+                <a href={`mailto:${settings?.email || "info@pacemakerinstitute.rw"}`} className="text-muted/70 text-sm hover:text-brand transition-colors">
                   {settings?.email || "info@pacemakerinstitute.rw"}
                 </a>
               </li>
               <li className="flex items-start gap-3">
-                <Clock className="w-5 h-5 text-[#5E17EB] shrink-0 mt-0.5" />
-                <span className="text-[#E0E0E0]/70 text-sm">
+                <Clock className="w-5 h-5 text-brand shrink-0 mt-0.5" />
+                <span className="text-muted/70 text-sm">
                   {settings?.openingHours || "Mon to Fri: 8:00 AM to 6:00 PM | Sat: 9:00 AM to 1:00 PM"}
                 </span>
               </li>
@@ -158,14 +158,14 @@ export default function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-[#E0E0E0]/50 text-sm">
+          <p className="text-muted/50 text-sm">
             &copy; {new Date().getFullYear()} Pacemaker Institute. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
-            <Link to="/contact" className="text-[#E0E0E0]/50 hover:text-[#5E17EB] text-sm transition-colors">
+            <Link to="/contact" className="text-muted/50 hover:text-brand text-sm transition-colors">
               Privacy Policy
             </Link>
-            <Link to="/contact" className="text-[#E0E0E0]/50 hover:text-[#5E17EB] text-sm transition-colors">
+            <Link to="/contact" className="text-muted/50 hover:text-brand text-sm transition-colors">
               Terms of Service
             </Link>
           </div>

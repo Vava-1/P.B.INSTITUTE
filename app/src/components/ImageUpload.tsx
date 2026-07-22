@@ -86,11 +86,11 @@ export function ImageUpload({
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={loading}
-            className="w-20 h-20 rounded-full border-2 border-dashed border-gray-300 flex flex-col items-center justify-center hover:border-[#5E17EB] hover:bg-[#5E17EB]/5 transition-colors text-gray-400 hover:text-[#5E17EB]"
+            className="w-20 h-20 rounded-full border-2 border-dashed border-gray-300 flex flex-col items-center justify-center hover:border-brand hover:bg-brand/5 transition-colors text-gray-400 hover:text-brand"
             aria-label={`Upload ${label}`}
           >
             {loading ? (
-              <div className="w-5 h-5 border-2 border-[#5E17EB] border-t-transparent rounded-full animate-spin" />
+              <div className="w-5 h-5 border-2 border-brand border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
                 <Upload className="w-5 h-5" />

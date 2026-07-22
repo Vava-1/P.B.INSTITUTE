@@ -22,7 +22,7 @@ module.exports = {
         warm: {
           gray: "hsl(var(--warm-gray))",
         },
-        body: "#1A1A2E",
+        body: "hsl(var(--foreground))",
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",

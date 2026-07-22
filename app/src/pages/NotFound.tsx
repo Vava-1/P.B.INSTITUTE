@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1A1A2E] via-brand to-[#1A1A2E] flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-brand-dark via-brand to-brand-dark flex items-center justify-center px-4">
       <div className="absolute inset-0 diagonal-stripe opacity-30" aria-hidden="true" />
       <div className="relative text-center">
         <img
@@ -12,7 +12,7 @@ export default function NotFound() {
           alt="Pacemaker Institute"
           className="h-24 w-auto rounded-2xl mx-auto mb-6 shadow-warm-lg"
         />
-        <p className="font-hand text-2xl text-[#F4A400] mb-2">Oops!</p>
+        <p className="font-hand text-2xl text-gold mb-2">Oops!</p>
         <h1 className="text-6xl md:text-8xl font-bold text-white font-display mb-4">
           404
         </h1>

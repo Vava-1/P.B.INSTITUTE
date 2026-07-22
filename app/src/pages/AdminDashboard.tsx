@@ -66,9 +66,9 @@ export default function AdminDashboard() {
   if (!admin) return null;
 
   return (
-    <div className="min-h-screen bg-[#EDE7FF]">
+    <div className="min-h-screen bg-brand-light">
       {/* Mobile Header */}
-      <div className="lg:hidden bg-[#1A1A2E] text-white p-4 flex items-center justify-between">
+      <div className="lg:hidden bg-brand-dark text-white p-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <img src="/images/PBI_logo.jpg" alt="PBI" className="h-8 w-auto rounded" />
           <span className="font-bold font-display">Admin</span>
@@ -81,7 +81,7 @@ export default function AdminDashboard() {
       <div className="flex">
         {/* Sidebar */}
         <aside
-          className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-[#1A1A2E] text-white flex flex-col transition-transform ${
+          className={`fixed lg:sticky top-0 left-0 z-40 h-screen w-64 bg-brand-dark text-white flex flex-col transition-transform ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
           }`}
         >
@@ -90,7 +90,7 @@ export default function AdminDashboard() {
               <img src="/images/PBI_logo.jpg" alt="PBI" className="h-10 w-auto rounded-xl" />
               <div>
                 <div className="font-bold font-display leading-tight text-lg">Pacemaker</div>
-                <div className="font-hand text-sm text-[#F4A400] leading-none mt-0.5">Admin Panel</div>
+                <div className="font-hand text-sm text-gold leading-none mt-0.5">Admin Panel</div>
               </div>
             </div>
           </div>
@@ -103,7 +103,7 @@ export default function AdminDashboard() {
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors ${
                   location.pathname.startsWith(item.path)
-                    ? "bg-[#5E17EB] text-[#1A1A2E] font-semibold"
+                    ? "bg-brand text-foreground font-semibold"
                     : "text-white/70 hover:bg-white/10 hover:text-white"
                 }`}
                 aria-current={location.pathname.startsWith(item.path) ? "page" : undefined}
@@ -116,7 +116,7 @@ export default function AdminDashboard() {
 
           <div className="p-4 border-t border-white/10">
             <div className="flex items-center gap-3 px-4 py-3 mb-3">
-              <div className="w-8 h-8 rounded-full bg-[#5E17EB] flex items-center justify-center text-[#1A1A2E] font-bold text-sm">
+              <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-foreground font-bold text-sm">
                 {admin.name.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
@@ -167,17 +167,17 @@ function DashboardOverview() {
   );
 
   const statCards = [
-    { label: "Total Enrollments", value: stats?.totalEnrollments ?? 0, icon: Users, color: "#5E17EB" },
-    { label: "Pending Review", value: stats?.pendingEnrollments ?? 0, icon: Clock, color: "#5E17EB" },
-    { label: "Confirmed", value: stats?.confirmedEnrollments ?? 0, icon: CheckCircle, color: "#00B894" },
-    { label: "Unread Messages", value: stats?.unreadMessages ?? 0, icon: Mail, color: "#8B5CF6" },
+    { label: "Total Enrollments", value: stats?.totalEnrollments ?? 0, icon: Users, color: "hsl(var(--brand))" },
+    { label: "Pending Review", value: stats?.pendingEnrollments ?? 0, icon: Clock, color: "hsl(var(--brand))" },
+    { label: "Confirmed", value: stats?.confirmedEnrollments ?? 0, icon: CheckCircle, color: "hsl(var(--gold))" },
+    { label: "Unread Messages", value: stats?.unreadMessages ?? 0, icon: Mail, color: "hsl(var(--brand))" },
   ];
 
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#1A1A2E] font-display">Dashboard</h1>
-        <p className="text-[#6B7280]">Welcome back! Here's what's happening.</p>
+        <h1 className="text-2xl font-bold text-foreground font-display">Dashboard</h1>
+        <p className="text-muted-foreground">Welcome back! Here's what's happening.</p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -186,10 +186,10 @@ function DashboardOverview() {
             <CardContent className="p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-[#6B7280]">{s.label}</p>
-                  <p className="text-3xl font-bold text-[#1A1A2E] mt-1">{s.value}</p>
+                  <p className="text-sm text-muted-foreground">{s.label}</p>
+                  <p className="text-3xl font-bold text-foreground mt-1">{s.value}</p>
                 </div>
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${s.color}15` }}>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center bg-brand/10">
                   <s.icon className="w-6 h-6" style={{ color: s.color }} />
                 </div>
               </div>
@@ -201,25 +201,25 @@ function DashboardOverview() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card className="border-0 shadow-md">
           <CardContent className="p-6">
-            <h2 className="text-lg font-bold text-[#1A1A2E] mb-4 font-display flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-[#5E17EB]" /> Recent Enrollments
+            <h2 className="text-lg font-bold text-foreground mb-4 font-display flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-brand" /> Recent Enrollments
             </h2>
             <div className="space-y-3">
               {(recentEnrollments || []).length === 0 && (
-                <p className="text-sm text-[#6B7280] py-4 text-center">No enrollments yet</p>
+                <p className="text-sm text-muted-foreground py-4 text-center">No enrollments yet</p>
               )}
               {(recentEnrollments || []).map((e: any) => (
-                <div key={e.id} className="flex items-center justify-between p-3 bg-[#EDE7FF] rounded-lg">
+                <div key={e.id} className="flex items-center justify-between p-3 bg-brand-light rounded-lg">
                   <div>
-                    <div className="font-medium text-sm text-[#1A1A2E]">{e.fullName}</div>
-                    <div className="text-xs text-[#6B7280]">{e.referenceNumber}</div>
+                    <div className="font-medium text-sm text-foreground">{e.fullName}</div>
+                    <div className="text-xs text-muted-foreground">{e.referenceNumber}</div>
                   </div>
                   <Badge
                     className={
                       e.status === "pending"
-                        ? "bg-[#5E17EB]/10 text-[#5E17EB]"
+                        ? "bg-brand/10 text-brand"
                         : e.status === "enrolled"
-                        ? "bg-[#00B894]/10 text-[#00B894]"
+                        ? "bg-gold/10 text-gold"
                         : "bg-gray-100 text-gray-600"
                     }
                   >
@@ -233,8 +233,8 @@ function DashboardOverview() {
 
         <Card className="border-0 shadow-md">
           <CardContent className="p-6">
-            <h2 className="text-lg font-bold text-[#1A1A2E] mb-4 font-display flex items-center gap-2">
-              <AlertCircle className="w-5 h-5 text-[#5E17EB]" /> Quick Actions
+            <h2 className="text-lg font-bold text-foreground mb-4 font-display flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-brand" /> Quick Actions
             </h2>
             <div className="grid grid-cols-2 gap-3">
               {[
@@ -246,10 +246,10 @@ function DashboardOverview() {
                 <Link
                   key={action.path}
                   to={action.path}
-                  className="flex flex-col items-center gap-2 p-4 bg-[#EDE7FF] rounded-lg hover:bg-[#5E17EB]/5 transition-colors text-center"
+                  className="flex flex-col items-center gap-2 p-4 bg-brand-light rounded-lg hover:bg-brand/5 transition-colors text-center"
                 >
-                  <action.icon className="w-6 h-6 text-[#5E17EB]" />
-                  <span className="text-sm font-medium text-[#1A1A2E]">{action.label}</span>
+                  <action.icon className="w-6 h-6 text-brand" />
+                  <span className="text-sm font-medium text-foreground">{action.label}</span>
                 </Link>
               ))}
             </div>
@@ -269,27 +269,27 @@ function EnrollmentsPage() {
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#1A1A2E] font-display">Enrollments</h1>
-        <p className="text-[#6B7280]">Manage student enrollment applications</p>
+        <h1 className="text-2xl font-bold text-foreground font-display">Enrollments</h1>
+        <p className="text-muted-foreground">Manage student enrollment applications</p>
       </div>
       <Card className="border-0 shadow-md overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-[#EDE7FF]">
+            <thead className="bg-brand-light">
               <tr>
-                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Reference</th>
-                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Name</th>
-                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Phone</th>
-                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Status</th>
-                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Actions</th>
+                <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase">Reference</th>
+                <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase">Name</th>
+                <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase">Phone</th>
+                <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase">Status</th>
+                <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase">Actions</th>
               </tr>
             </thead>
             <tbody>
               {(enrollments || []).length === 0 && (
-                <tr><td colSpan={5} className="p-8 text-center text-[#6B7280]">No enrollments found</td></tr>
+                <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">No enrollments found</td></tr>
               )}
               {(enrollments || []).map((e: any) => (
-                <tr key={e.id} className="border-t border-gray-50 hover:bg-[#EDE7FF]">
+                <tr key={e.id} className="border-t border-gray-50 hover:bg-brand-light">
                   <td className="p-4 text-sm font-mono">{e.referenceNumber}</td>
                   <td className="p-4 text-sm font-medium">{e.fullName}</td>
                   <td className="p-4 text-sm">{e.phone}</td>
@@ -311,7 +311,7 @@ function EnrollmentsPage() {
                   </td>
                   <td className="p-4">
                     <button
-                      className="text-[#5E17EB] hover:text-[#5E17EB] transition-colors"
+                      className="text-brand hover:text-brand transition-colors"
                       aria-label={`View details for ${e.fullName}`}
                       title="View details"
                       onClick={() => {
@@ -363,16 +363,16 @@ function PaymentsPage() {
   });
 
   const statusColor = (s: string) =>
-    s === "success" ? "bg-[#00B894]/10 text-[#00B894]"
-    : s === "pending" ? "bg-[#5E17EB]/10 text-[#5E17EB]"
+    s === "success" ? "bg-gold/10 text-gold"
+    : s === "pending" ? "bg-brand/10 text-brand"
     : s === "failed" ? "bg-red-100 text-red-600"
     : "bg-gray-100 text-gray-600";
 
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#1A1A2E] font-display">Payments</h1>
-        <p className="text-[#6B7280]">View and reconcile MTN MoMo / Airtel payments</p>
+        <h1 className="text-2xl font-bold text-foreground font-display">Payments</h1>
+        <p className="text-muted-foreground">View and reconcile MTN MoMo / Airtel payments</p>
       </div>
 
       {/* Filters */}
@@ -408,23 +408,23 @@ function PaymentsPage() {
       <Card className="border-0 shadow-md overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-[#EDE7FF]">
+            <thead className="bg-brand-light">
               <tr>
-                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Reference</th>
-                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Provider</th>
-                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Amount</th>
-                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Phone</th>
-                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Status</th>
-                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Enrollment</th>
-                <th className="text-left p-4 text-xs font-semibold text-[#6B7280] uppercase">Actions</th>
+                <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase">Reference</th>
+                <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase">Provider</th>
+                <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase">Amount</th>
+                <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase">Phone</th>
+                <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase">Status</th>
+                <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase">Enrollment</th>
+                <th className="text-left p-4 text-xs font-semibold text-muted-foreground uppercase">Actions</th>
               </tr>
             </thead>
             <tbody>
               {(payments || []).length === 0 && (
-                <tr><td colSpan={7} className="p-8 text-center text-[#6B7280]">No payments found</td></tr>
+                <tr><td colSpan={7} className="p-8 text-center text-muted-foreground">No payments found</td></tr>
               )}
               {(payments || []).map((p: any) => (
-                <tr key={p.id} className="border-t border-gray-50 hover:bg-[#EDE7FF]">
+                <tr key={p.id} className="border-t border-gray-50 hover:bg-brand-light">
                   <td className="p-4 text-sm font-mono">{p.referenceNumber}</td>
                   <td className="p-4 text-sm">{p.provider}</td>
                   <td className="p-4 text-sm font-medium">{p.amount?.toLocaleString()} RWF</td>
@@ -434,16 +434,16 @@ function PaymentsPage() {
                   </td>
                   <td className="p-4 text-sm">
                     {p.enrollmentRef ? (
-                      <Link to="/admin/enrollments" className="text-[#5E17EB] hover:underline font-mono text-xs">
+                      <Link to="/admin/enrollments" className="text-brand hover:underline font-mono text-xs">
                         {p.enrollmentRef}
                       </Link>
                     ) : (
-                      <span className="text-[#6B7280]">—</span>
+                      <span className="text-muted-foreground">—</span>
                     )}
                   </td>
                   <td className="p-4">
                     <button
-                      className="text-xs px-2 py-1 bg-[#5E17EB] text-white rounded hover:bg-[#1A1A2E] transition-colors"
+                      className="text-xs px-2 py-1 bg-brand text-white rounded hover:bg-brand-dark transition-colors"
                       onClick={() => setReconcileTarget(p)}
                       disabled={p.status === "success"}
                       title={p.status === "success" ? "Already successful" : "Manually reconcile"}
@@ -463,11 +463,11 @@ function PaymentsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setReconcileTarget(null)}>
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-md m-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-lg font-bold text-[#1A1A2E]">Manual Reconcile</h2>
-              <button onClick={() => setReconcileTarget(null)}><X className="w-5 h-5 text-[#6B7280]" /></button>
+              <h2 className="text-lg font-bold text-foreground">Manual Reconcile</h2>
+              <button onClick={() => setReconcileTarget(null)}><X className="w-5 h-5 text-muted-foreground" /></button>
             </div>
             <div className="p-6 space-y-4">
-              <p className="text-sm text-[#6B7280]">
+              <p className="text-sm text-muted-foreground">
                 Payment <span className="font-mono">{reconcileTarget.referenceNumber}</span> ({reconcileTarget.amount?.toLocaleString()} RWF via {reconcileTarget.provider})
               </p>
               <div>
@@ -494,7 +494,7 @@ function PaymentsPage() {
               <div className="flex justify-end gap-3 pt-2">
                 <Button variant="outline" onClick={() => setReconcileTarget(null)}>Cancel</Button>
                 <Button
-                  className="bg-[#5E17EB] text-white hover:bg-[#1A1A2E]"
+                  className="bg-brand text-white hover:bg-brand-dark"
                   disabled={reconcileMutation.isPending}
                   onClick={() => {
                     const statusEl = document.getElementById("reconcile-status") as HTMLSelectElement;
@@ -579,10 +579,10 @@ function CoursesAdminPage() {
     <div className="p-6 lg:p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A2E] font-display">Courses</h1>
-          <p className="text-[#6B7280]">Manage your course catalog</p>
+          <h1 className="text-2xl font-bold text-foreground font-display">Courses</h1>
+          <p className="text-muted-foreground">Manage your course catalog</p>
         </div>
-        <Button onClick={openCreate} className="bg-[#5E17EB] text-white hover:bg-[#1A1A2E]">
+        <Button onClick={openCreate} className="bg-brand text-white hover:bg-brand-dark">
           <Plus className="w-4 h-4 mr-2" /> Add Course
         </Button>
       </div>
@@ -591,21 +591,21 @@ function CoursesAdminPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowModal(false)}>
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-lg font-bold text-[#1A1A2E]">{editing ? "Edit Course" : "Add Course"}</h2>
-              <button onClick={() => setShowModal(false)}><X className="w-5 h-5 text-[#6B7280]" /></button>
+              <h2 className="text-lg font-bold text-foreground">{editing ? "Edit Course" : "Add Course"}</h2>
+              <button onClick={() => setShowModal(false)}><X className="w-5 h-5 text-muted-foreground" /></button>
             </div>
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="text-sm font-medium text-[#1A1A2E] block mb-1">Title</label>
+                  <label className="text-sm font-medium text-foreground block mb-1">Title</label>
                   <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[#1A1A2E] block mb-1">Slug</label>
+                  <label className="text-sm font-medium text-foreground block mb-1">Slug</label>
                   <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[#1A1A2E] block mb-1">Category</label>
+                  <label className="text-sm font-medium text-foreground block mb-1">Category</label>
                   <select className="w-full px-3 py-2 border rounded-md text-sm" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
                     <option value="languages">Languages</option>
                     <option value="bakery">Bakery & Pastry</option>
@@ -616,19 +616,19 @@ function CoursesAdminPage() {
                   </select>
                 </div>
                 <div className="col-span-2">
-                  <label className="text-sm font-medium text-[#1A1A2E] block mb-1">Short Description</label>
+                  <label className="text-sm font-medium text-foreground block mb-1">Short Description</label>
                   <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.shortDesc} onChange={(e) => setForm({ ...form, shortDesc: e.target.value })} />
                 </div>
                 <div className="col-span-2">
-                  <label className="text-sm font-medium text-[#1A1A2E] block mb-1">Description</label>
+                  <label className="text-sm font-medium text-foreground block mb-1">Description</label>
                   <textarea className="w-full px-3 py-2 border rounded-md text-sm min-h-[80px]" value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[#1A1A2E] block mb-1">Duration</label>
+                  <label className="text-sm font-medium text-foreground block mb-1">Duration</label>
                   <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.duration} onChange={(e) => setForm({ ...form, duration: e.target.value })} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[#1A1A2E] block mb-1">Display Order</label>
+                  <label className="text-sm font-medium text-foreground block mb-1">Display Order</label>
                   <input type="number" className="w-full px-3 py-2 border rounded-md text-sm" value={form.displayOrder} onChange={(e) => setForm({ ...form, displayOrder: parseInt(e.target.value) || 0 })} />
                 </div>
                 <div className="flex items-center gap-6">
@@ -645,7 +645,7 @@ function CoursesAdminPage() {
             </div>
             <div className="flex justify-end gap-3 p-6 border-t">
               <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} className="bg-[#5E17EB] text-white hover:bg-[#1A1A2E]">
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} className="bg-brand text-white hover:bg-brand-dark">
                 {createMutation.isPending || updateMutation.isPending ? "Saving..." : editing ? "Update Course" : "Create Course"}
               </Button>
             </div>
@@ -655,28 +655,28 @@ function CoursesAdminPage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {(courses || []).length === 0 && (
-          <div className="col-span-full text-center py-12 text-[#6B7280]">No courses yet. Click "Add Course" to create one.</div>
+          <div className="col-span-full text-center py-12 text-muted-foreground">No courses yet. Click "Add Course" to create one.</div>
         )}
         {(courses || []).map((course: any) => (
           <Card key={course.id} className="border-0 shadow-md group">
             <CardContent className="p-5">
               <div className="flex items-center gap-3 mb-3">
-                <div className="w-10 h-10 rounded-lg bg-[#5E17EB]/10 flex items-center justify-center">
-                  <BookOpen className="w-5 h-5 text-[#5E17EB]" />
+                <div className="w-10 h-10 rounded-lg bg-brand/10 flex items-center justify-center">
+                  <BookOpen className="w-5 h-5 text-brand" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-[#1A1A2E] text-sm truncate">{course.title}</h3>
-                  <p className="text-xs text-[#6B7280]">{course.category.replace(/_/g, " ")}</p>
+                  <h3 className="font-semibold text-foreground text-sm truncate">{course.title}</h3>
+                  <p className="text-xs text-muted-foreground">{course.category.replace(/_/g, " ")}</p>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <Badge className={course.isPublished ? "bg-[#00B894]/10 text-[#00B894]" : "bg-gray-100 text-gray-600"}>
+                <Badge className={course.isPublished ? "bg-gold/10 text-gold" : "bg-gray-100 text-gray-600"}>
                   {course.isPublished ? "Published" : "Draft"}
                 </Badge>
-                <span className="text-xs text-[#6B7280]">{course.duration}</span>
+                <span className="text-xs text-muted-foreground">{course.duration}</span>
               </div>
               <div className="flex items-center gap-2 mt-3 pt-3 border-t border-gray-50 opacity-0 group-hover:opacity-100 transition-opacity">
-                <button onClick={() => openEdit(course)} className="text-xs flex items-center gap-1 text-[#5E17EB] hover:text-[#5E17EB] transition-colors">
+                <button onClick={() => openEdit(course)} className="text-xs flex items-center gap-1 text-brand hover:text-brand transition-colors">
                   <Edit className="w-3.5 h-3.5" /> Edit
                 </button>
                 <button
@@ -756,10 +756,10 @@ function NewsAdminPage() {
     <div className="p-6 lg:p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A2E] font-display">News & Events</h1>
-          <p className="text-[#6B7280]">Manage news articles and events</p>
+          <h1 className="text-2xl font-bold text-foreground font-display">News & Events</h1>
+          <p className="text-muted-foreground">Manage news articles and events</p>
         </div>
-        <Button onClick={openCreate} className="bg-[#5E17EB] text-white hover:bg-[#1A1A2E]">
+        <Button onClick={openCreate} className="bg-brand text-white hover:bg-brand-dark">
           <Plus className="w-4 h-4 mr-2" /> Add Article
         </Button>
       </div>
@@ -772,8 +772,8 @@ function NewsAdminPage() {
             onClick={() => setFilterCategory(cat)}
             className={`px-4 py-2 text-sm font-medium rounded-full transition-colors capitalize ${
               filterCategory === cat
-                ? "bg-[#5E17EB] text-white"
-                : "bg-white text-[#6B7280] hover:bg-[#5E17EB]/10 hover:text-[#5E17EB] border border-gray-200"
+                ? "bg-brand text-white"
+                : "bg-white text-muted-foreground hover:bg-brand/10 hover:text-brand border border-gray-200"
             }`}
           >
             {cat === "all" ? "All" : cat + "s"}
@@ -785,21 +785,21 @@ function NewsAdminPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50" onClick={() => setShowModal(false)}>
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto m-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between p-6 border-b">
-              <h2 className="text-lg font-bold text-[#1A1A2E]">{editing ? "Edit Article" : "Add Article"}</h2>
-              <button onClick={() => setShowModal(false)}><X className="w-5 h-5 text-[#6B7280]" /></button>
+              <h2 className="text-lg font-bold text-foreground">{editing ? "Edit Article" : "Add Article"}</h2>
+              <button onClick={() => setShowModal(false)}><X className="w-5 h-5 text-muted-foreground" /></button>
             </div>
             <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="text-sm font-medium text-[#1A1A2E] block mb-1">Title</label>
+                  <label className="text-sm font-medium text-foreground block mb-1">Title</label>
                   <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[#1A1A2E] block mb-1">Slug</label>
+                  <label className="text-sm font-medium text-foreground block mb-1">Slug</label>
                   <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.slug} onChange={(e) => setForm({ ...form, slug: e.target.value })} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[#1A1A2E] block mb-1">Category</label>
+                  <label className="text-sm font-medium text-foreground block mb-1">Category</label>
                   <select className="w-full px-3 py-2 border rounded-md text-sm" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
                     <option value="news">News</option>
                     <option value="event">Event</option>
@@ -808,15 +808,15 @@ function NewsAdminPage() {
                   </select>
                 </div>
                 <div className="col-span-2">
-                  <label className="text-sm font-medium text-[#1A1A2E] block mb-1">Excerpt</label>
+                  <label className="text-sm font-medium text-foreground block mb-1">Excerpt</label>
                   <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} />
                 </div>
                 <div className="col-span-2">
-                  <label className="text-sm font-medium text-[#1A1A2E] block mb-1">Content</label>
+                  <label className="text-sm font-medium text-foreground block mb-1">Content</label>
                   <textarea className="w-full px-3 py-2 border rounded-md text-sm min-h-[120px]" value={form.content} onChange={(e) => setForm({ ...form, content: e.target.value })} />
                 </div>
                 <div>
-                  <label className="text-sm font-medium text-[#1A1A2E] block mb-1">Author Name</label>
+                  <label className="text-sm font-medium text-foreground block mb-1">Author Name</label>
                   <input className="w-full px-3 py-2 border rounded-md text-sm" value={form.authorName} onChange={(e) => setForm({ ...form, authorName: e.target.value })} />
                 </div>
                 <div className="flex items-end pb-2">
@@ -829,7 +829,7 @@ function NewsAdminPage() {
             </div>
             <div className="flex justify-end gap-3 p-6 border-t">
               <Button variant="outline" onClick={() => setShowModal(false)}>Cancel</Button>
-              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} className="bg-[#5E17EB] text-white hover:bg-[#1A1A2E]">
+              <Button onClick={handleSave} disabled={createMutation.isPending || updateMutation.isPending} className="bg-brand text-white hover:bg-brand-dark">
                 {createMutation.isPending || updateMutation.isPending ? "Saving..." : editing ? "Update Article" : "Create Article"}
               </Button>
             </div>
@@ -843,7 +843,7 @@ function NewsAdminPage() {
             (item: any) => filterCategory === "all" || item.category === filterCategory
           );
           if (filtered.length === 0) {
-            return <p className="text-[#6B7280]">No {filterCategory === "all" ? "" : filterCategory + " "}articles yet</p>;
+            return <p className="text-muted-foreground">No {filterCategory === "all" ? "" : filterCategory + " "}articles yet</p>;
           }
           return filtered.map((item: any) => (
           <Card key={item.id} className="border-0 shadow-sm group">
@@ -851,25 +851,25 @@ function NewsAdminPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <Badge className="bg-[#5E17EB]/10 text-[#5E17EB]">{item.category}</Badge>
-                    <span className="text-xs text-[#6B7280]">
+                    <Badge className="bg-brand/10 text-brand">{item.category}</Badge>
+                    <span className="text-xs text-muted-foreground">
                       {item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : "Draft"}
                     </span>
                     {!item.isPublished && (
                       <Badge className="bg-gray-100 text-gray-600">Unpublished</Badge>
                     )}
                   </div>
-                  <h3 className="font-semibold text-[#1A1A2E] truncate">{item.title}</h3>
-                  <p className="text-xs text-[#6B7280] mt-1">{item.excerpt}</p>
+                  <h3 className="font-semibold text-foreground truncate">{item.title}</h3>
+                  <p className="text-xs text-muted-foreground mt-1">{item.excerpt}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
                   <button
                     onClick={() => updateMutation.mutate({ id: item.id, data: { isPublished: !item.isPublished } })}
-                    className="text-xs px-2 py-1 bg-[#5E17EB] text-white rounded hover:bg-[#1A1A2E] transition-colors"
+                    className="text-xs px-2 py-1 bg-brand text-white rounded hover:bg-brand-dark transition-colors"
                   >
                     {item.isPublished ? "Unpublish" : "Publish"}
                   </button>
-                  <button onClick={() => openEdit(item)} className="text-[#5E17EB] hover:text-[#5E17EB] transition-colors">
+                  <button onClick={() => openEdit(item)} className="text-brand hover:text-brand transition-colors">
                     <Edit className="w-4 h-4" />
                   </button>
                   <button
@@ -951,12 +951,12 @@ function TestimonialsAdminPage() {
     <div className="p-6 lg:p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-[#1A1A2E] font-display">Testimonials</h1>
-          <p className="text-[#6B7280]">Manage student testimonials</p>
+          <h1 className="text-2xl font-bold text-foreground font-display">Testimonials</h1>
+          <p className="text-muted-foreground">Manage student testimonials</p>
         </div>
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button onClick={openNew} className="bg-[#5E17EB] text-white hover:bg-[#4a12c0] rounded-full">
+            <Button onClick={openNew} className="bg-brand text-white hover:bg-brand-dark rounded-full">
               <Plus className="w-4 h-4 mr-2" /> Add Testimonial
             </Button>
           </DialogTrigger>
@@ -1010,7 +1010,7 @@ function TestimonialsAdminPage() {
                     type="checkbox"
                     checked={form.isPublished}
                     onChange={(e) => setForm({ ...form, isPublished: e.target.checked })}
-                    className="w-4 h-4 rounded accent-[#5E17EB]"
+                    className="w-4 h-4 rounded accent-brand"
                   />
                   Published (visible on website)
                 </label>
@@ -1019,14 +1019,14 @@ function TestimonialsAdminPage() {
                     type="checkbox"
                     checked={form.isFeatured}
                     onChange={(e) => setForm({ ...form, isFeatured: e.target.checked })}
-                    className="w-4 h-4 rounded accent-[#5E17EB]"
+                    className="w-4 h-4 rounded accent-brand"
                   />
                   Featured (shown on home page)
                 </label>
               </div>
               <div className="flex justify-end gap-3 pt-2">
                 <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                <Button onClick={handleSave} className="bg-[#5E17EB] text-white hover:bg-[#4a12c0]">
+                <Button onClick={handleSave} className="bg-brand text-white hover:bg-brand-dark">
                   {editId ? "Update" : "Create"}
                 </Button>
               </div>
@@ -1035,7 +1035,7 @@ function TestimonialsAdminPage() {
         </Dialog>
       </div>
       <div className="space-y-4">
-        {(testimonials || []).length === 0 && <p className="text-[#6B7280]">No testimonials yet</p>}
+        {(testimonials || []).length === 0 && <p className="text-muted-foreground">No testimonials yet</p>}
         {(testimonials || []).map((t: any) => (
           <Card key={t.id} className="border-0 shadow-sm">
             <CardContent className="p-5">
@@ -1053,7 +1053,7 @@ function TestimonialsAdminPage() {
                     </div>
                   ) : (
                     <div className="relative w-12 h-12 shrink-0">
-                      <div className="w-12 h-12 rounded-full bg-[#5E17EB]/10 flex items-center justify-center text-[#5E17EB] font-bold text-sm">
+                      <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center text-brand font-bold text-sm">
                         {t.studentName.charAt(0)}
                       </div>
                       {t.linkedinUrl && (
@@ -1067,25 +1067,25 @@ function TestimonialsAdminPage() {
                   <div className="min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold text-sm">{t.studentName}</span>
-                      <Badge className={t.isPublished ? "bg-[#00B894]/10 text-[#00B894]" : "bg-[#5E17EB]/10 text-[#5E17EB]"}>
+                      <Badge className={t.isPublished ? "bg-gold/10 text-gold" : "bg-brand/10 text-brand"}>
                         {t.isPublished ? "Published" : "Pending"}
                       </Badge>
                     </div>
-                    {t.courseName && <div className="text-xs text-[#6B7280] mb-1">{t.courseName}</div>}
-                    <p className="text-sm text-[#6B7280] italic line-clamp-2">"{t.quote}"</p>
+                    {t.courseName && <div className="text-xs text-muted-foreground mb-1">{t.courseName}</div>}
+                    <p className="text-sm text-muted-foreground italic line-clamp-2">"{t.quote}"</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <button onClick={() => openEdit(t)} aria-label={`Edit testimonial from ${t.studentName}`} className="p-2 text-[#6B7280] hover:text-[#5E17EB] hover:bg-[#EDE7FF] rounded transition-colors">
+                  <button onClick={() => openEdit(t)} aria-label={`Edit testimonial from ${t.studentName}`} className="p-2 text-muted-foreground hover:text-brand hover:bg-brand-light rounded transition-colors">
                     <Edit className="w-4 h-4" />
                   </button>
                   <button onClick={async () => { if (await confirm("Delete this testimonial? This cannot be undone.", "Delete testimonial")) deleteMutation.mutate({ id: t.id }); }} aria-label={`Delete testimonial from ${t.studentName}`}
-                    className="p-2 text-[#6B7280] hover:text-red-500 hover:bg-red-50 rounded transition-colors">
+                    className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-50 rounded transition-colors">
                     <Trash2 className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => updateMutation.mutate({ id: t.id, data: { isPublished: !t.isPublished, isApproved: !t.isPublished } })}
-                    className="text-xs px-3 py-1.5 bg-[#5E17EB] text-white rounded hover:bg-[#1A1A2E] transition-colors"
+                    className="text-xs px-3 py-1.5 bg-brand text-white rounded hover:bg-brand-dark transition-colors"
                   >
                     {t.isPublished ? "Unpublish" : "Publish"}
                   </button>
@@ -1109,34 +1109,34 @@ function MessagesAdminPage() {
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#1A1A2E] font-display">Contact Messages</h1>
-        <p className="text-[#6B7280]">Messages from the contact form</p>
+        <h1 className="text-2xl font-bold text-foreground font-display">Contact Messages</h1>
+        <p className="text-muted-foreground">Messages from the contact form</p>
       </div>
       <div className="space-y-4">
-        {(messages || []).length === 0 && <p className="text-[#6B7280]">No messages yet</p>}
+        {(messages || []).length === 0 && <p className="text-muted-foreground">No messages yet</p>}
         {(messages || []).map((m: any) => (
-          <Card key={m.id} className={`border-0 shadow-sm ${!m.isRead ? "border-l-4 border-l-[#5E17EB]" : ""}`}>
+          <Card key={m.id} className={`border-0 shadow-sm ${!m.isRead ? "border-l-4 border-l-brand" : ""}`}>
             <CardContent className="p-5">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
                     <span className="font-semibold text-sm">{m.fullName}</span>
-                    {!m.isRead && <Badge className="bg-[#5E17EB]/10 text-[#5E17EB]">New</Badge>}
+                    {!m.isRead && <Badge className="bg-brand/10 text-brand">New</Badge>}
                   </div>
-                  <div className="flex items-center gap-3 text-xs text-[#6B7280] mb-2">
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
                     <span>{m.email}</span>
                     <span>{m.phone}</span>
                     <Badge variant="outline">{m.subject}</Badge>
                   </div>
-                  <p className="text-sm text-[#1A1A2E]">{m.message}</p>
-                  <div className="text-xs text-[#6B7280] mt-2">
+                  <p className="text-sm text-foreground">{m.message}</p>
+                  <div className="text-xs text-muted-foreground mt-2">
                     {new Date(m.createdAt).toLocaleString()}
                   </div>
                 </div>
                 {!m.isRead && (
                   <button
                     onClick={() => updateMutation.mutate({ id: m.id, isRead: true })}
-                    className="text-xs px-3 py-1.5 bg-[#EDE7FF] text-[#5E17EB] rounded hover:bg-[#5E17EB]/10 transition-colors shrink-0"
+                    className="text-xs px-3 py-1.5 bg-brand-light text-brand rounded hover:bg-brand/10 transition-colors shrink-0"
                   >
                     Mark Read
                   </button>
@@ -1185,15 +1185,15 @@ function SettingsAdminPage() {
   return (
     <div className="p-6 lg:p-8">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-[#1A1A2E] font-display">Site Settings</h1>
-        <p className="text-[#6B7280]">Configure your website settings</p>
+        <h1 className="text-2xl font-bold text-foreground font-display">Site Settings</h1>
+        <p className="text-muted-foreground">Configure your website settings</p>
       </div>
 
       <Card className="border-0 shadow-md">
         <CardContent className="p-8">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="text-sm font-medium text-[#1A1A2E] mb-1 block">Site Name</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">Site Name</label>
               <input
                 className="w-full px-3 py-2 border rounded-md text-sm"
                 value={form.siteName || ""}
@@ -1201,7 +1201,7 @@ function SettingsAdminPage() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-[#1A1A2E] mb-1 block">Tagline</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">Tagline</label>
               <input
                 className="w-full px-3 py-2 border rounded-md text-sm"
                 value={form.tagline || ""}
@@ -1209,7 +1209,7 @@ function SettingsAdminPage() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-[#1A1A2E] mb-1 block">Phone</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">Phone</label>
               <input
                 className="w-full px-3 py-2 border rounded-md text-sm"
                 value={form.phone || ""}
@@ -1217,7 +1217,7 @@ function SettingsAdminPage() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-[#1A1A2E] mb-1 block">Email</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">Email</label>
               <input
                 className="w-full px-3 py-2 border rounded-md text-sm"
                 value={form.email || ""}
@@ -1225,7 +1225,7 @@ function SettingsAdminPage() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-[#1A1A2E] mb-1 block">WhatsApp</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">WhatsApp</label>
               <input
                 className="w-full px-3 py-2 border rounded-md text-sm"
                 value={form.whatsapp || ""}
@@ -1233,7 +1233,7 @@ function SettingsAdminPage() {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="text-sm font-medium text-[#1A1A2E] mb-1 block">Address</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">Address</label>
               <input
                 className="w-full px-3 py-2 border rounded-md text-sm"
                 value={form.address || ""}
@@ -1241,7 +1241,7 @@ function SettingsAdminPage() {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="text-sm font-medium text-[#1A1A2E] mb-1 block">Opening Hours</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">Opening Hours</label>
               <input
                 className="w-full px-3 py-2 border rounded-md text-sm"
                 value={form.openingHours || ""}
@@ -1249,7 +1249,7 @@ function SettingsAdminPage() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-[#1A1A2E] mb-1 block">Facebook URL</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">Facebook URL</label>
               <input
                 className="w-full px-3 py-2 border rounded-md text-sm"
                 value={form.facebookUrl || ""}
@@ -1257,7 +1257,7 @@ function SettingsAdminPage() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-[#1A1A2E] mb-1 block">Instagram URL</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">Instagram URL</label>
               <input
                 className="w-full px-3 py-2 border rounded-md text-sm"
                 value={form.instagramUrl || ""}
@@ -1265,7 +1265,7 @@ function SettingsAdminPage() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-[#1A1A2E] mb-1 block">Twitter URL</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">Twitter URL</label>
               <input
                 className="w-full px-3 py-2 border rounded-md text-sm"
                 value={form.twitterUrl || ""}
@@ -1273,7 +1273,7 @@ function SettingsAdminPage() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-[#1A1A2E] mb-1 block">LinkedIn URL</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">LinkedIn URL</label>
               <input
                 className="w-full px-3 py-2 border rounded-md text-sm"
                 value={form.linkedinUrl || ""}
@@ -1281,7 +1281,7 @@ function SettingsAdminPage() {
               />
             </div>
             <div>
-              <label className="text-sm font-medium text-[#1A1A2E] mb-1 block">YouTube URL</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">YouTube URL</label>
               <input
                 className="w-full px-3 py-2 border rounded-md text-sm"
                 value={form.youtubeUrl || ""}
@@ -1289,7 +1289,7 @@ function SettingsAdminPage() {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="text-sm font-medium text-[#1A1A2E] mb-1 block">SEO Title Suffix</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">SEO Title Suffix</label>
               <input
                 className="w-full px-3 py-2 border rounded-md text-sm"
                 value={form.seoTitleSuffix || ""}
@@ -1297,7 +1297,7 @@ function SettingsAdminPage() {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="text-sm font-medium text-[#1A1A2E] mb-1 block">SEO Default Description</label>
+              <label className="text-sm font-medium text-foreground mb-1 block">SEO Default Description</label>
               <textarea
                 className="w-full px-3 py-2 border rounded-md text-sm min-h-[80px]"
                 value={form.seoDefaultDesc || ""}
@@ -1310,12 +1310,12 @@ function SettingsAdminPage() {
             <Button
               onClick={handleSave}
               disabled={updateMutation.isPending}
-              className="bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] hover:from-[#5E17EB] hover:to-[#5E17EB] font-semibold px-8"
+              className="bg-gradient-to-r from-brand to-brand text-foreground hover:from-brand hover:to-brand font-semibold px-8"
             >
               {updateMutation.isPending ? "Saving..." : "Save Settings"}
             </Button>
             {updateMutation.isSuccess && (
-              <span className="text-sm text-[#00B894]">Settings saved successfully!</span>
+              <span className="text-sm text-gold">Settings saved successfully!</span>
             )}
           </div>
         </CardContent>

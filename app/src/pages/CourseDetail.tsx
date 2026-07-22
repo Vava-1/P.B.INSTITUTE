@@ -13,15 +13,6 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { trpc } from "@/providers/trpc";
 
-const categoryColors: Record<string, string> = {
-  languages: "#3B82F6",
-  bakery: "#F59E0B",
-  salon: "#EC4899",
-  mechanics: "#6B7280",
-  ai_skills: "#8B5CF6",
-  private_candidate: "#10B981",
-};
-
 export default function CourseDetail() {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
@@ -38,7 +29,7 @@ export default function CourseDetail() {
       <div className="min-h-screen bg-white">
         <Navbar />
         <div className="pt-32 pb-20 flex items-center justify-center">
-          <div className="animate-spin w-8 h-8 border-4 border-[#5E17EB] border-t-transparent rounded-full" />
+          <div className="animate-spin w-8 h-8 border-4 border-brand border-t-transparent rounded-full" />
         </div>
         <Footer />
       </div>
@@ -50,7 +41,7 @@ export default function CourseDetail() {
       <div className="min-h-screen bg-white">
         <Navbar />
         <div className="pt-32 pb-20 text-center">
-          <h1 className="text-2xl font-bold text-[#1A1A2E] mb-4">Course Not Found</h1>
+          <h1 className="text-2xl font-bold text-foreground mb-4">Course Not Found</h1>
           <Button asChild>
             <Link to="/courses">Browse All Courses</Link>
           </Button>
@@ -60,7 +51,6 @@ export default function CourseDetail() {
     );
   }
 
-  const color = categoryColors[course.category] || "#5E17EB";
   const whatYoullLearn = course.whatYoullLearn
     ? JSON.parse(course.whatYoullLearn as string)
     : [];
@@ -85,7 +75,7 @@ export default function CourseDetail() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative pt-28 pb-16" style={{ backgroundColor: color }}>
+      <section className="relative pt-28 pb-16 bg-brand">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute top-10 left-10 w-40 h-40 rounded-full bg-white/20" />
           <div className="absolute bottom-10 right-10 w-60 h-60 rounded-full bg-white/10" />
@@ -102,7 +92,7 @@ export default function CourseDetail() {
               {course.category.replace("_", " ").toUpperCase()}
             </Badge>
             {course.isFeatured && (
-              <Badge className="bg-[#5E17EB] text-[#1A1A2E]">Featured</Badge>
+              <Badge className="bg-brand text-foreground">Featured</Badge>
             )}
           </div>
           <h1 className="text-3xl md:text-5xl font-bold text-white font-display mb-4">
@@ -113,7 +103,7 @@ export default function CourseDetail() {
       </section>
 
       {/* Main Content */}
-      <section className="py-16 bg-[#EDE7FF]">
+      <section className="py-16 bg-brand-light">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left: Course Details */}
@@ -121,10 +111,10 @@ export default function CourseDetail() {
               {/* Overview */}
               <Card className="border-0 shadow-md">
                 <CardContent className="p-8">
-                  <h2 className="text-2xl font-bold text-[#1A1A2E] mb-4 font-display flex items-center gap-2">
-                    <BookOpen className="w-6 h-6 text-[#5E17EB]" /> Overview
+                  <h2 className="text-2xl font-bold text-foreground mb-4 font-display flex items-center gap-2">
+                    <BookOpen className="w-6 h-6 text-brand" /> Overview
                   </h2>
-                  <p className="text-[#1A1A2E] leading-relaxed whitespace-pre-line">
+                  <p className="text-foreground leading-relaxed whitespace-pre-line">
                     {course.description}
                   </p>
                 </CardContent>
@@ -134,14 +124,14 @@ export default function CourseDetail() {
               {whatYoullLearn.length > 0 && (
                 <Card className="border-0 shadow-md">
                   <CardContent className="p-8">
-                    <h2 className="text-2xl font-bold text-[#1A1A2E] mb-4 font-display flex items-center gap-2">
-                      <GraduationCap className="w-6 h-6 text-[#5E17EB]" /> What You'll Learn
+                    <h2 className="text-2xl font-bold text-foreground mb-4 font-display flex items-center gap-2">
+                      <GraduationCap className="w-6 h-6 text-brand" /> What You'll Learn
                     </h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {whatYoullLearn.map((item: string, i: number) => (
                         <div key={i} className="flex items-start gap-3">
-                          <CheckCircle className="w-5 h-5 text-[#00B894] shrink-0 mt-0.5" />
-                          <span className="text-[#1A1A2E] text-sm">{item}</span>
+                          <CheckCircle className="w-5 h-5 text-gold shrink-0 mt-0.5" />
+                          <span className="text-foreground text-sm">{item}</span>
                         </div>
                       ))}
                     </div>
@@ -153,34 +143,33 @@ export default function CourseDetail() {
               {modules.length > 0 && (
                 <Card className="border-0 shadow-md">
                   <CardContent className="p-8">
-                    <h2 className="text-2xl font-bold text-[#1A1A2E] mb-4 font-display flex items-center gap-2">
-                      <BookOpen className="w-6 h-6 text-[#5E17EB]" /> Course Modules
+                    <h2 className="text-2xl font-bold text-foreground mb-4 font-display flex items-center gap-2">
+                      <BookOpen className="w-6 h-6 text-brand" /> Course Modules
                     </h2>
                     <div className="space-y-3">
                       {modules.map((mod: any, i: number) => (
                         <div key={i} className="border border-gray-100 rounded-lg overflow-hidden">
                           <button
                             onClick={() => setOpenModule(openModule === i ? null : i)}
-                            className="w-full flex items-center justify-between p-4 text-left hover:bg-[#EDE7FF] transition-colors"
+                            className="w-full flex items-center justify-between p-4 text-left hover:bg-brand-light transition-colors"
                           >
                             <div className="flex items-center gap-3">
                               <span
-                                className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
-                                style={{ backgroundColor: color }}
+                                className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold bg-brand"
                               >
                                 {i + 1}
                               </span>
-                              <span className="font-semibold text-[#1A1A2E]">{mod.title}</span>
+                              <span className="font-semibold text-foreground">{mod.title}</span>
                             </div>
                             {openModule === i ? (
-                              <ChevronUp className="w-5 h-5 text-[#6B7280]" />
+                              <ChevronUp className="w-5 h-5 text-muted-foreground" />
                             ) : (
-                              <ChevronDown className="w-5 h-5 text-[#6B7280]" />
+                              <ChevronDown className="w-5 h-5 text-muted-foreground" />
                             )}
                           </button>
                           {openModule === i && (
                             <div className="px-4 pb-4 pl-16">
-                              <p className="text-sm text-[#6B7280] mb-2">{mod.description}</p>
+                              <p className="text-sm text-muted-foreground mb-2">{mod.description}</p>
                               <div className="flex flex-wrap gap-2">
                                 {mod.topics?.map((topic: string, j: number) => (
                                   <Badge key={j} variant="secondary" className="text-xs">
@@ -201,14 +190,14 @@ export default function CourseDetail() {
               {requirements.length > 0 && (
                 <Card className="border-0 shadow-md">
                   <CardContent className="p-8">
-                    <h2 className="text-2xl font-bold text-[#1A1A2E] mb-4 font-display flex items-center gap-2">
-                      <CheckCircle className="w-6 h-6 text-[#5E17EB]" /> Requirements
+                    <h2 className="text-2xl font-bold text-foreground mb-4 font-display flex items-center gap-2">
+                      <CheckCircle className="w-6 h-6 text-brand" /> Requirements
                     </h2>
                     <ul className="space-y-2">
                       {requirements.map((req: string, i: number) => (
                         <li key={i} className="flex items-start gap-3">
-                          <CheckCircle className="w-5 h-5 text-[#00B894] shrink-0 mt-0.5" />
-                          <span className="text-[#1A1A2E]">{req}</span>
+                          <CheckCircle className="w-5 h-5 text-gold shrink-0 mt-0.5" />
+                          <span className="text-foreground">{req}</span>
                         </li>
                       ))}
                     </ul>
@@ -220,17 +209,17 @@ export default function CourseDetail() {
               {careerOutcomes.length > 0 && (
                 <Card className="border-0 shadow-md">
                   <CardContent className="p-8">
-                    <h2 className="text-2xl font-bold text-[#1A1A2E] mb-4 font-display flex items-center gap-2">
-                      <Briefcase className="w-6 h-6 text-[#5E17EB]" /> Career Outcomes
+                    <h2 className="text-2xl font-bold text-foreground mb-4 font-display flex items-center gap-2">
+                      <Briefcase className="w-6 h-6 text-brand" /> Career Outcomes
                     </h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                       {careerOutcomes.map((career: string, i: number) => (
                         <div
                           key={i}
-                          className="flex items-center gap-3 p-4 bg-[#EDE7FF] rounded-lg"
+                          className="flex items-center gap-3 p-4 bg-brand-light rounded-lg"
                         >
-                          <Briefcase className="w-5 h-5 text-[#5E17EB]" />
-                          <span className="text-sm font-medium text-[#1A1A2E]">{career}</span>
+                          <Briefcase className="w-5 h-5 text-brand" />
+                          <span className="text-sm font-medium text-foreground">{career}</span>
                         </div>
                       ))}
                     </div>
@@ -242,12 +231,12 @@ export default function CourseDetail() {
               {courseTestimonials.length > 0 && (
                 <Card className="border-0 shadow-md">
                   <CardContent className="p-8">
-                    <h2 className="text-2xl font-bold text-[#1A1A2E] mb-6 font-display">
+                    <h2 className="text-2xl font-bold text-foreground mb-6 font-display">
                       Student Reviews
                     </h2>
                     <div className="space-y-6">
                       {courseTestimonials.slice(0, 3).map((t) => (
-                        <div key={t.id} className="flex items-start gap-4 p-4 bg-[#EDE7FF] rounded-lg">
+                        <div key={t.id} className="flex items-start gap-4 p-4 bg-brand-light rounded-lg">
                           {t.photoUrl ? (
                             <div className="relative w-12 h-12 shrink-0">
                               <img src={t.photoUrl} alt={t.studentName} className="w-12 h-12 rounded-full object-cover" />
@@ -260,7 +249,7 @@ export default function CourseDetail() {
                             </div>
                           ) : (
                             <div className="relative w-12 h-12 shrink-0">
-                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#5E17EB] to-[#1A1A2E] flex items-center justify-center text-white font-bold">
+                              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand to-brand-dark flex items-center justify-center text-white font-bold">
                                 {t.studentName.charAt(0)}
                               </div>
                               {t.linkedinUrl && (
@@ -272,16 +261,16 @@ export default function CourseDetail() {
                             </div>
                           )}
                           <div>
-                            <div className="font-semibold text-[#1A1A2E]">{t.studentName}</div>
-                            {t.courseName && <div className="text-xs text-[#6B7280] mb-1">{t.courseName}</div>}
+                            <div className="font-semibold text-foreground">{t.studentName}</div>
+                            {t.courseName && <div className="text-xs text-muted-foreground mb-1">{t.courseName}</div>}
                             <div className="flex items-center gap-1 mb-2">
                               {Array.from({ length: t.rating }).map((_, i) => (
-                                <svg key={i} className="w-4 h-4 text-[#5E17EB] fill-current" viewBox="0 0 20 20">
+                                <svg key={i} className="w-4 h-4 text-brand fill-current" viewBox="0 0 20 20">
                                   <path d="M10 15l-5.878 3.09 1.123-6.545L.489 6.91l6.572-.955L10 0l2.939 5.955 6.572.955-4.756 4.635 1.123 6.545z" />
                                 </svg>
                               ))}
                             </div>
-                            <p className="text-sm text-[#6B7280] italic">"{t.quote}"</p>
+                            <p className="text-sm text-muted-foreground italic">"{t.quote}"</p>
                           </div>
                         </div>
                       ))}
@@ -294,40 +283,40 @@ export default function CourseDetail() {
             {/* Right: Sticky Sidebar */}
             <div className="lg:col-span-1">
               <div className="sticky top-24 space-y-6">
-                <Card className="border-2 border-[#5E17EB]/30 shadow-lg">
+                <Card className="border-2 border-brand/30 shadow-lg">
                   <CardContent className="p-6">
-                    <h3 className="text-lg font-bold text-[#1A1A2E] mb-4 font-display">
+                    <h3 className="text-lg font-bold text-foreground mb-4 font-display">
                       Course Details
                     </h3>
                     <div className="space-y-4">
                       <div className="flex items-center gap-3">
-                        <Clock className="w-5 h-5 text-[#5E17EB]" />
+                        <Clock className="w-5 h-5 text-brand" />
                         <div>
-                          <div className="text-xs text-[#6B7280]">Duration</div>
+                          <div className="text-xs text-muted-foreground">Duration</div>
                           <div className="font-medium text-sm">{course.duration}</div>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Calendar className="w-5 h-5 text-[#5E17EB]" />
+                        <Calendar className="w-5 h-5 text-brand" />
                         <div>
-                          <div className="text-xs text-[#6B7280]">Schedule</div>
+                          <div className="text-xs text-muted-foreground">Schedule</div>
                           <div className="font-medium text-sm">
                             {scheduleOptions.join(", ") || "Contact us"}
                           </div>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <GraduationCap className="w-5 h-5 text-[#5E17EB]" />
+                        <GraduationCap className="w-5 h-5 text-brand" />
                         <div>
-                          <div className="text-xs text-[#6B7280]">Certificate</div>
+                          <div className="text-xs text-muted-foreground">Certificate</div>
                           <div className="font-medium text-sm">Professional Certificate</div>
                         </div>
                       </div>
                       {course.feeRwf && (
                         <div className="flex items-center gap-3">
-                          <MessageCircle className="w-5 h-5 text-[#5E17EB]" />
+                          <MessageCircle className="w-5 h-5 text-brand" />
                           <div>
-                            <div className="text-xs text-[#6B7280]">Fee</div>
+                            <div className="text-xs text-muted-foreground">Fee</div>
                             <div className="font-medium text-sm">
                               {course.feeRwf.toLocaleString()} RWF
                               {course.installmentAvailable && " (Installments available)"}
@@ -339,7 +328,7 @@ export default function CourseDetail() {
                     <div className="mt-6 space-y-3">
                       <Button
                         asChild
-                        className="w-full bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] hover:from-[#5E17EB] hover:to-[#5E17EB] font-semibold"
+                        className="w-full bg-gradient-to-r from-brand to-brand text-foreground hover:from-brand hover:to-brand font-semibold"
                       >
                         <Link to="/enroll">Enroll Now</Link>
                       </Button>
@@ -359,10 +348,10 @@ export default function CourseDetail() {
                 {course.whoIsItFor && (
                   <Card className="border-0 shadow-md">
                     <CardContent className="p-6">
-                      <h3 className="text-lg font-bold text-[#1A1A2E] mb-3 font-display">
+                      <h3 className="text-lg font-bold text-foreground mb-3 font-display">
                         Who Is This For?
                       </h3>
-                      <p className="text-sm text-[#6B7280]">{course.whoIsItFor}</p>
+                      <p className="text-sm text-muted-foreground">{course.whoIsItFor}</p>
                     </CardContent>
                   </Card>
                 )}

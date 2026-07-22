@@ -8,15 +8,6 @@ import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { trpc } from "@/providers/trpc";
 
-const categoryColors: Record<string, string> = {
-  enrollment: "#5E17EB",
-  courses: "#5E17EB",
-  fees: "#00B894",
-  schedule: "#8B5CF6",
-  certificates: "#EC4899",
-  technical: "#6B7280",
-};
-
 const categoryLabels: Record<string, string> = {
   enrollment: "Enrollment",
   courses: "Courses",
@@ -47,7 +38,7 @@ export default function Faqs() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative pt-32 pb-16 bg-gradient-to-br from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E]">
+      <section className="relative pt-32 pb-16 bg-gradient-to-br from-brand-dark via-brand to-brand-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-5xl font-bold text-white font-display">
             Frequently Asked <span className="text-gradient-gold">Questions</span>
@@ -59,10 +50,10 @@ export default function Faqs() {
       </section>
 
       {/* Search & Filter */}
-      <section className="py-12 bg-[#EDE7FF]">
+      <section className="py-12 bg-brand-light">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative mb-8">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#6B7280]" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
             <Input
               placeholder="Search questions..."
               value={search}
@@ -75,8 +66,8 @@ export default function Faqs() {
               onClick={() => setActiveCategory("all")}
               className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                 activeCategory === "all"
-                  ? "bg-[#5E17EB] text-white"
-                  : "bg-white text-[#6B7280] hover:bg-[#5E17EB]/10"
+                  ? "bg-brand text-white"
+                  : "bg-white text-muted-foreground hover:bg-brand/10"
               }`}
             >
               All
@@ -87,8 +78,8 @@ export default function Faqs() {
                 onClick={() => setActiveCategory(key)}
                 className={`px-4 py-2 text-sm font-medium rounded-full transition-colors ${
                   activeCategory === key
-                    ? "bg-[#5E17EB] text-white"
-                    : "bg-white text-[#6B7280] hover:bg-[#5E17EB]/10"
+                    ? "bg-brand text-white"
+                    : "bg-white text-muted-foreground hover:bg-brand/10"
                 }`}
               >
                 {label}
@@ -100,7 +91,6 @@ export default function Faqs() {
           <div className="space-y-4">
             {filtered.map((faq) => {
               const isOpen = openId === faq.id;
-              const color = categoryColors[faq.category] || "#5E17EB";
               return (
                 <Card
                   key={faq.id}
@@ -115,22 +105,21 @@ export default function Faqs() {
                   >
                     <div className="flex-1 pr-4">
                       <span
-                        className="inline-block px-2 py-0.5 text-xs font-medium rounded mb-2 text-white"
-                        style={{ backgroundColor: color }}
+                        className="inline-block px-2 py-0.5 text-xs font-medium rounded mb-2 text-white bg-brand"
                       >
                         {categoryLabels[faq.category] || faq.category}
                       </span>
-                      <h3 className="font-semibold text-[#1A1A2E]">{faq.question}</h3>
+                      <h3 className="font-semibold text-foreground">{faq.question}</h3>
                     </div>
                     {isOpen ? (
-                      <ChevronUp className="w-5 h-5 text-[#6B7280] shrink-0 mt-6" />
+                      <ChevronUp className="w-5 h-5 text-muted-foreground shrink-0 mt-6" />
                     ) : (
-                      <ChevronDown className="w-5 h-5 text-[#6B7280] shrink-0 mt-6" />
+                      <ChevronDown className="w-5 h-5 text-muted-foreground shrink-0 mt-6" />
                     )}
                   </button>
                   {isOpen && (
                     <CardContent className="pt-0 pb-6 px-6">
-                      <p id={`faq-answer-${faq.id}`} role="region" aria-labelledby={`faq-button-${faq.id}`} className="text-[#6B7280] leading-relaxed">{faq.answer}</p>
+                      <p id={`faq-answer-${faq.id}`} role="region" aria-labelledby={`faq-button-${faq.id}`} className="text-muted-foreground leading-relaxed">{faq.answer}</p>
                     </CardContent>
                   )}
                 </Card>
@@ -141,12 +130,12 @@ export default function Faqs() {
           {filtered.length === 0 && (
             <div className="text-center py-12">
               <Search className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-[#6B7280]">No questions found matching your search.</p>
+              <p className="text-muted-foreground">No questions found matching your search.</p>
             </div>
           )}
 
           {/* CTA */}
-          <div className="mt-12 text-center p-8 bg-gradient-to-r from-[#5E17EB] to-[#1A1A2E] rounded-2xl">
+          <div className="mt-12 text-center p-8 bg-gradient-to-r from-brand to-brand-dark rounded-2xl">
             <h3 className="text-xl font-bold text-white mb-3 font-display">
               Didn't Find Your Answer?
             </h3>
@@ -156,7 +145,7 @@ export default function Faqs() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
                 to="/contact"
-                className="px-6 py-3 bg-white text-[#1A1A2E] font-semibold rounded-full hover:bg-[#EDE7FF] transition-colors"
+                className="px-6 py-3 bg-white text-foreground font-semibold rounded-full hover:bg-brand-light transition-colors"
               >
                 Contact Us
               </Link>

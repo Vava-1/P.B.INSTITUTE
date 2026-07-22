@@ -35,7 +35,7 @@ export default function Contact() {
       <Navbar />
 
       {/* Hero */}
-      <section className="relative pt-32 pb-16 bg-gradient-to-br from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E]">
+      <section className="relative pt-32 pb-16 bg-gradient-to-br from-brand-dark via-brand to-brand-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-5xl font-bold text-white font-display">
             Contact <span className="text-gradient-gold">Us</span>
@@ -55,9 +55,9 @@ export default function Contact() {
                 <CardContent className="p-8">
                   {submitted ? (
                     <div className="text-center py-12">
-                      <CheckCircle className="w-16 h-16 text-[#00B894] mx-auto mb-4" />
-                      <h2 className="text-2xl font-bold text-[#1A1A2E] mb-2 font-display">Message Sent!</h2>
-                      <p className="text-[#6B7280]">We'll get back to you within 24 hours.</p>
+                      <CheckCircle className="w-16 h-16 text-gold mx-auto mb-4" />
+                      <h2 className="text-2xl font-bold text-foreground mb-2 font-display">Message Sent!</h2>
+                      <p className="text-muted-foreground">We'll get back to you within 24 hours.</p>
                       <Button
                         variant="outline"
                         className="mt-6"
@@ -68,7 +68,7 @@ export default function Contact() {
                     </div>
                   ) : (
                     <>
-                      <h2 className="text-2xl font-bold text-[#1A1A2E] mb-6 font-display">
+                      <h2 className="text-2xl font-bold text-foreground mb-6 font-display">
                         Send Us a Message
                       </h2>
                       <form onSubmit={handleSubmit} className="space-y-5">
@@ -129,12 +129,12 @@ export default function Contact() {
                         <Button
                           type="submit"
                           disabled={contactMutation.isPending}
-                          className="w-full bg-gradient-to-r from-[#5E17EB] to-[#5E17EB] text-[#1A1A2E] hover:from-[#5E17EB] hover:to-[#5E17EB] font-semibold"
+                          className="w-full bg-gradient-to-r from-brand to-brand text-foreground hover:from-brand hover:to-brand font-semibold"
                         >
                           <Send className="w-4 h-4 mr-2" />
                           {contactMutation.isPending ? "Sending..." : "Send Message"}
                         </Button>
-                        <p className="text-xs text-[#6B7280] text-center">
+                        <p className="text-xs text-muted-foreground text-center">
                           We respond within 24 hours on business days
                         </p>
                       </form>
@@ -147,50 +147,50 @@ export default function Contact() {
             {/* Contact Info */}
             <div className="space-y-6">
               <div>
-                <h2 className="text-2xl font-bold text-[#1A1A2E] mb-6 font-display">
+                <h2 className="text-2xl font-bold text-foreground mb-6 font-display">
                   Get In Touch
                 </h2>
                 <div className="space-y-4">
-                  <div className="flex items-start gap-4 p-4 bg-[#EDE7FF] rounded-xl">
-                    <div className="w-12 h-12 rounded-full bg-[#5E17EB]/10 flex items-center justify-center shrink-0">
-                      <MapPin className="w-6 h-6 text-[#5E17EB]" />
+                  <div className="flex items-start gap-4 p-4 bg-brand-light rounded-xl">
+                    <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center shrink-0">
+                      <MapPin className="w-6 h-6 text-brand" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-[#1A1A2E]">Visit Us</h3>
-                      <p className="text-sm text-[#6B7280]">
+                      <h3 className="font-semibold text-foreground">Visit Us</h3>
+                      <p className="text-sm text-muted-foreground">
                         {settings?.address || "Centenary House, 8 KN 4 Ave, Kigali, Rwanda"}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 p-4 bg-[#EDE7FF] rounded-xl">
-                    <div className="w-12 h-12 rounded-full bg-[#5E17EB]/10 flex items-center justify-center shrink-0">
-                      <Phone className="w-6 h-6 text-[#5E17EB]" />
+                  <div className="flex items-start gap-4 p-4 bg-brand-light rounded-xl">
+                    <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center shrink-0">
+                      <Phone className="w-6 h-6 text-brand" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-[#1A1A2E]">Call Us</h3>
-                      <p className="text-sm text-[#6B7280]">
+                      <h3 className="font-semibold text-foreground">Call Us</h3>
+                      <p className="text-sm text-muted-foreground">
                         {settings?.phone || "+250 786 053 720"}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 p-4 bg-[#EDE7FF] rounded-xl">
-                    <div className="w-12 h-12 rounded-full bg-[#5E17EB]/10 flex items-center justify-center shrink-0">
-                      <Mail className="w-6 h-6 text-[#5E17EB]" />
+                  <div className="flex items-start gap-4 p-4 bg-brand-light rounded-xl">
+                    <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center shrink-0">
+                      <Mail className="w-6 h-6 text-brand" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-[#1A1A2E]">Email Us</h3>
-                      <p className="text-sm text-[#6B7280]">
+                      <h3 className="font-semibold text-foreground">Email Us</h3>
+                      <p className="text-sm text-muted-foreground">
                         {settings?.email || "info@pacemakerinstitute.rw"}
                       </p>
                     </div>
                   </div>
-                  <div className="flex items-start gap-4 p-4 bg-[#EDE7FF] rounded-xl">
-                    <div className="w-12 h-12 rounded-full bg-[#5E17EB]/10 flex items-center justify-center shrink-0">
-                      <Clock className="w-6 h-6 text-[#5E17EB]" />
+                  <div className="flex items-start gap-4 p-4 bg-brand-light rounded-xl">
+                    <div className="w-12 h-12 rounded-full bg-brand/10 flex items-center justify-center shrink-0">
+                      <Clock className="w-6 h-6 text-brand" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-[#1A1A2E]">Opening Hours</h3>
-                      <p className="text-sm text-[#6B7280]">
+                      <h3 className="font-semibold text-foreground">Opening Hours</h3>
+                      <p className="text-sm text-muted-foreground">
                         {settings?.openingHours || "Mon to Fri: 8:00 AM to 6:00 PM | Sat: 9:00 AM to 1:00 PM"}
                       </p>
                     </div>

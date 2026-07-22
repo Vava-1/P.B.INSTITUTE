@@ -42,56 +42,56 @@ export default function TrackEnrollment() {
       case "pending":
         return {
           icon: Clock,
-          color: "#5E17EB",
-          bg: "#EDE7FF",
+          color: "hsl(var(--brand))",
+          bg: "hsl(var(--brand-light))",
           title: "Application Received — Pending Review",
           desc: "Your enrollment application has been received and is waiting for review by our admissions team. We'll contact you within 2 business days.",
         };
       case "under_review":
         return {
           icon: AlertCircle,
-          color: "#F4A400",
-          bg: "#FFF8E1",
+          color: "hsl(var(--gold))",
+          bg: "hsl(var(--gold) / 0.1)",
           title: "Under Review",
           desc: "Our admissions team is currently reviewing your application. You'll hear from us soon.",
         };
       case "enrolled":
         return {
           icon: CheckCircle,
-          color: "#00B894",
-          bg: "#E8F5E9",
+          color: "hsl(var(--gold))",
+          bg: "hsl(var(--gold) / 0.1)",
           title: "Admitted — You're In!",
           desc: "Congratulations! You've been admitted to Pacemaker Institute. Our team will contact you with your class schedule and next steps.",
         };
       case "rejected":
         return {
           icon: XCircle,
-          color: "#EF4444",
-          bg: "#FFEBEE",
+          color: "hsl(var(--destructive))",
+          bg: "hsl(var(--destructive) / 0.1)",
           title: "Application Not Approved",
           desc: "Unfortunately, your application was not approved at this time. Please contact us for more information.",
         };
       case "waitlisted":
         return {
           icon: Clock,
-          color: "#6B7280",
-          bg: "#F3F4F6",
+          color: "hsl(var(--muted-foreground))",
+          bg: "hsl(var(--muted))",
           title: "Waitlisted",
           desc: "You've been placed on our waitlist. We'll contact you if a spot opens up in your chosen course.",
         };
       case "completed":
         return {
           icon: GraduationCap,
-          color: "#00B894",
-          bg: "#E8F5E9",
+          color: "hsl(var(--gold))",
+          bg: "hsl(var(--gold) / 0.1)",
           title: "Course Completed",
           desc: "Congratulations on completing your course at Pacemaker Institute!",
         };
       default:
         return {
           icon: Clock,
-          color: "#5E17EB",
-          bg: "#EDE7FF",
+          color: "hsl(var(--brand))",
+          bg: "hsl(var(--brand-light))",
           title: status,
           desc: "",
         };
@@ -99,11 +99,11 @@ export default function TrackEnrollment() {
   };
 
   return (
-    <div className="min-h-screen bg-[#EDE7FF]">
+    <div className="min-h-screen bg-brand-light">
       <Navbar />
 
       {/* Hero */}
-      <section className="pt-32 pb-12 bg-gradient-to-br from-[#1A1A2E] via-[#5E17EB] to-[#1A1A2E]">
+      <section className="pt-32 pb-12 bg-gradient-to-br from-brand-dark via-brand to-brand-dark">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-3xl md:text-4xl font-bold text-white font-display">
             Track Your <span className="text-gradient-gold">Enrollment</span>
@@ -130,13 +130,13 @@ export default function TrackEnrollment() {
                       placeholder="e.g., PI-ENRL-2026-XXXXXX"
                       className="pr-10 font-mono"
                     />
-                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B7280]" />
+                    <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                   </div>
-                  <p className="text-xs text-[#6B7280] mt-2">
+                  <p className="text-xs text-muted-foreground mt-2">
                     Your reference number was given to you when you submitted your enrollment.
                   </p>
                 </div>
-                <Button type="submit" className="w-full bg-[#5E17EB] hover:bg-[#4a12c0] font-semibold">
+                <Button type="submit" className="w-full bg-brand hover:bg-brand-dark font-semibold">
                   <Search className="w-4 h-4 mr-2" /> Check Status
                 </Button>
               </form>
@@ -147,8 +147,8 @@ export default function TrackEnrollment() {
           {searched && isLoading && (
             <Card className="border-0 shadow-md">
               <CardContent className="p-12 text-center">
-                <div className="animate-spin w-8 h-8 border-4 border-[#5E17EB] border-t-transparent rounded-full mx-auto mb-4" />
-                <p className="text-[#6B7280]">Looking up your enrollment...</p>
+                <div className="animate-spin w-8 h-8 border-4 border-brand border-t-transparent rounded-full mx-auto mb-4" />
+                <p className="text-muted-foreground">Looking up your enrollment...</p>
               </CardContent>
             </Card>
           )}
@@ -159,11 +159,11 @@ export default function TrackEnrollment() {
                 <div className="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
                   <XCircle className="w-8 h-8 text-red-500" />
                 </div>
-                <h3 className="text-lg font-bold text-[#1A1A2E] mb-2">Enrollment Not Found</h3>
-                <p className="text-sm text-[#6B7280] mb-6">
+                <h3 className="text-lg font-bold text-foreground mb-2">Enrollment Not Found</h3>
+                <p className="text-sm text-muted-foreground mb-6">
                   We couldn't find an enrollment with that reference number. Please check the number and try again.
                 </p>
-                <Button asChild variant="outline" className="border-[#5E17EB] text-[#5E17EB] hover:bg-[#5E17EB] hover:text-white rounded-full">
+                <Button asChild variant="outline" className="border-brand text-brand hover:bg-brand hover:text-white rounded-full">
                   <Link to="/enroll">Submit New Enrollment</Link>
                 </Button>
               </CardContent>
@@ -184,7 +184,7 @@ export default function TrackEnrollment() {
                     <h3 className="text-xl font-bold mb-1 font-display" style={{ color: info.color }}>
                       {info.title}
                     </h3>
-                    <p className="text-sm text-[#6B7280] max-w-md mx-auto">{info.desc}</p>
+                    <p className="text-sm text-muted-foreground max-w-md mx-auto">{info.desc}</p>
                   </div>
                 );
               })()}
@@ -192,56 +192,56 @@ export default function TrackEnrollment() {
               {/* Details */}
               <CardContent className="p-6 md:p-8 space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 bg-[#EDE7FF]/50 rounded-xl">
-                    <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Reference Number</div>
-                    <div className="font-mono font-bold text-[#1A1A2E]">{enrollment.referenceNumber}</div>
+                  <div className="p-4 bg-brand-light/50 rounded-xl">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Reference Number</div>
+                    <div className="font-mono font-bold text-foreground">{enrollment.referenceNumber}</div>
                   </div>
-                  <div className="p-4 bg-[#EDE7FF]/50 rounded-xl">
-                    <div className="text-xs text-[#6B7280] uppercase tracking-wider mb-1">Full Name</div>
-                    <div className="font-bold text-[#1A1A2E]">{enrollment.fullName}</div>
+                  <div className="p-4 bg-brand-light/50 rounded-xl">
+                    <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">Full Name</div>
+                    <div className="font-bold text-foreground">{enrollment.fullName}</div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex items-center gap-3 p-4 rounded-xl border border-gray-100">
-                    <Phone className="w-5 h-5 text-[#5E17EB] shrink-0" />
+                    <Phone className="w-5 h-5 text-brand shrink-0" />
                     <div>
-                      <div className="text-xs text-[#6B7280]">Phone</div>
-                      <div className="text-sm font-medium text-[#1A1A2E]">{enrollment.phone}</div>
+                      <div className="text-xs text-muted-foreground">Phone</div>
+                      <div className="text-sm font-medium text-foreground">{enrollment.phone}</div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-4 rounded-xl border border-gray-100">
-                    <Mail className="w-5 h-5 text-[#5E17EB] shrink-0" />
+                    <Mail className="w-5 h-5 text-brand shrink-0" />
                     <div>
-                      <div className="text-xs text-[#6B7280]">Email</div>
-                      <div className="text-sm font-medium text-[#1A1A2E]">{enrollment.email || "—"}</div>
+                      <div className="text-xs text-muted-foreground">Email</div>
+                      <div className="text-sm font-medium text-foreground">{enrollment.email || "—"}</div>
                     </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-3 p-4 rounded-xl border border-gray-100">
-                  <BookOpen className="w-5 h-5 text-[#5E17EB] shrink-0" />
+                  <BookOpen className="w-5 h-5 text-brand shrink-0" />
                   <div className="flex-1">
-                    <div className="text-xs text-[#6B7280]">Course</div>
-                    <div className="text-sm font-medium text-[#1A1A2E]">Course ID: {enrollment.courseId}</div>
+                    <div className="text-xs text-muted-foreground">Course</div>
+                    <div className="text-sm font-medium text-foreground">Course ID: {enrollment.courseId}</div>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="flex items-center gap-3 p-4 rounded-xl border border-gray-100">
-                    <Calendar className="w-5 h-5 text-[#5E17EB] shrink-0" />
+                    <Calendar className="w-5 h-5 text-brand shrink-0" />
                     <div>
-                      <div className="text-xs text-[#6B7280]">Submitted</div>
-                      <div className="text-sm font-medium text-[#1A1A2E]">
+                      <div className="text-xs text-muted-foreground">Submitted</div>
+                      <div className="text-sm font-medium text-foreground">
                         {enrollment.submittedAt ? new Date(enrollment.submittedAt).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" }) : "—"}
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-3 p-4 rounded-xl border border-gray-100">
-                    <GraduationCap className="w-5 h-5 text-[#5E17EB] shrink-0" />
+                    <GraduationCap className="w-5 h-5 text-brand shrink-0" />
                     <div>
-                      <div className="text-xs text-[#6B7280]">Payment Status</div>
-                      <div className="text-sm font-medium text-[#1A1A2E] capitalize">
+                      <div className="text-xs text-muted-foreground">Payment Status</div>
+                      <div className="text-sm font-medium text-foreground capitalize">
                         {enrollment.paymentStatus?.replace(/_/g, " ") || "not paid"}
                       </div>
                     </div>
@@ -249,32 +249,32 @@ export default function TrackEnrollment() {
                 </div>
 
                 {enrollment.adminNotes && (
-                  <div className="p-4 bg-[#FFF8E1] rounded-xl border border-[#F4A400]/20">
-                    <div className="text-xs text-[#F4A400] uppercase tracking-wider mb-1 font-semibold">Message from Admissions</div>
-                    <p className="text-sm text-[#1A1A2E]">{enrollment.adminNotes}</p>
+                  <div className="p-4 bg-gold rounded-xl border border-gold/20">
+                    <div className="text-xs text-gold uppercase tracking-wider mb-1 font-semibold">Message from Admissions</div>
+                    <p className="text-sm text-foreground">{enrollment.adminNotes}</p>
                   </div>
                 )}
 
                 {/* Timeline */}
                 <div className="pt-4">
-                  <h4 className="text-sm font-bold text-[#1A1A2E] mb-3">Application Timeline</h4>
+                  <h4 className="text-sm font-bold text-foreground mb-3">Application Timeline</h4>
                   <div className="space-y-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full bg-[#00B894]" />
-                      <span className="text-sm text-[#1A1A2E]">Application submitted</span>
-                      <span className="text-xs text-[#6B7280] ml-auto">
+                      <div className="w-3 h-3 rounded-full bg-gold" />
+                      <span className="text-sm text-foreground">Application submitted</span>
+                      <span className="text-xs text-muted-foreground ml-auto">
                         {enrollment.submittedAt ? new Date(enrollment.submittedAt).toLocaleDateString() : ""}
                       </span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className={`w-3 h-3 rounded-full ${enrollment.status === "pending" ? "bg-[#5E17EB] animate-pulse" : enrollment.status !== "pending" ? "bg-[#00B894]" : "bg-gray-200"}`} />
-                      <span className="text-sm text-[#1A1A2E]">
+                      <div className={`w-3 h-3 rounded-full ${enrollment.status === "pending" ? "bg-brand animate-pulse" : "bg-gold"}`} />
+                      <span className="text-sm text-foreground">
                         {enrollment.status === "pending" ? "Awaiting review" : "Reviewed by admissions team"}
                       </span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className={`w-3 h-3 rounded-full ${["enrolled", "completed"].includes(enrollment.status) ? "bg-[#00B894]" : "bg-gray-200"}`} />
-                      <span className={`text-sm ${["enrolled", "completed"].includes(enrollment.status) ? "text-[#1A1A2E]" : "text-[#6B7280]"}`}>
+                      <div className={`w-3 h-3 rounded-full ${["enrolled", "completed"].includes(enrollment.status) ? "bg-gold" : "bg-gray-200"}`} />
+                      <span className={`text-sm ${["enrolled", "completed"].includes(enrollment.status) ? "text-foreground" : "text-muted-foreground"}`}>
                         Admitted to course
                       </span>
                     </div>
@@ -283,7 +283,7 @@ export default function TrackEnrollment() {
 
                 {/* CTA */}
                 <div className="pt-4 flex flex-col sm:flex-row gap-3">
-                  <Button asChild className="bg-[#5E17EB] text-white hover:bg-[#4a12c0] rounded-full flex-1">
+                  <Button asChild className="bg-brand text-white hover:bg-brand-dark rounded-full flex-1">
                     <Link to="/">
                       Back to Home <ArrowRight className="w-4 h-4 ml-1" />
                     </Link>
@@ -304,10 +304,10 @@ export default function TrackEnrollment() {
           {!searched && (
             <Card className="border-0 shadow-md">
               <CardContent className="p-8 text-center">
-                <p className="text-[#6B7280]">
+                <p className="text-muted-foreground">
                   Enter your reference number above to check your enrollment status.
                   Don't have a reference number yet?{" "}
-                  <Link to="/enroll" className="text-[#5E17EB] font-medium hover:underline">
+                  <Link to="/enroll" className="text-brand font-medium hover:underline">
                     Submit an enrollment →
                   </Link>
                 </p>
