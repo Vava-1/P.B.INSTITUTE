@@ -103,7 +103,7 @@ export default function AdminDashboard() {
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm transition-colors ${
                   location.pathname.startsWith(item.path)
-                    ? "bg-brand text-foreground font-semibold"
+                    ? "bg-brand text-primary-foreground font-semibold"
                     : "text-white/70 hover:bg-white/10 hover:text-white"
                 }`}
                 aria-current={location.pathname.startsWith(item.path) ? "page" : undefined}
@@ -116,7 +116,7 @@ export default function AdminDashboard() {
 
           <div className="p-4 border-t border-white/10">
             <div className="flex items-center gap-3 px-4 py-3 mb-3">
-              <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-foreground font-bold text-sm">
+              <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-primary-foreground font-bold text-sm">
                 {admin.name.charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
@@ -1310,7 +1310,7 @@ function SettingsAdminPage() {
             <Button
               onClick={handleSave}
               disabled={updateMutation.isPending}
-              className="bg-gradient-to-r from-brand to-brand text-foreground hover:from-brand hover:to-brand font-semibold px-8"
+              className="bg-brand text-primary-foreground hover:bg-brand-dark font-semibold px-8 transition-colors"
             >
               {updateMutation.isPending ? "Saving..." : "Save Settings"}
             </Button>

@@ -72,11 +72,11 @@ export default function About() {
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-0 shadow-lg bg-gradient-to-br from-brand to-brand">
+            <Card className="border-0 shadow-lg bg-brand">
               <CardContent className="p-8 text-center">
-                <Eye className="w-12 h-12 text-foreground mx-auto mb-4" />
-                <h3 className="text-2xl font-bold mb-3 font-display text-foreground">Our Vision</h3>
-                <p className="text-foreground/80 leading-relaxed">
+                <Eye className="w-12 h-12 text-primary-foreground mx-auto mb-4" />
+                <h3 className="text-2xl font-bold mb-3 font-display text-primary-foreground">Our Vision</h3>
+                <p className="text-primary-foreground/80 leading-relaxed">
                   To be Rwanda's leading center for professional training and skills
                   development, producing world-class graduates who drive national progress.
                 </p>
@@ -172,7 +172,7 @@ export default function About() {
               >
                 <div className="h-32 bg-gradient-to-br from-brand to-brand-dark" />
                 <CardContent className="p-6 -mt-12 relative">
-                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-brand to-brand flex items-center justify-center text-2xl font-bold text-foreground mx-auto mb-4 border-4 border-white shadow-lg">
+                  <div className="w-24 h-24 rounded-full bg-brand flex items-center justify-center text-2xl font-bold text-primary-foreground mx-auto mb-4 border-4 border-white shadow-lg">
                     {instructor.fullName.split(" ").map((n) => n[0]).join("")}
                   </div>
                   <h3 className="text-lg font-bold text-center text-foreground font-display">
@@ -203,7 +203,7 @@ export default function About() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
               asChild
-              className="bg-gradient-to-r from-brand to-brand text-foreground hover:from-brand hover:to-brand font-semibold rounded-full px-8"
+              className="bg-brand text-primary-foreground hover:bg-brand-dark font-semibold rounded-full px-8 transition-colors"
             >
               <Link to="/enroll">Apply Now</Link>
             </Button>

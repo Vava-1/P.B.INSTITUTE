@@ -92,7 +92,7 @@ export default function CourseDetail() {
               {course.category.replace("_", " ").toUpperCase()}
             </Badge>
             {course.isFeatured && (
-              <Badge className="bg-brand text-foreground">Featured</Badge>
+              <Badge className="bg-brand text-primary-foreground">Featured</Badge>
             )}
           </div>
           <h1 className="text-3xl md:text-5xl font-bold text-white font-display mb-4">
@@ -328,7 +328,7 @@ export default function CourseDetail() {
                     <div className="mt-6 space-y-3">
                       <Button
                         asChild
-                        className="w-full bg-gradient-to-r from-brand to-brand text-foreground hover:from-brand hover:to-brand font-semibold"
+                        className="w-full bg-brand text-primary-foreground hover:bg-brand-dark font-semibold transition-colors"
                       >
                         <Link to="/enroll">Enroll Now</Link>
                       </Button>

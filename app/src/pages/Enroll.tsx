@@ -241,7 +241,7 @@ export default function Enroll() {
                   </div>
                   <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                      className="h-full bg-gradient-to-r from-brand to-brand transition-all duration-500"
+                      className="h-full bg-brand transition-all duration-500"
                       style={{ width: `${(step / 5) * 100}%` }}
                     />
                   </div>
@@ -677,7 +677,7 @@ export default function Enroll() {
                     <Button
                       onClick={handleSubmit}
                       disabled={enrollMutation.isPending}
-                      className="bg-gradient-to-r from-brand to-brand text-foreground hover:from-brand hover:to-brand font-semibold px-8"
+                      className="bg-brand text-primary-foreground hover:bg-brand-dark font-semibold px-8 transition-colors"
                     >
                       {enrollMutation.isPending ? "Submitting..." : "Submit Enrollment"}
                     </Button>

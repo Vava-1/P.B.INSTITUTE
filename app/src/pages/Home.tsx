@@ -251,7 +251,7 @@ export default function Home() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
               asChild
-              className="bg-gold text-white hover:bg-gold font-semibold rounded-full px-8 py-5 text-base"
+              className="bg-gold text-gold-foreground hover:bg-brand-dark hover:text-white font-semibold rounded-full px-8 py-5 text-base transition-colors"
             >
               <Link to="/enroll">Enroll Today</Link>
             </Button>
