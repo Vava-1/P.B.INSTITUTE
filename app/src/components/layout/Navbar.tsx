@@ -26,33 +26,19 @@ const navLinks = [
 ];
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const location = useLocation();
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 80);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   useEffect(() => {
     setMobileOpen(false);
     setDropdownOpen(false);
   }, [location.pathname]);
 
-  const isHome = location.pathname === "/";
-  const showBg = scrolled || !isHome;
-
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          showBg
-            ? "bg-white/95 backdrop-blur-md shadow-warm"
-            : "bg-transparent"
-        }`}
+        className="fixed top-0 left-0 right-0 z-50 transition-all duration-500 bg-white/95 backdrop-blur-md shadow-warm"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-20">
@@ -63,11 +49,11 @@ export default function Navbar() {
                 alt="Pacemaker Institute"
                 className="h-12 w-auto rounded-xl shadow-sm"
               />
-              <div className={`hidden sm:block ${showBg ? "text-foreground" : "text-white"}`}>
+              <div className="hidden sm:block text-foreground">
                 <div className="text-xl font-bold leading-tight font-display">
                   Pacemaker
                 </div>
-                <div className={`text-xs font-hand text-base leading-none mt-0.5 ${showBg ? "text-brand" : "text-gold"}`}>
+                <div className="text-xs font-hand text-base leading-none mt-0.5 text-brand">
                   Institute
                 </div>
               </div>
@@ -93,11 +79,7 @@ export default function Navbar() {
                       aria-haspopup="menu"
                       aria-expanded={dropdownOpen}
                       onClick={() => setDropdownOpen((v) => !v)}
-                      className={`flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors rounded-md ${
-                        showBg
-                          ? "text-foreground hover:text-brand hover:bg-brand-light"
-                          : "text-white/90 hover:text-white hover:bg-white/10"
-                      }`}
+                      className="flex items-center gap-1 px-3 py-2 text-sm font-medium transition-colors rounded-md text-foreground hover:text-brand hover:bg-brand-light"
                     >
                       {link.label}
                       <ChevronDown className="w-4 h-4" />
@@ -123,11 +105,7 @@ export default function Navbar() {
                     key={link.label}
                     to={link.href}
                     aria-current={location.pathname === link.href ? "page" : undefined}
-                    className={`px-3 py-2 text-sm font-medium transition-colors rounded-md ${
-                      showBg
-                        ? "text-foreground hover:text-brand hover:bg-brand-light"
-                        : "text-white/90 hover:text-white hover:bg-white/10"
-                    } ${location.pathname === link.href ? "font-semibold" : ""}`}
+                    className={`px-3 py-2 text-sm font-medium transition-colors rounded-md text-foreground hover:text-brand hover:bg-brand-light ${location.pathname === link.href ? "font-semibold" : ""}`}
                   >
                     {link.label}
                   </Link>
@@ -139,7 +117,7 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-3">
               <Button
                 asChild
-                className="bg-gold text-foreground hover:bg-gold font-bold rounded-full px-6 transition-colors"
+                className="bg-brand text-black hover:bg-brand-dark hover:text-white font-bold rounded-full px-6 transition-colors"
               >
                 <Link to="/enroll">Enroll Now</Link>
               </Button>
@@ -150,9 +128,7 @@ export default function Navbar() {
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label="Toggle navigation menu"
               aria-expanded={mobileOpen}
-              className={`lg:hidden p-2 rounded-md ${
-                showBg ? "text-foreground" : "text-white"
-              }`}
+              className="lg:hidden p-2 rounded-md text-foreground"
             >
               {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
@@ -218,7 +194,7 @@ export default function Navbar() {
               <div className="mt-8 pt-6 border-t border-white/10">
                 <Button
                   asChild
-                  className="w-full bg-gold text-foreground hover:bg-gold font-bold rounded-full"
+                  className="w-full bg-brand text-black hover:bg-brand-dark hover:text-white font-bold rounded-full transition-colors"
                 >
                   <Link to="/enroll">Enroll Now</Link>
                 </Button>
