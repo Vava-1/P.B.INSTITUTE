@@ -6,64 +6,73 @@
 
 @layer base {
   :root {
-    /* Brand palette — warmer, more human. */
-    --brand: 263 70% 50%;          /* #5E17EB purple */
-    --brand-foreground: 0 0% 100%; /* white */
-    --brand-light: 263 60% 95%;    /* #EDE7FF lavender */
-    --brand-dark: 263 70% 40%;     /* #4a12c0 hover */
+    /* ─────────────────────────────────────────────────────────
+       TWO-COLOR PALETTE: dark blue + white
+       Every token resolves to either dark blue (#0D1B2A) or white (#FFFFFF),
+       or a very light tint of dark blue (used for subtle backgrounds so the
+       design has visual hierarchy without introducing a third color).
+    ───────────────────────────────────────────────────────── */
 
-    --gold: 39 95% 50%;            /* #F4A400 */
-    --gold-foreground: 222 47% 11%; /* dark navy text on gold */
+    /* Brand = dark blue */
+    --brand: 222 47% 11%;             /* #0D1B2A — dark blue */
+    --brand-foreground: 0 0% 100%;    /* white on dark blue */
+    --brand-light: 222 47% 97%;       /* near-white with faint blue tint — for subtle section backgrounds */
+    --brand-dark: 222 47% 7%;         /* slightly darker blue for hover states */
 
-    /* Warm neutrals — cream-tinted instead of cold gray. */
-    --cream: 40 30% 97%;           /* warm off-white */
-    --cream-dark: 35 25% 93%;      /* warm light gray */
-    --warm-gray: 30 8% 45%;        /* warm muted text */
+    /* Gold token is repurposed to dark blue so any existing gold usage
+       (badges, accents, stars) also becomes dark blue. */
+    --gold: 222 47% 11%;              /* = dark blue */
+    --gold-foreground: 0 0% 100%;     /* white on dark blue */
 
-    /* shadcn semantic tokens. primary matches brand purple. */
-    --background: 40 30% 99%;      /* very warm white */
-    --foreground: 222 30% 15%;     /* warm near-black */
-    --card: 0 0% 100%;
-    --card-foreground: 222 30% 15%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 30% 15%;
-    --primary: 263 70% 50%;            /* = brand purple */
-    --primary-foreground: 0 0% 100%;   /* white on purple */
-    --secondary: 40 30% 96%;           /* warm light */
-    --secondary-foreground: 222 30% 15%;
-    --muted: 40 20% 95%;
-    --muted-foreground: 30 8% 40%;     /* warm muted — WCAG AA on cream */
-    --accent: 40 30% 94%;
-    --accent-foreground: 222 30% 15%;
-    --destructive: 0 84% 60%;
+    /* Neutrals — all derived from the dark blue */
+    --cream: 222 47% 98%;             /* near-white */
+    --cream-dark: 222 30% 90%;        /* light blue-gray for borders */
+    --warm-gray: 222 15% 40%;         /* medium blue-gray for muted text */
+
+    /* shadcn semantic tokens — all dark blue + white */
+    --background: 0 0% 100%;          /* white page background */
+    --foreground: 222 47% 11%;        /* dark blue text */
+    --card: 0 0% 100%;                /* white cards */
+    --card-foreground: 222 47% 11%;   /* dark blue text on cards */
+    --popover: 0 0% 100%;             /* white popovers */
+    --popover-foreground: 222 47% 11%;
+    --primary: 222 47% 11%;           /* dark blue primary */
+    --primary-foreground: 0 0% 100%;  /* white on primary */
+    --secondary: 222 47% 96%;         /* light blue-tinted background */
+    --secondary-foreground: 222 47% 11%;
+    --muted: 222 47% 96%;             /* light blue-tinted muted bg */
+    --muted-foreground: 222 15% 40%;  /* medium blue-gray muted text */
+    --accent: 222 47% 95%;            /* very light blue accent */
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 84% 60%;         /* keep red for error states only */
     --destructive-foreground: 0 0% 100%;
-    --border: 35 20% 90%;              /* warm border */
-    --input: 35 20% 90%;
-    --ring: 263 70% 50%;
-    --radius: 0.625rem;                /* slightly rounder = more organic */
+    --border: 222 30% 88%;            /* light blue-gray border */
+    --input: 222 30% 88%;
+    --ring: 222 47% 11%;              /* dark blue focus ring */
+    --radius: 0.625rem;
   }
 
-  /* Dark mode tokens. */
+  /* Dark mode — inverted: dark blue background, white text */
   .dark {
-    --background: 222 30% 10%;
-    --foreground: 40 20% 95%;
-    --card: 222 25% 13%;
-    --card-foreground: 40 20% 95%;
-    --popover: 222 25% 13%;
-    --popover-foreground: 40 20% 95%;
-    --primary: 263 70% 60%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 222 20% 18%;
-    --secondary-foreground: 40 20% 95%;
-    --muted: 222 20% 18%;
-    --muted-foreground: 40 10% 65%;
-    --accent: 222 20% 18%;
-    --accent-foreground: 40 20% 95%;
+    --background: 222 47% 11%;        /* dark blue */
+    --foreground: 0 0% 100%;          /* white text */
+    --card: 222 47% 14%;              /* slightly lighter dark blue */
+    --card-foreground: 0 0% 100%;
+    --popover: 222 47% 14%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 0% 100%;             /* white primary in dark mode */
+    --primary-foreground: 222 47% 11%; /* dark blue on white */
+    --secondary: 222 30% 18%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 222 30% 18%;
+    --muted-foreground: 222 10% 65%;
+    --accent: 222 30% 18%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 70% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 222 20% 22%;
-    --input: 222 20% 22%;
-    --ring: 263 70% 60%;
+    --border: 222 30% 22%;
+    --input: 222 30% 22%;
+    --ring: 0 0% 100%;
   }
 
   * {
@@ -77,14 +86,12 @@
   body {
     @apply bg-background text-foreground antialiased;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    /* Slightly warmer text rendering. */
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Fraunces', Georgia, serif;
-    /* Fraunces optical sizing — larger headings get more display-like proportions. */
     font-optical-sizing: auto;
     letter-spacing: -0.01em;
   }
@@ -96,12 +103,10 @@
 }
 
 @layer components {
-  /* Handwriting accent — for section labels, callouts, "human" touches. */
   .font-hand {
     font-family: 'Caveat', cursive;
     font-weight: 600;
   }
-  /* Warm card with soft shadow and organic rounding. */
   .card-warm {
     @apply bg-white rounded-2xl shadow-warm border border-cream-dark/60;
     transition: transform 0.25s ease, box-shadow 0.25s ease;
@@ -123,29 +128,30 @@
   .font-hand {
     font-family: 'Caveat', cursive;
   }
+  /* All gradient utilities now use dark blue → dark blue (effectively flat) */
   .text-gradient-gold {
-    background: linear-gradient(90deg, #F4A400, #FFD166);
+    background: linear-gradient(90deg, #0D1B2A, #0D1B2A);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .text-gradient-warm {
-    background: linear-gradient(135deg, #5E17EB 0%, #7C3AED 50%, #6D28D9 100%);
+    background: linear-gradient(135deg, #0D1B2A 0%, #0D1B2A 50%, #0D1B2A 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
   .bg-gradient-hero {
-    background: linear-gradient(135deg, #1A1A2E 0%, #1A3C6E 60%, #0D1B2A 100%);
+    background: linear-gradient(135deg, #0D1B2A 0%, #0D1B2A 60%, #0D1B2A 100%);
   }
   .bg-gradient-gold {
-    background: linear-gradient(90deg, #F4A400, #FFD166);
+    background: linear-gradient(90deg, #0D1B2A, #0D1B2A);
   }
   .bg-gradient-warm {
-    background: linear-gradient(135deg, #faf6f0 0%, #f3ede4 100%);
+    background: linear-gradient(135deg, #ffffff 0%, #f7f9fc 100%);
   }
   .glass-panel {
-    background: rgba(0, 18, 51, 0.6);
+    background: rgba(13, 27, 42, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.1);
     backdrop-filter: blur(12px);
     border-radius: 16px;
@@ -155,24 +161,24 @@
       55deg,
       transparent,
       transparent 20px,
-      rgba(244, 164, 0, 0.06) 20px,
-      rgba(244, 164, 0, 0.06) 40px
+      rgba(13, 27, 42, 0.04) 20px,
+      rgba(13, 27, 42, 0.04) 40px
     );
   }
-  /* Photo overlay — warm dark gradient for text readability on photos. */
+  /* Photo overlay — dark blue gradient for text readability on photos. */
   .photo-overlay {
     background: linear-gradient(
       135deg,
-      rgba(26, 26, 46, 0.85) 0%,
-      rgba(94, 23, 235, 0.55) 50%,
-      rgba(26, 26, 46, 0.75) 100%
+      rgba(13, 27, 42, 0.85) 0%,
+      rgba(13, 27, 42, 0.65) 50%,
+      rgba(13, 27, 42, 0.80) 100%
     );
   }
   .photo-overlay-bottom {
     background: linear-gradient(
       to top,
-      rgba(26, 26, 46, 0.92) 0%,
-      rgba(26, 26, 46, 0.6) 40%,
+      rgba(13, 27, 42, 0.92) 0%,
+      rgba(13, 27, 42, 0.6) 40%,
       transparent 70%
     );
   }

@@ -74,9 +74,9 @@ module.exports = {
       },
       boxShadow: {
         xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
-        warm: "0 2px 8px -2px rgb(94 23 235 / 0.08), 0 4px 16px -4px rgb(0 0 0 / 0.06)",
-        "warm-lg": "0 8px 24px -6px rgb(94 23 235 / 0.12), 0 16px 48px -12px rgb(0 0 0 / 0.1)",
-        "warm-glow": "0 0 24px -4px rgb(244 164 0 / 0.25)",
+        warm: "0 2px 8px -2px rgb(13 27 42 / 0.08), 0 4px 16px -4px rgb(0 0 0 / 0.06)",
+        "warm-lg": "0 8px 24px -6px rgb(13 27 42 / 0.12), 0 16px 48px -12px rgb(0 0 0 / 0.1)",
+        "warm-glow": "0 0 24px -4px rgb(13 27 42 / 0.20)",
       },
       keyframes: {
         "accordion-down": {
