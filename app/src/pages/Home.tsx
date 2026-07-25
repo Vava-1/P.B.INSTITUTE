@@ -239,31 +239,23 @@ export default function Home() {
       {/* News Preview */}
       <NewsPreviewSection news={news} />
 
-      {/* CTA Banner */}
-      <section className="py-6 bg-gradient-to-br from-gold via-gold to-gold">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-lg md:text-xl font-bold text-gold mb-1 font-display">
-            Ready to Start Your Training?
-          </h2>
-          <p className="text-sm text-gold/80 mb-3 max-w-2xl mx-auto">
-            Join hundreds of Pacemaker graduates building better careers.
-          </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Button
-              asChild
-              className="bg-gold text-gold-foreground hover:bg-brand-dark hover:text-white font-semibold rounded-full px-6 py-2 text-sm transition-colors"
-            >
-              <Link to="/enroll">Enroll Today</Link>
-            </Button>
-            <a
-              href={`https://wa.me/${(settings?.whatsapp || "250786053720").replace(/\+/g, "")}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-5 py-2 bg-white text-gold font-semibold rounded-full hover:bg-brand-light transition-colors text-sm"
-            >
-              Talk to Us on WhatsApp
-            </a>
-          </div>
+      {/* CTA Banner — minimal single-line */}
+      <section className="py-1.5 bg-gradient-to-r from-gold via-gold to-gold">
+        <div className="max-w-4xl mx-auto px-4 flex items-center justify-center gap-2 flex-wrap">
+          <Button
+            asChild
+            className="bg-gold text-gold-foreground hover:bg-brand-dark hover:text-white font-semibold rounded-full px-4 py-1 text-xs transition-colors h-7"
+          >
+            <Link to="/enroll">Enroll Today</Link>
+          </Button>
+          <a
+            href={`https://wa.me/${(settings?.whatsapp || "250786053720").replace(/\+/g, "")}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center px-4 py-1 bg-white text-gold font-semibold rounded-full hover:bg-brand-light transition-colors text-xs h-7 leading-none"
+          >
+            Talk to Us on WhatsApp
+          </a>
         </div>
       </section>
 
