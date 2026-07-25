@@ -240,18 +240,18 @@ export default function Home() {
       <NewsPreviewSection news={news} />
 
       {/* CTA Banner */}
-      <section className="py-16 bg-gradient-to-br from-gold via-gold to-gold">
+      <section className="py-6 bg-gradient-to-br from-gold via-gold to-gold">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl md:text-4xl font-bold text-gold mb-3 font-display">
+          <h2 className="text-lg md:text-xl font-bold text-gold mb-1 font-display">
             Ready to Start Your Training?
           </h2>
-          <p className="text-base text-gold/80 mb-6 max-w-2xl mx-auto">
+          <p className="text-sm text-gold/80 mb-3 max-w-2xl mx-auto">
             Join hundreds of Pacemaker graduates building better careers.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button
               asChild
-              className="bg-gold text-gold-foreground hover:bg-brand-dark hover:text-white font-semibold rounded-full px-8 py-5 text-base transition-colors"
+              className="bg-gold text-gold-foreground hover:bg-brand-dark hover:text-white font-semibold rounded-full px-6 py-2 text-sm transition-colors"
             >
               <Link to="/enroll">Enroll Today</Link>
             </Button>
@@ -259,7 +259,7 @@ export default function Home() {
               href={`https://wa.me/${(settings?.whatsapp || "250786053720").replace(/\+/g, "")}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-2.5 bg-white text-gold font-semibold rounded-full hover:bg-brand-light transition-colors"
+              className="inline-flex items-center gap-2 px-5 py-2 bg-white text-gold font-semibold rounded-full hover:bg-brand-light transition-colors text-sm"
             >
               Talk to Us on WhatsApp
             </a>
@@ -289,50 +289,26 @@ function CoursesSlider({ courses }: { courses: any[] }) {
   const Icon = categoryIcons[course.category] || BookOpen;
 
   return (
-    <section className="bg-gradient-to-r from-brand via-brand to-brand py-6">
+    <section className="bg-gradient-to-r from-brand via-brand to-brand py-2">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-xl bg-white/20 backdrop-blur-sm">
-          <div className="flex items-center gap-6 p-4 sm:p-6">
-            <div
-              className="w-14 h-14 rounded-xl flex items-center justify-center shrink-0 bg-brand/20"
-            >
-              <Icon className="w-7 h-7 text-brand" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 text-xs text-foreground/60 uppercase tracking-wider font-medium mb-0.5">
-                <span>Explore our programs</span>
-                <span>·</span>
-                <span>{course.category.replace(/_/g, " ")}</span>
-              </div>
-              <h3 className="text-lg sm:text-xl font-bold text-foreground font-display truncate">
-                {course.title}
-              </h3>
-              <p className="text-sm text-foreground/70 mt-0.5 line-clamp-1">
-                {course.shortDesc}
-              </p>
-            </div>
-            <Link
-              to={`/courses/${course.slug}`}
-              className="shrink-0 flex items-center gap-1 px-4 py-2 bg-brand-dark text-white text-sm font-medium rounded-lg hover:bg-brand transition-colors"
-            >
-              View <ArrowRight className="w-4 h-4" />
-            </Link>
+        <div className="flex items-center gap-4 px-3 py-2">
+          <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-brand/20">
+            <Icon className="w-5 h-5 text-brand" />
           </div>
-
-          {/* Dots */}
-          {courses.length > 1 && (
-            <div className="flex items-center justify-center gap-1.5 pb-3">
-              {courses.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setIdx(i)}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    i === idx ? "bg-brand-dark w-4" : "bg-brand-dark/30"
-                  }`}
-                />
-              ))}
-            </div>
-          )}
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-bold text-foreground font-display truncate leading-tight">
+              {course.title}
+            </h3>
+            <p className="text-xs text-foreground/60 line-clamp-1 leading-tight">
+              {course.shortDesc}
+            </p>
+          </div>
+          <Link
+            to={`/courses/${course.slug}`}
+            className="shrink-0 flex items-center gap-1 px-3 py-1.5 bg-brand-dark text-white text-xs font-medium rounded-lg hover:bg-brand transition-colors"
+          >
+            View <ArrowRight className="w-3 h-3" />
+          </Link>
         </div>
       </div>
     </section>
@@ -426,19 +402,17 @@ function StatsSection() {
   return (
     <section
       ref={statsRef}
-      className="relative py-32 bg-gradient-to-r from-brand-dark via-brand to-brand-dark"
+      className="relative py-6 bg-gradient-to-r from-brand-dark via-brand to-brand-dark"
     >
-      <div className="absolute inset-0 diagonal-stripe opacity-50" />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {stats.map((stat, i) => (
             <div key={stat.label} className="text-center">
-              <stat.icon className="w-8 h-8 text-gold mx-auto mb-3" />
-              <div className="text-4xl md:text-5xl font-bold text-white font-display mb-1">
+              <div className="text-2xl md:text-3xl font-bold text-white font-display leading-tight">
                 {visible ? <CountUp end={stat.value} duration={2000} delay={i * 200} /> : "0"}
                 <span className="text-gold">{stat.suffix}</span>
               </div>
-              <div className="text-sm text-white/70">{stat.label}</div>
+              <div className="text-xs text-white/60">{stat.label}</div>
             </div>
           ))}
         </div>
