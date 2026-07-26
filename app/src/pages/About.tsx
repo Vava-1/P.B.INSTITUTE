@@ -64,7 +64,7 @@ export default function About() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
             <Card className="border-0 shadow-lg bg-gradient-to-br from-brand to-brand-dark text-white">
               <CardContent className="p-8 text-center">
-                <Target className="w-12 h-12 text-brand mx-auto mb-4" />
+                <Target className="w-12 h-12 text-white mx-auto mb-4" />
                 <h3 className="text-2xl font-bold mb-3 font-display">Our Mission</h3>
                 <p className="text-white/80 leading-relaxed">
                   Empowering individuals with practical skills, language mastery, and

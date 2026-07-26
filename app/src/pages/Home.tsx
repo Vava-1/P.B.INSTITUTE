@@ -284,20 +284,20 @@ function CoursesSlider({ courses }: { courses: any[] }) {
     <section className="bg-gradient-to-r from-brand via-brand to-brand py-2">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center gap-4 px-3 py-2">
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-brand/20">
-            <Icon className="w-5 h-5 text-brand" />
+          <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-white/20">
+            <Icon className="w-5 h-5 text-white" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-bold text-foreground font-display truncate leading-tight">
+            <h3 className="text-sm font-bold text-white font-display truncate leading-tight">
               {course.title}
             </h3>
-            <p className="text-xs text-foreground/60 line-clamp-1 leading-tight">
+            <p className="text-xs text-white/70 line-clamp-1 leading-tight">
               {course.shortDesc}
             </p>
           </div>
           <Link
             to={`/courses/${course.slug}`}
-            className="shrink-0 flex items-center gap-1 px-3 py-1.5 bg-brand-dark text-white text-xs font-medium rounded-lg hover:bg-brand transition-colors"
+            className="shrink-0 flex items-center gap-1 px-3 py-1.5 bg-white text-brand text-xs font-medium rounded-lg hover:bg-white/80 transition-colors"
           >
             View <ArrowRight className="w-3 h-3" />
           </Link>
@@ -346,7 +346,7 @@ function HeroSection() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-up" style={{ animationDelay: "0.3s" }}>
           <Button
             asChild
-            className="bg-gradient-to-r from-gold to-gold text-foreground font-bold rounded-full px-8 py-6 text-lg shadow-warm-glow hover:from-gold hover:to-gold transition-all"
+            className="bg-white text-brand font-bold rounded-full px-8 py-6 text-lg shadow-warm-glow hover:bg-white/80 transition-all"
           >
             <Link to="/enroll">Enroll Now</Link>
           </Button>

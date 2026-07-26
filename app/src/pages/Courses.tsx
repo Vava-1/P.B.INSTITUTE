@@ -53,7 +53,7 @@ export default function Courses() {
         <div className="absolute inset-0 diagonal-stripe opacity-30" />
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <span className="text-brand font-semibold text-sm uppercase tracking-wider">
+            <span className="text-white font-semibold text-sm uppercase tracking-wider">
               Course Catalog
             </span>
             <h1 className="mt-4 text-4xl md:text-5xl font-bold text-white font-display">
