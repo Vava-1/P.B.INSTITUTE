@@ -107,9 +107,6 @@ export default function Home() {
       {/* Hero Section */}
       <HeroSection />
 
-      {/* Courses Slider */}
-      <CoursesSlider courses={allCourses || []} />
-
       {/* Stats Counter */}
       <StatsSection />
 
