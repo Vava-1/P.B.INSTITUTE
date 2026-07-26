@@ -1,6 +1,7 @@
 import { MessageCircle } from "lucide-react";
 import { trpc } from "@/providers/trpc";
 
+// Floating WhatsApp button — appears on every public page.
 export default function WhatsAppButton() {
   const { data: settings } = trpc.public.settings.get.useQuery();
   const phone = (settings?.whatsapp || "250786053720").replace(/[^0-9]/g, "");
