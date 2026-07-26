@@ -239,12 +239,12 @@ export default function Home() {
       {/* News Preview */}
       <NewsPreviewSection news={news} />
 
-      {/* CTA Banner — minimal single-line */}
-      <section className="py-4 bg-gradient-to-r from-gold via-gold to-gold">
+      {/* CTA — buttons only, white background */}
+      <section className="py-4 bg-white">
         <div className="max-w-4xl mx-auto px-4 flex items-center justify-center gap-3 flex-wrap">
           <Button
             asChild
-            className="bg-gold text-gold-foreground hover:bg-brand-dark hover:text-white font-semibold rounded-full px-6 py-2 text-sm transition-colors h-10"
+            className="bg-brand text-primary-foreground hover:bg-brand-dark font-semibold rounded-full px-6 py-2 text-sm transition-colors h-10"
           >
             <Link to="/enroll">Enroll Today</Link>
           </Button>
@@ -252,7 +252,7 @@ export default function Home() {
             href={`https://wa.me/${(settings?.whatsapp || "250786053720").replace(/\+/g, "")}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center px-6 py-2 bg-white text-gold font-semibold rounded-full hover:bg-brand-light transition-colors text-sm h-10 leading-none"
+            className="inline-flex items-center px-6 py-2 bg-brand text-primary-foreground hover:bg-brand-dark font-semibold rounded-full transition-colors text-sm h-10 leading-none"
           >
             Talk to Us on WhatsApp
           </a>
