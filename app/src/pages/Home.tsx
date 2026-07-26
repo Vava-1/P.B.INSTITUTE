@@ -73,23 +73,6 @@ export default function Home() {
   const news = data?.news ?? [];
   const settings = data?.settings;
 
-  const announcementMsgs = (() => {
-    if (!settings?.announcementMessages) return [];
-    try {
-      const parsed = JSON.parse(settings.announcementMessages as string);
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
-      return [];
-    }
-  })();
-  const [announceIdx, setAnnounceIdx] = useState(0);
-
-  useEffect(() => {
-    if (announcementMsgs.length <= 1) return;
-    const iv = setInterval(() => setAnnounceIdx((p) => (p + 1) % announcementMsgs.length), 5000);
-    return () => clearInterval(iv);
-  }, [announcementMsgs.length]);
-
   return (
     <div className="min-h-screen bg-white">
       <Navbar />
