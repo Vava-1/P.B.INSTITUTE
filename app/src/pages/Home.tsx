@@ -94,16 +94,6 @@ export default function Home() {
     <div className="min-h-screen bg-white">
       <Navbar />
 
-      {/* Announcement Ticker */}
-      {settings?.announcementActive && announcementMsgs.length > 0 && (
-        <div className="fixed top-20 left-0 right-0 z-40 bg-brand text-white py-2.5 px-4 text-center text-sm font-medium shadow-md">
-          <div className="max-w-7xl mx-auto flex items-center justify-center gap-2">
-            <span className="animate-pulse">📣</span>
-            <span>{announcementMsgs[announceIdx]}</span>
-          </div>
-        </div>
-      )}
-
       {/* Hero Section */}
       <HeroSection />
 
