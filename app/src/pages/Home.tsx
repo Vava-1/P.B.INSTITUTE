@@ -304,13 +304,13 @@ function HeroSection() {
 
       <div className="relative z-10 text-center px-4 max-w-4xl mx-auto pt-20">
         {/* Handwritten accent label — human touch. */}
-        <p className="font-hand text-2xl md:text-3xl text-gold mb-3 animate-fade-up">
+        <p className="font-hand text-2xl md:text-3xl text-white mb-3 animate-fade-up">
           Welcome to Pacemaker Institute
         </p>
         <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 font-display leading-tight animate-fade-up" style={{ animationDelay: "0.1s" }}>
           Master a Skill.
           <br />
-          <span className="text-gradient-gold">Transform Your Future.</span>
+          <span className="text-white">Transform Your Future.</span>
         </h1>
         <p className="text-lg md:text-xl text-white/85 max-w-2xl mx-auto mb-10 leading-relaxed animate-fade-up" style={{ animationDelay: "0.2s" }}>
           Professional training in Languages, Bakery, Salon, Mechanics,
