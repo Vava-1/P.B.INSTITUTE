@@ -31,6 +31,7 @@ export default defineConfig({
           "form-vendor": ["react-hook-form", "@hookform/resolvers", "zod"],
           "query-vendor": ["@tanstack/react-query", "@trpc/client", "@trpc/react-query"],
           "chart-vendor": ["recharts"],
+          "layout-vendor": ["./src/components/layout/Footer.tsx", "./src/components/layout/WhatsAppButton.tsx", "./src/components/layout/Navbar.tsx"],
         },
       },
     },
