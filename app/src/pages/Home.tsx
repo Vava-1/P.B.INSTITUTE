@@ -262,48 +262,6 @@ export default function Home() {
   );
 }
 
-// ─── COURSES SLIDER ───
-function CoursesSlider({ courses }: { courses: any[] }) {
-  const [idx, setIdx] = useState(0);
-
-  useEffect(() => {
-    if (courses.length <= 1) return;
-    const iv = setInterval(() => setIdx((p) => (p + 1) % courses.length), 4000);
-    return () => clearInterval(iv);
-  }, [courses.length]);
-
-  if (!courses.length) return null;
-
-  const course = courses[idx];
-  const Icon = categoryIcons[course.category] || BookOpen;
-
-  return (
-    <section className="bg-white border-y border-brand/10 py-2">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-4 px-3 py-2">
-          <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-brand/10">
-            <Icon className="w-5 h-5 text-brand" />
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-bold text-brand font-display truncate leading-tight">
-              {course.title}
-            </h3>
-            <p className="text-xs text-brand/70 line-clamp-1 leading-tight">
-              {course.shortDesc}
-            </p>
-          </div>
-          <Link
-            to={`/courses/${course.slug}`}
-            className="shrink-0 flex items-center gap-1 px-3 py-1.5 bg-brand text-white text-xs font-medium rounded-lg hover:bg-brand-dark transition-colors"
-          >
-            View <ArrowRight className="w-3 h-3" />
-          </Link>
-        </div>
-      </div>
-    </section>
-  );
-}
-
 // ─── HERO SECTION ───
 // Real classroom photo with a warm purple/navy overlay — feels human and inviting,
 // not cold and corporate like the old canvas animation.
