@@ -7,8 +7,8 @@ export default function Footer() {
 
   return (
     <footer className="bg-brand-dark text-white">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-xs">
           {/* Brand */}
           <div>
             <Link to="/" className="flex items-center gap-2 mb-2">
@@ -60,7 +60,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom bar — single thin line */}
-        <div className="mt-3 pt-2 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-1">
+        <div className="mt-6 pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="text-muted/40 text-xs">&copy; {new Date().getFullYear()} Pacemaker Institute.</p>
           <div className="flex items-center gap-4">
             <Link to="/contact" className="text-muted/40 hover:text-brand text-xs transition-colors">Privacy</Link>
