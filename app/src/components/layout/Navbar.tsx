@@ -117,7 +117,7 @@ export default function Navbar() {
             <div className="hidden lg:flex items-center gap-3">
               <Button
                 asChild
-                className="bg-brand text-black hover:bg-brand-dark hover:text-white font-bold rounded-full px-6 transition-colors"
+                className="bg-brand text-white hover:bg-brand-dark font-bold rounded-full px-6 transition-colors"
               >
                 <Link to="/enroll">Enroll Now</Link>
               </Button>
