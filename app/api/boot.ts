@@ -8,13 +8,32 @@ import { appRouter } from "./router";
 import { createContext } from "./context";
 import { env } from "./lib/env";
 import { createOAuthCallbackHandler } from "./auth/auth";
-import { Paths } from "@contracts/constants";
+import { Paths, AdminSession } from "@contracts/constants";
 import { getDb } from "./queries/connection";
 import { courses, newsEvents, payments } from "@db/schema";
 import { eq, asc, desc } from "drizzle-orm";
 import { buildMomoConfig, checkTransactionStatus } from "./lib/mtn-momo";
+import * as cookie from "cookie";
+import { verifyAdminToken } from "./lib/jwt";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
+
+// Admin auth middleware for raw Hono routes
+const requireAdminHono = async (c: any, next: () => Promise<void>) => {
+  const cookies = cookie.parse(c.req.header("cookie") || "");
+  const adminToken = cookies[AdminSession.cookieName];
+  if (!adminToken) {
+    return c.json({ error: "Authentication required" }, 401);
+  }
+  const payload = await verifyAdminToken(adminToken);
+  if (!payload) {
+    return c.json({ error: "Authentication required" }, 401);
+  }
+  if (payload.role !== "super_admin") {
+    return c.json({ error: "Insufficient permissions" }, 403);
+  }
+  await next();
+};
 
 // SECURITY: 5 MB allows for base64-encoded photos in testimonials/news.
 // Was 50 MB (too large), then 1 MB (too small for base64 images).
@@ -68,7 +87,7 @@ app.get("/health", async (c) => {
 });
 
 // Diagnostic endpoint — shows table counts and can trigger a re-seed.
-app.get("/api/diag", async (c) => {
+app.get("/api/diag", requireAdminHono, async (c) => {
   const db = getDb();
   const result: any = {};
   try {
@@ -96,7 +115,7 @@ app.get("/api/diag", async (c) => {
 });
 
 // Manual re-seed trigger — calls seedIfEmpty and returns the result.
-app.post("/api/reseed", async (c) => {
+app.post("/api/reseed", requireAdminHono, async (c) => {
   try {
     const { seedIfEmpty } = await import("../db/seed-if-empty");
     await seedIfEmpty();
