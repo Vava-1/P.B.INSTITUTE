@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate } from "react-router";
 import { Shield, LogIn, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { trpc } from "@/providers/trpc";
+import { trpc } from "@/providers/trpc-client";
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -42,8 +42,8 @@ export default function AdminLogin() {
       // No token is stored client-side.
       await loginMutation.mutateAsync({ email, password });
       navigate("/admin/dashboard");
-    } catch (err: any) {
-      setError(err.message || "Invalid credentials");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Invalid credentials");
     }
   };
 

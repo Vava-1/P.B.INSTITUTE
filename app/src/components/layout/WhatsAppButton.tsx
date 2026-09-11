@@ -1,5 +1,5 @@
-import { MessageCircle } from "lucide-react";
-import { trpc } from "@/providers/trpc";
+﻿import { MessageCircle } from "lucide-react";
+import { trpc } from "@/providers/trpc-client";
 
 // Floating WhatsApp button — appears on every public page.
 export default function WhatsAppButton() {

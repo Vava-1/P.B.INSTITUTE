@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from "react-router";
+﻿import { useParams, Link, useNavigate } from "react-router";
 import {
   Clock, BookOpen, CheckCircle, Briefcase, ArrowLeft,
   GraduationCap, Calendar, Phone, MessageCircle, Linkedin,
@@ -11,7 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
-import { trpc } from "@/providers/trpc";
+import { trpc } from "@/providers/trpc-client";
 
 export default function CourseDetail() {
   const { slug } = useParams<{ slug: string }>();
@@ -54,7 +54,7 @@ export default function CourseDetail() {
   const whatYoullLearn = course.whatYoullLearn
     ? JSON.parse(course.whatYoullLearn as string)
     : [];
-  const modules = course.modules ? JSON.parse(course.modules as string) : [];
+  const modules: Array<{ title: string; description?: string; topics?: string[] }> = course.modules ? JSON.parse(course.modules as string) : [];
   const requirements = course.requirements
     ? JSON.parse(course.requirements as string)
     : [];
@@ -147,7 +147,7 @@ export default function CourseDetail() {
                       <BookOpen className="w-6 h-6 text-brand" /> Course Modules
                     </h2>
                     <div className="space-y-3">
-                      {modules.map((mod: any, i: number) => (
+                      {modules.map((mod, i: number) => (
                         <div key={i} className="border border-gray-100 rounded-lg overflow-hidden">
                           <button
                             onClick={() => setOpenModule(openModule === i ? null : i)}

@@ -75,6 +75,7 @@ function ButtonGroupSeparator({
   )
 }
 
+/* eslint-disable react-refresh/only-export-components -- shadcn/ui convention */
 export {
   ButtonGroup,
   ButtonGroupSeparator,

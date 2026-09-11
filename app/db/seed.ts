@@ -9,7 +9,7 @@ import {
   galleryItems,
   adminUsers,
 } from "./schema";
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { hashSync } from "bcryptjs";
 
 async function seed() {

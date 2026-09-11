@@ -326,7 +326,10 @@ export const faqs = mysqlTable("faqs", {
 export type Faq = typeof faqs.$inferSelect;
 export type InsertFaq = typeof faqs.$inferInsert;
 
-// ─── USERS (OAuth) ───
+// ─── USERS (OAuth) — DEPRECATED ───
+// This table backed the OAuth user flow that was removed in P1-4. It is no
+// longer read or written by any application code. Kept in the schema (rather
+// than dropped) to avoid a destructive production migration.
 export const users = mysqlTable("users", {
   id: serial("id").primaryKey(),
   unionId: varchar("unionId", { length: 255 }).notNull().unique(),

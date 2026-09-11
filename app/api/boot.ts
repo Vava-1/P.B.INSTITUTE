@@ -7,11 +7,10 @@ import { fetchRequestHandler } from "@trpc/server/adapters/fetch";
 import { appRouter } from "./router";
 import { createContext } from "./context";
 import { env } from "./lib/env";
-import { createOAuthCallbackHandler } from "./auth/auth";
-import { Paths, AdminSession } from "@contracts/constants";
+import { AdminSession } from "@contracts/constants";
 import { getDb } from "./queries/connection";
 import { courses, newsEvents, payments } from "@db/schema";
-import { eq, asc, desc } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { buildMomoConfig, checkTransactionStatus } from "./lib/mtn-momo";
 import * as cookie from "cookie";
 import { verifyAdminToken } from "./lib/jwt";
@@ -19,6 +18,7 @@ import { verifyAdminToken } from "./lib/jwt";
 const app = new Hono<{ Bindings: HttpBindings }>();
 
 // Admin auth middleware for raw Hono routes
+// eslint-disable-next-line @typescript-eslint/no-explicit-any -- Hono handler param; Context generic is verbose and adds no safety here.
 const requireAdminHono = async (c: any, next: () => Promise<void>) => {
   const cookies = cookie.parse(c.req.header("cookie") || "");
   const adminToken = cookies[AdminSession.cookieName];
@@ -51,7 +51,7 @@ if (env.openUrl) {
       origin: [env.openUrl],
       credentials: true,
       allowMethods: ["GET", "POST", "OPTIONS"],
-      allowHeaders: ["Content-Type", "x-admin-token", "x-trpc-source"],
+      allowHeaders: ["Content-Type", "x-admin-token", "x-trpc-source", "x-csrf-token"],
     }),
   );
 }
@@ -89,27 +89,31 @@ app.get("/health", async (c) => {
 // Diagnostic endpoint — shows table counts and can trigger a re-seed.
 app.get("/api/diag", requireAdminHono, async (c) => {
   const db = getDb();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- diagnostic payload shape is intentionally dynamic.
   const result: any = {};
   try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw SQL row shape; diagnostic endpoint.
     const [tc] = await db.execute("SELECT COUNT(*) as cnt FROM testimonials") as any;
     result.testimonials_count = tc?.cnt ?? tc?.[0]?.cnt ?? "?";
-  } catch (e: any) {
-    result.testimonials_count_error = e.message;
+  } catch (e: unknown) {
+    result.testimonials_count_error = e instanceof Error ? e.message : String(e);
   }
   try {
     // Try selecting all columns the Drizzle query uses — if any column is missing, this fails.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw SQL row shape; diagnostic endpoint.
     const [rows] = await db.execute("SELECT id, student_name, photo_url, linkedin_url, course_id, course_name, completion_year, current_role, employer, quote, rating, is_featured, is_approved, is_published, submitted_at, updated_at FROM testimonials WHERE is_published = true AND is_approved = true LIMIT 3") as any;
     result.testimonials_query = Array.isArray(rows) ? rows : [rows];
     result.testimonials_query_count = (Array.isArray(rows) ? rows : [rows]).length;
-  } catch (e: any) {
-    result.testimonials_query_error = e.message;
+  } catch (e: unknown) {
+    result.testimonials_query_error = e instanceof Error ? e.message : String(e);
   }
   try {
     // Show the actual column names in the testimonials table.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw SQL row shape; diagnostic endpoint.
     const [cols] = await db.execute("SHOW COLUMNS FROM testimonials") as any;
-    result.testimonials_columns = (Array.isArray(cols) ? cols : [cols]).map((r: any) => r.Field);
-  } catch (e: any) {
-    result.testimonials_columns_error = e.message;
+    result.testimonials_columns = (Array.isArray(cols) ? cols : [cols]).map((r) => r.Field);
+  } catch (e: unknown) {
+    result.testimonials_columns_error = e instanceof Error ? e.message : String(e);
   }
   return c.json(result);
 });
@@ -120,6 +124,7 @@ app.post("/api/reseed", requireAdminHono, async (c) => {
     const { seedIfEmpty } = await import("../db/seed-if-empty");
     await seedIfEmpty();
     const db = getDb();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- raw SQL row shape; reseed endpoint response.
     const [tc] = await db.execute("SELECT COUNT(*) as cnt FROM testimonials") as any;
     return c.json({ success: true, testimonials_count: tc?.cnt ?? tc?.[0]?.cnt ?? "?" });
   } catch (e) {
@@ -162,12 +167,11 @@ app.get("/sitemap.xml", async (c) => {
   }
 });
 
-app.get(Paths.oauthCallback, createOAuthCallbackHandler());
-
 // MTN MoMo webhook — MTN calls this when a requestToPay completes.
 // Idempotent: safe to receive the same notification multiple times.
 app.post("/api/momo/webhook", async (c) => {
   try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- webhook body parsed from unknown JSON; shape validated manually below.
     const body = (await c.req.json().catch(() => null)) as any;
     if (!body || !body.referenceId) {
       return c.json({ status: "ignored", reason: "no referenceId" }, 200);

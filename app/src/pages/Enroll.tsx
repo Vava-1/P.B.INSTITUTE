@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+﻿import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router";
 import {
   CheckCircle, ChevronRight, ChevronLeft, BookOpen,
@@ -13,7 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
-import { trpc } from "@/providers/trpc";
+import { trpc } from "@/providers/trpc-client";
 import { toast } from "sonner";
 
 export default function Enroll() {
@@ -29,6 +29,7 @@ export default function Enroll() {
   const [paymentStatus, setPaymentStatus] = useState<"idle" | "processing" | "success" | "failed">("idle");
   const [paymentMessage, setPaymentMessage] = useState("");
   const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- form state holds mixed string/boolean fields; a strict Record type breaks dozens of JSX usages.
   const [formData, setFormData] = useState<Record<string, any>>({
     fullName: "", email: "", phone: "", whatsapp: "",
     dateOfBirth: "", gender: "", nationality: "", nationalId: "", district: "",
@@ -40,6 +41,7 @@ export default function Enroll() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- update() accepts both string (input) and boolean (checkbox) field values.
   const update = (field: string, value: any) => {
     setFormData((p) => ({ ...p, [field]: value }));
     setErrors((p) => ({ ...p, [field]: "" }));
@@ -96,9 +98,9 @@ export default function Enroll() {
         setPaymentStatus("failed");
         setPaymentMessage(result.message || "Payment failed. Please try again or contact us on WhatsApp.");
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       setPaymentStatus("failed");
-      setPaymentMessage(e?.message || "Payment failed. Please try again or contact us on WhatsApp.");
+      setPaymentMessage(e instanceof Error ? e.message : "Payment failed. Please try again or contact us on WhatsApp.");
     }
   };
 
@@ -117,7 +119,9 @@ export default function Enroll() {
             setPaymentStatus("failed");
             clearInterval(interval);
           }
-        } catch {}
+        } catch (e) {
+          console.error("[Enroll] payment status poll failed:", e);
+        }
       }, 3000);
       pollingRef.current = interval;
       return () => clearInterval(interval);
@@ -158,9 +162,9 @@ export default function Enroll() {
         setSubmitted(true);
         toast.success("Enrollment submitted successfully!");
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Enrollment failed:", e);
-      toast.error(e?.message || "Enrollment failed. Please try again or contact us on WhatsApp.");
+      toast.error(e instanceof Error ? e.message : "Enrollment failed. Please try again or contact us on WhatsApp.");
     }
   };
 
