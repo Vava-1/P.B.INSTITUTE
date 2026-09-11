@@ -128,6 +128,14 @@ app.post("/api/reseed", requireAdminHono, async (c) => {
 });
 
 app.get("/sitemap.xml", async (c) => {
+  const siteUrl = (process.env.SITE_URL || "").replace(/\/$/, "");
+  if (!siteUrl) {
+    return c.text(
+      `<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"></urlset>`,
+      200,
+      { "Content-Type": "application/xml" }
+    );
+  }
   try {
     const db = getDb();
     const [courseList, newsList] = await Promise.all([
@@ -136,8 +144,8 @@ app.get("/sitemap.xml", async (c) => {
     ]);
 
     const urls = [
-      ...courseList.map(c => `<url><loc>https://pacemakerinstitute.ac.rw/courses/${c.slug}</loc><lastmod>${c.updatedAt.toISOString().split("T")[0]}</lastmod><priority>0.9</priority></url>`),
-      ...newsList.map(n => `<url><loc>https://pacemakerinstitute.ac.rw/news/${n.slug}</loc><lastmod>${n.publishedAt?.toISOString().split("T")[0] ?? ""}</lastmod><priority>0.7</priority></url>`),
+      ...courseList.map(c => `<url><loc>${siteUrl}/courses/${c.slug}</loc><lastmod>${c.updatedAt.toISOString().split("T")[0]}</lastmod><priority>0.9</priority></url>`),
+      ...newsList.map(n => `<url><loc>${siteUrl}/news/${n.slug}</loc><lastmod>${n.publishedAt?.toISOString().split("T")[0] ?? ""}</lastmod><priority>0.7</priority></url>`),
     ];
 
     return c.text(
