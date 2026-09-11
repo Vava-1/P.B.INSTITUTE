@@ -16,27 +16,18 @@ import { trpc } from "@/providers/trpc";
 export default function TrackEnrollment() {
   const [searchParams] = useSearchParams();
   const [reference, setReference] = useState(searchParams.get("ref") || "");
+  const [phone, setPhone] = useState("");
   const [searched, setSearched] = useState(false);
 
-  // Auto-search if ref is in the URL (from the enrollment success page).
-  useEffect(() => {
-    const ref = searchParams.get("ref");
-    if (ref) {
-      setReference(ref);
-      setSearched(true);
-    }
-  }, [searchParams]);
-
   const { data: enrollment, isLoading, error } = trpc.public.enrollments.checkStatus.useQuery(
-    { reference },
-    { enabled: searched && reference.length > 0, retry: false }
+    { reference, phone },
+    { enabled: searched && reference.length > 0 && phone.length >= 4, retry: false }
   );
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (reference.trim()) setSearched(true);
+    if (reference.trim() && phone.trim()) setSearched(true);
   };
-
   const getStatusInfo = (status: string) => {
     switch (status) {
       case "pending":
@@ -108,8 +99,8 @@ export default function TrackEnrollment() {
           <h1 className="text-3xl md:text-4xl font-bold text-white font-display">
             Track Your <span className="text-gradient-gold">Enrollment</span>
           </h1>
-          <p className="mt-3 text-white/70">
-            Enter your reference number to check the status of your application.
+                   <p className="mt-3 text-white/70">
+            Enter your reference number and the phone number you used to enroll.
           </p>
         </div>
       </section>
@@ -136,10 +127,25 @@ export default function TrackEnrollment() {
                     Your reference number was given to you when you submitted your enrollment.
                   </p>
                 </div>
+                               <div>
+                  <Label htmlFor="phone">Phone Number (used at enrollment)</Label>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={phone}
+                    onChange={(e) => { setPhone(e.target.value); setSearched(false); }}
+                    placeholder="e.g., 250788123456"
+                    className="font-mono"
+                  />
+                  <p className="text-xs text-muted-foreground mt-2">
+                    For your privacy, we verify your identity with the phone number on file.
+                  </p>
+                </div>
                 <Button type="submit" className="w-full bg-brand hover:bg-brand-dark font-semibold">
                   <Search className="w-4 h-4 mr-2" /> Check Status
                 </Button>
               </form>
+              
             </CardContent>
           </Card>
 
@@ -202,22 +208,7 @@ export default function TrackEnrollment() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="flex items-center gap-3 p-4 rounded-xl border border-gray-100">
-                    <Phone className="w-5 h-5 text-brand shrink-0" />
-                    <div>
-                      <div className="text-xs text-muted-foreground">Phone</div>
-                      <div className="text-sm font-medium text-foreground">{enrollment.phone}</div>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-3 p-4 rounded-xl border border-gray-100">
-                    <Mail className="w-5 h-5 text-brand shrink-0" />
-                    <div>
-                      <div className="text-xs text-muted-foreground">Email</div>
-                      <div className="text-sm font-medium text-foreground">{enrollment.email || "—"}</div>
-                    </div>
-                  </div>
-                </div>
+                
 
                 <div className="flex items-center gap-3 p-4 rounded-xl border border-gray-100">
                   <BookOpen className="w-5 h-5 text-brand shrink-0" />
@@ -248,12 +239,7 @@ export default function TrackEnrollment() {
                   </div>
                 </div>
 
-                {enrollment.adminNotes && (
-                  <div className="p-4 bg-gold rounded-xl border border-gold/20">
-                    <div className="text-xs text-gold uppercase tracking-wider mb-1 font-semibold">Message from Admissions</div>
-                    <p className="text-sm text-foreground">{enrollment.adminNotes}</p>
-                  </div>
-                )}
+                
 
                 {/* Timeline */}
                 <div className="pt-4">
