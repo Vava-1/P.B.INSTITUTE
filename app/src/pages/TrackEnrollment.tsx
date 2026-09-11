@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSearchParams, Link } from "react-router";
 import {
   Search, CheckCircle, Clock, XCircle, AlertCircle,
-  GraduationCap, Phone, Mail, BookOpen, Calendar, ArrowRight,
+  GraduationCap, BookOpen, Calendar, ArrowRight, Phone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
