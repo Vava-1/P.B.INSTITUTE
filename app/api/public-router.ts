@@ -422,14 +422,27 @@ export const publicRouter = createRouter({
         return { success: true, referenceNumber: refNum };
       }),
 
-    checkStatus: publicQuery
-      .input(z.object({ reference: z.string().min(1).max(50) }))
+        checkStatus: publicQuery
+      .input(z.object({
+        reference: z.string().min(1).max(50),
+        phone: z.string().min(4).max(50),
+      }))
       .query(async ({ input }) => {
         const db = getDb();
         const result = await db
-          .select()
+          .select({
+            referenceNumber: enrollments.referenceNumber,
+            fullName: enrollments.fullName,
+            status: enrollments.status,
+            paymentStatus: enrollments.paymentStatus,
+            submittedAt: enrollments.submittedAt,
+            courseId: enrollments.courseId,
+          })
           .from(enrollments)
-          .where(eq(enrollments.referenceNumber, input.reference));
+          .where(and(
+            eq(enrollments.referenceNumber, input.reference),
+            eq(enrollments.phone, input.phone),
+          ));
         return result[0] ?? null;
       }),
   }),
