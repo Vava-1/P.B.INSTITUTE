@@ -1,4 +1,5 @@
-import { useState } from "react";
+﻿import { useState } from "react";
+import type { ComponentType } from "react";
 import { Link } from "react-router";
 import {
   BookOpen, Clock, ArrowRight, Filter, Languages,
@@ -10,9 +11,9 @@ import { Input } from "@/components/ui/input";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
-import { trpc } from "@/providers/trpc";
+import { trpc } from "@/providers/trpc-client";
 
-const categoryIcons: Record<string, any> = {
+const categoryIcons: Record<string, ComponentType<{ className?: string }>> = {
   languages: Languages,
   bakery: ChefHat,
   salon: Scissors,

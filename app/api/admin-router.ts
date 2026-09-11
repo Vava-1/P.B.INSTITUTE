@@ -261,6 +261,7 @@ export const adminRouter = createRouter({
         );
       }
       if (input?.status) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle ORM type friction: enum column vs Zod string input.
         conditions.push(eq(enrollments.status, input.status as any));
       }
       const query = db
@@ -283,6 +284,7 @@ export const adminRouter = createRouter({
     )
     .mutation(async ({ input }) => {
       const db = getDb();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial update object; Drizzle .set() accepts a wider type.
       const updates: any = {};
       if (input.status) updates.status = input.status;
       if (input.paymentStatus) updates.paymentStatus = input.paymentStatus;
@@ -378,6 +380,7 @@ export const adminRouter = createRouter({
     )
     .mutation(async ({ input }) => {
       const db = getDb();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial update object; Drizzle .set() accepts a wider type.
       const data: any = Object.fromEntries(
         Object.entries(input.data).filter(([, v]) => v !== undefined)
       );
@@ -475,6 +478,7 @@ export const adminRouter = createRouter({
     )
     .mutation(async ({ input }) => {
       const db = getDb();
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- partial update object; Drizzle .set() accepts a wider type.
       const updates: any = {};
       if (input.isRead !== undefined) updates.isRead = input.isRead;
       if (input.isReplied !== undefined) updates.isReplied = input.isReplied;

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+﻿import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Routes, Route, Link } from "react-router";
 import {
   LayoutDashboard, Users, BookOpen, Newspaper,
@@ -19,7 +19,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { trpc } from "@/providers/trpc";
+import { trpc } from "@/providers/trpc-client";
 import { useConfirmDialog } from "@/hooks/use-confirm-dialog";
 import { ImageUpload } from "@/components/ImageUpload";
 import { toast } from "sonner";
@@ -208,7 +208,7 @@ function DashboardOverview() {
               {(recentEnrollments || []).length === 0 && (
                 <p className="text-sm text-muted-foreground py-4 text-center">No enrollments yet</p>
               )}
-              {(recentEnrollments || []).map((e: any) => (
+              {(recentEnrollments || []).map((e) => (
                 <div key={e.id} className="flex items-center justify-between p-3 bg-brand-light rounded-lg">
                   <div>
                     <div className="font-medium text-sm text-foreground">{e.fullName}</div>
@@ -288,7 +288,7 @@ function EnrollmentsPage() {
               {(enrollments || []).length === 0 && (
                 <tr><td colSpan={5} className="p-8 text-center text-muted-foreground">No enrollments found</td></tr>
               )}
-              {(enrollments || []).map((e: any) => (
+              {(enrollments || []).map((e) => (
                 <tr key={e.id} className="border-t border-gray-50 hover:bg-brand-light">
                   <td className="p-4 text-sm font-mono">{e.referenceNumber}</td>
                   <td className="p-4 text-sm font-medium">{e.fullName}</td>
@@ -297,7 +297,7 @@ function EnrollmentsPage() {
                     <select
                       value={e.status}
                       onChange={(ev) =>
-                        updateMutation.mutate({ id: e.id, status: ev.target.value as any })
+                        updateMutation.mutate({ id: e.id, status: ev.target.value as "pending" | "under_review" | "enrolled" | "rejected" | "waitlisted" | "completed" })
                       }
                       className="text-xs px-2 py-1 rounded border border-gray-200 bg-white"
                     >
@@ -345,6 +345,7 @@ function PaymentsPage() {
   const [statusFilter, setStatusFilter] = useState<"pending" | "success" | "failed" | "cancelled" | "">("");
   const [providerFilter, setProviderFilter] = useState<"MOMO" | "AIRTEL" | "">("");
   const [search, setSearch] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- tRPC inferred payment row type.
   const [reconcileTarget, setReconcileTarget] = useState<any | null>(null);
 
   const { data: payments } = trpc.admin.paymentList.useQuery(
@@ -423,7 +424,7 @@ function PaymentsPage() {
               {(payments || []).length === 0 && (
                 <tr><td colSpan={7} className="p-8 text-center text-muted-foreground">No payments found</td></tr>
               )}
-              {(payments || []).map((p: any) => (
+              {(payments || []).map((p) => (
                 <tr key={p.id} className="border-t border-gray-50 hover:bg-brand-light">
                   <td className="p-4 text-sm font-mono">{p.referenceNumber}</td>
                   <td className="p-4 text-sm">{p.provider}</td>
@@ -537,6 +538,7 @@ function CoursesAdminPage() {
   const [confirmNode, confirm] = useConfirmDialog();
 
   const [showModal, setShowModal] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- form state shape doesn't match tRPC input exactly; would need per-field typing.
   const [editing, setEditing] = useState<any>(null);
   const [form, setForm] = useState({
     slug: "", title: "", category: "languages", shortDesc: "", description: "",
@@ -549,7 +551,7 @@ function CoursesAdminPage() {
     setShowModal(true);
   };
 
-  const openEdit = (course: any) => {
+  const openEdit = (course: { id: number; slug: string; title: string; category: string; shortDesc: string; description: string; duration: string; isPublished: boolean | null; isFeatured: boolean | null; displayOrder: number | null }) => {
     setEditing(course);
     setForm({
       slug: course.slug || "",
@@ -567,8 +569,10 @@ function CoursesAdminPage() {
 
   const handleSave = () => {
     if (editing) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- form is a loose Record; tRPC mutation input is a strict Zod schema.
       updateMutation.mutate({ id: editing.id, data: form as any });
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- form is a loose Record; tRPC mutation input is a strict Zod schema.
       createMutation.mutate(form as any);
     }
     setShowModal(false);
@@ -657,7 +661,7 @@ function CoursesAdminPage() {
         {(courses || []).length === 0 && (
           <div className="col-span-full text-center py-12 text-muted-foreground">No courses yet. Click "Add Course" to create one.</div>
         )}
-        {(courses || []).map((course: any) => (
+        {(courses || []).map((course) => (
           <Card key={course.id} className="border-0 shadow-md group">
             <CardContent className="p-5">
               <div className="flex items-center gap-3 mb-3">
@@ -715,6 +719,7 @@ function NewsAdminPage() {
   const [confirmNode, confirm] = useConfirmDialog();
 
   const [showModal, setShowModal] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- form state shape doesn't match tRPC input exactly; would need per-field typing.
   const [editing, setEditing] = useState<any>(null);
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [form, setForm] = useState({
@@ -728,7 +733,7 @@ function NewsAdminPage() {
     setShowModal(true);
   };
 
-  const openEdit = (item: any) => {
+  const openEdit = (item: { id: number; slug: string; title: string; category: string; excerpt: string; content: string; authorName: string; isPublished: boolean | null }) => {
     setEditing(item);
     setForm({
       slug: item.slug || "",
@@ -744,8 +749,10 @@ function NewsAdminPage() {
 
   const handleSave = () => {
     if (editing) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- form is a loose Record; tRPC mutation input is a strict Zod schema.
       updateMutation.mutate({ id: editing.id, data: form as any });
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- form is a loose Record; tRPC mutation input is a strict Zod schema.
       createMutation.mutate(form as any);
     }
     setShowModal(false);
@@ -840,12 +847,12 @@ function NewsAdminPage() {
       <div className="space-y-4">
         {(() => {
           const filtered = (newsItems || []).filter(
-            (item: any) => filterCategory === "all" || item.category === filterCategory
+            (item: { category: string }) => filterCategory === "all" || item.category === filterCategory
           );
           if (filtered.length === 0) {
             return <p className="text-muted-foreground">No {filterCategory === "all" ? "" : filterCategory + " "}articles yet</p>;
           }
-          return filtered.map((item: any) => (
+          return filtered.map((item) => (
           <Card key={item.id} className="border-0 shadow-sm group">
             <CardContent className="p-5">
               <div className="flex items-start justify-between gap-4">
@@ -927,7 +934,7 @@ function TestimonialsAdminPage() {
     setDialogOpen(true);
   };
 
-  const openEdit = (t: any) => {
+  const openEdit = (t: { id: number; studentName: string; photoUrl?: string | null; linkedinUrl?: string | null; courseName?: string | null; currentRole?: string | null; employer?: string | null; quote: string; rating: number; isPublished: boolean | null; isFeatured: boolean | null }) => {
     setEditId(t.id);
     setForm({
       studentName: t.studentName, photoUrl: t.photoUrl ?? "", linkedinUrl: t.linkedinUrl ?? "",
@@ -1036,7 +1043,7 @@ function TestimonialsAdminPage() {
       </div>
       <div className="space-y-4">
         {(testimonials || []).length === 0 && <p className="text-muted-foreground">No testimonials yet</p>}
-        {(testimonials || []).map((t: any) => (
+        {(testimonials || []).map((t) => (
           <Card key={t.id} className="border-0 shadow-sm">
             <CardContent className="p-5">
               <div className="flex items-start justify-between gap-4">
@@ -1114,7 +1121,7 @@ function MessagesAdminPage() {
       </div>
       <div className="space-y-4">
         {(messages || []).length === 0 && <p className="text-muted-foreground">No messages yet</p>}
-        {(messages || []).map((m: any) => (
+        {(messages || []).map((m) => (
           <Card key={m.id} className={`border-0 shadow-sm ${!m.isRead ? "border-l-4 border-l-brand" : ""}`}>
             <CardContent className="p-5">
               <div className="flex items-start justify-between gap-4">
@@ -1156,8 +1163,9 @@ function SettingsAdminPage() {
   const { data: settings } = trpc.public.settings.get.useQuery();
   const updateMutation = trpc.admin.settingsUpdate.useMutation({ onSuccess: () => Promise.all([utils.public.settings.get.invalidate(), utils.public.homepage.data.invalidate()]) });
   const [form, setForm] = useState<Record<string, string>>({});
-
-  useEffect(() => {
+  const [prevSettings, setPrevSettings] = useState<typeof settings>(undefined);
+  if (settings !== prevSettings) {
+    setPrevSettings(settings);
     if (settings) {
       setForm({
         siteName: settings.siteName || "",
@@ -1176,7 +1184,7 @@ function SettingsAdminPage() {
         seoDefaultDesc: settings.seoDefaultDesc || "",
       });
     }
-  }, [settings]);
+  }
 
   const handleSave = () => {
     updateMutation.mutate(form);

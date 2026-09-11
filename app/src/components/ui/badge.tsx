@@ -43,4 +43,5 @@ function Badge({
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- shadcn/ui convention: variants colocated with component
 export { Badge, badgeVariants }

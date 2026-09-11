@@ -43,7 +43,7 @@ async function getAccessToken(config: MomoConfig): Promise<string> {
     throw new Error(`MTN MoMo auth failed (${res.status}): ${text}`);
   }
 
-  const data = await res.json() as any;
+  const data = (await res.json()) as { access_token: string; expires_in: string };
   cachedToken = {
     token: data.access_token,
     expiry: Date.now() + (parseInt(data.expires_in) - 60) * 1000,
@@ -77,8 +77,10 @@ async function setupApiUser(config: MomoConfig): Promise<void> {
     throw new Error(`MTN MoMo API key creation failed (${keyRes.status}): ${text}`);
   }
 
-  const keyData = (await keyRes.json()) as any;
+  const keyData = (await keyRes.json()) as { apiKey: string };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- mutating the config in place during dev bootstrap.
   (config as any).apiUser = referenceId;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- mutating the config in place during dev bootstrap.
   (config as any).apiKey = keyData.apiKey;
 
   // SECURITY: never log the API key in production. Only emit a one-time
@@ -153,7 +155,7 @@ export async function checkTransactionStatus(
     throw new Error(`MTN MoMo status check failed (${res.status}): ${text}`);
   }
 
-  const data = (await res.json()) as any;
+  const data = (await res.json()) as { status: string; reason?: string };
   return { status: data.status, reason: data.reason };
 }
 

@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
+import type { ComponentType } from "react";
 import { Link } from "react-router";
 import {
   BookOpen, Users, Clock, Award, ArrowRight, Star,
@@ -14,12 +15,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { trpc } from "@/providers/trpc";
+import { trpc } from "@/providers/trpc-client";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
+import type { Course, Testimonial, NewsEvent } from "@db/schema";
 
-const categoryIcons: Record<string, any> = {
+const categoryIcons: Record<string, ComponentType<{ className?: string }>> = {
   languages: Languages,
   bakery: ChefHat,
   salon: Scissors,
@@ -239,7 +241,7 @@ export default function Home() {
 }
 
 // ─── COURSES SLIDER ───
-function CoursesSlider({ courses }: { courses: any[] }) {
+function CoursesSlider({ courses }: { courses: Course[] }) {
   const [idx, setIdx] = useState(0);
 
   useEffect(() => {
@@ -502,7 +504,7 @@ function WhyChooseSection() {
 }
 
 // ─── TESTIMONIALS SECTION (carousel showing ALL testimonials) ───
-function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
+function TestimonialsSection({ testimonials }: { testimonials: Testimonial[] }) {
   const [current, setCurrent] = useState(0);
   const [paused, setPaused] = useState(false);
 
@@ -636,8 +638,8 @@ function TestimonialsSection({ testimonials }: { testimonials: any[] }) {
 }
 
 // ─── NEWS PREVIEW SECTION (with article modal) ───
-function NewsPreviewSection({ news }: { news: any[] }) {
-  const [selected, setSelected] = useState<any | null>(null);
+function NewsPreviewSection({ news }: { news: NewsEvent[] }) {
+  const [selected, setSelected] = useState<NewsEvent | null>(null);
 
   return (
     <>

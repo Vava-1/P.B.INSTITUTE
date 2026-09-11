@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState } from "react";
 import { useSearchParams, Link } from "react-router";
 import {
   Search, CheckCircle, Clock, XCircle, AlertCircle,
@@ -11,7 +11,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
-import { trpc } from "@/providers/trpc";
+import { trpc } from "@/providers/trpc-client";
 
 export default function TrackEnrollment() {
   const [searchParams] = useSearchParams();

@@ -30,7 +30,11 @@ dist-ssr
 *.db
 *.sqlite
 *.sqlite3
-db/migrations/*.sql
+# Drizzle migrations: generated .sql files under db/migrations/ ARE committed
+# (see db/migrations/README.md). Only ad-hoc SQL dumps outside that folder
+# should be ignored; anything matching *.sql elsewhere is covered by the
+# wildcard rules below only if you uncomment them.
+# db/migrations/*.sql
 # TypeScript cache
 *.tsbuildinfo
 # Build outputs

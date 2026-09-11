@@ -1,12 +1,13 @@
-import { useState } from "react";
+﻿import { useState } from "react";
+import type { ComponentType } from "react";
 import { Calendar, Newspaper, Trophy, Bell, PartyPopper } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
-import { trpc } from "@/providers/trpc";
+import { trpc } from "@/providers/trpc-client";
 
-const categoryIcons: Record<string, any> = {
+const categoryIcons: Record<string, ComponentType<{ className?: string }>> = {
   news: Newspaper,
   event: PartyPopper,
   achievement: Trophy,

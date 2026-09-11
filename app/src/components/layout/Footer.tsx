@@ -1,6 +1,6 @@
-import { Link } from "react-router";
+﻿import { Link } from "react-router";
 import { MapPin, Phone, Mail, Clock, Facebook, Instagram, Twitter, Linkedin, Youtube } from "lucide-react";
-import { trpc } from "@/providers/trpc";
+import { trpc } from "@/providers/trpc-client";
 
 export default function Footer() {
   const { data: settings } = trpc.public.settings.get.useQuery();

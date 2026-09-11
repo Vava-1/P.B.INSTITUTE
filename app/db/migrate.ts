@@ -1,57 +1,20 @@
 import { getDb } from "../api/queries/connection";
 
 /**
- * Raw SQL migrations — runs on every container startup BEFORE the seed.
- * These use ALTER TABLE with try/catch (MySQL doesn't support IF NOT EXISTS
- * for columns in all versions). Safe to run repeatedly — errors for existing
- * columns are silently ignored.
+ * Legacy raw-SQL migration runner — previously called on every container
+ * startup to patch schema drift via direct ALTER TABLE statements.
  *
- * This is more reliable than `drizzle-kit push` for adding columns on
- * PlanetScale/MySQL, which sometimes skips new columns in non-interactive mode.
+ * P1-7 requires that ALL schema changes go through the drizzle-kit pipeline.
+ * This function is now a no-op; kept for backwards compatibility with
+ * api/boot.ts's startup sequence.
+ *
+ * Going forward:
+ *   - Edit db/schema.ts, then `npm run db:generate`, review, commit,
+ *     then `npm run db:migrate:prod` in CI/deploy.
+ *   - Never write ALTER TABLE in a hotfix commit.
  */
-export async function runMigrations() {
+export async function runMigrations(): Promise<void> {
   const db = getDb();
-  const migrations: Array<{ name: string; sql: string }> = [
-    {
-      name: "testimonials.linkedin_url",
-      sql: "ALTER TABLE testimonials ADD COLUMN linkedin_url text",
-    },
-    {
-      name: "testimonials.photo_url_mediumtext",
-      // Change photo_url from TEXT (65KB) to MEDIUMTEXT (16MB) so it can hold
-      // base64-encoded uploaded images.
-      sql: "ALTER TABLE testimonials MODIFY COLUMN photo_url mediumtext",
-    },
-    {
-      name: "testimonials.course_id_type_fix",
-      sql: "ALTER TABLE testimonials MODIFY COLUMN course_id int",
-    },
-    {
-      name: "enrollments.course_id_type_fix",
-      sql: "ALTER TABLE enrollments MODIFY COLUMN course_id int",
-    },
-    {
-      name: "certificates.enrollment_id_type_fix",
-      sql: "ALTER TABLE certificates MODIFY COLUMN enrollment_id int",
-    },
-    {
-      name: "payments.admin_notes",
-      sql: "ALTER TABLE payments ADD COLUMN admin_notes text",
-    },
-  ];
-
-  for (const migration of migrations) {
-    try {
-      await db.execute(migration.sql);
-      console.log(`✅ [migration] ${migration.name} — applied`);
-    } catch (e: any) {
-      // "Duplicate column name" or "Check that column/data type exists" = already applied.
-      const msg = e.message || "";
-      if (msg.includes("Duplicate column") || msg.includes("already exists") || msg.includes("DATA_TYPE")) {
-        // Already applied — skip silently.
-      } else {
-        console.warn(`⚠️  [migration] ${migration.name} — skipped:`, msg.slice(0, 120));
-      }
-    }
-  }
+  void db;
+  return;
 }

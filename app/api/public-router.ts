@@ -75,6 +75,7 @@ export const publicRouter = createRouter({
         const db = getDb();
         const conditions = [eq(courses.isPublished, true)];
         if (input?.category) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle ORM type friction: enum column vs Zod string input.
           conditions.push(eq(courses.category, input.category as any));
         }
         if (input?.featured) {
@@ -123,6 +124,7 @@ export const publicRouter = createRouter({
           .where(and(...conditions))
           .orderBy(desc(testimonials.submittedAt));
         if (input?.limit) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle ORM type friction: .limit() builder reassignment.
           query = query.limit(input.limit) as any;
         }
         try {
@@ -149,6 +151,7 @@ export const publicRouter = createRouter({
         const db = getDb();
         const conditions = [eq(newsEvents.isPublished, true)];
         if (input?.category) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle ORM type friction: enum column vs Zod string input.
           conditions.push(eq(newsEvents.category, input.category as any));
         }
         let query = db
@@ -157,6 +160,7 @@ export const publicRouter = createRouter({
           .where(and(...conditions))
           .orderBy(desc(newsEvents.publishedAt));
         if (input?.limit) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle ORM type friction: .limit() builder reassignment.
           query = query.limit(input.limit) as any;
         }
         return query;
@@ -186,6 +190,7 @@ export const publicRouter = createRouter({
         const db = getDb();
         const conditions = [eq(instructors.isPublished, true)];
         if (input?.department) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle ORM type friction: enum column vs Zod string input.
           conditions.push(eq(instructors.department, input.department as any));
         }
         return db
@@ -208,6 +213,7 @@ export const publicRouter = createRouter({
         const db = getDb();
         const conditions = [];
         if (input?.category) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle ORM type friction: enum column vs Zod string input.
           conditions.push(eq(galleryItems.category, input.category as any));
         }
         const query = conditions.length > 0
@@ -229,6 +235,7 @@ export const publicRouter = createRouter({
         const db = getDb();
         const conditions = [eq(faqs.isPublished, true)];
         if (input?.category) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Drizzle ORM type friction: enum column vs Zod string input.
           conditions.push(eq(faqs.category, input.category as any));
         }
         return db
@@ -503,8 +510,8 @@ export const publicRouter = createRouter({
                 status: "pending",
                 message: "Payment request sent to your phone. Check your MTN MoMo app and enter your PIN to confirm.",
               };
-            } catch (e: any) {
-              console.error("[MTN MoMo] Initiate failed (reference:", refNum, "):", e.message);
+            } catch (e: unknown) {
+              console.error("[MTN MoMo] Initiate failed (reference:", refNum, "):", e instanceof Error ? e.message : String(e));
               // FALLBACK: Instead of showing "Payment Failed" (which blocks enrollment),
               // record the payment as "pending" and tell the user our team will contact
               // them to complete payment manually. This way the enrollment can proceed.

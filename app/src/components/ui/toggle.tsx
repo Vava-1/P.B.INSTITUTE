@@ -42,4 +42,5 @@ function Toggle({
   )
 }
 
+// eslint-disable-next-line react-refresh/only-export-components -- shadcn/ui convention
 export { Toggle, toggleVariants }

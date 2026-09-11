@@ -1,11 +1,11 @@
-import { Link } from "react-router";
+﻿import { Link } from "react-router";
 import { Target, Eye, Heart, Award, Users, BookOpen, Phone } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
-import { trpc } from "@/providers/trpc";
+import { trpc } from "@/providers/trpc-client";
 
 const values = [
   { icon: Award, title: "Excellence", desc: "High standards in instruction and student outcomes." },
